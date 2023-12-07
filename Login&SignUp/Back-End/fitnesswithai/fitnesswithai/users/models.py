@@ -1,35 +1,39 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import CharField, EmailField
-from django.urls import reverse
+from django.db.models import BooleanField, CharField, EmailField
 from django.utils.translation import gettext_lazy as _
 
-from fitnesswithai.users.managers import UserManager
+from .managers import CustomUserManager
 
 
 class User(AbstractUser):
-    """
-    Default custom user model for FitnestX.
-    If adding fields that need to be filled at user signup,
-    check forms.SignupForm and forms.SocialSignupForms accordingly.
-    """
+    """Default user for FitnestX."""
 
-    # First and last name do not cover name patterns around the globe
+    SOCIAL_AUTH_PROVIDERS = (
+        ("GOOGLE", ("GOOGLE")),
+        ("FACEBOOK", ("FACEBOOK")),
+        #("TWITTER", ("TWITTER")),
+    )
+    USER_TYPE = (("USER", "USER"),("PRO-USER", "PRO-USER"))
+
     name = CharField(_("Name of User"), blank=True, max_length=255)
+    email = EmailField(_("Email Address"), unique=True)
+    email_verified = BooleanField(default=False)
+    social_auth = CharField(
+        choices=SOCIAL_AUTH_PROVIDERS,
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="This field indicates through which social app has user logged in or signup",
+    )
+    user_type = CharField(max_length=15, choices=USER_TYPE, default="USER")
     first_name = None  # type: ignore
     last_name = None  # type: ignore
-    email = EmailField(_("email address"), unique=True)
     username = None  # type: ignore
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
-    objects = UserManager()
+    objects = CustomUserManager()
 
-    def get_absolute_url(self) -> str:
-        """Get URL for user's detail view.
-
-        Returns:
-            str: URL for user detail.
-
-        """
-        return reverse("users:detail", kwargs={"pk": self.id})
+    def __str__(self):
+        return self.name or self.email or self.mobile or ""

@@ -1,3 +1,4 @@
+from datetime import timedelta
 from .base import *  # noqa
 from .base import env
 
@@ -60,3 +61,6 @@ INSTALLED_APPS += ["django_extensions"]  # noqa: F405
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+}
