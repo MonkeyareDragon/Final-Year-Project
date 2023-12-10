@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:loginsignup/common/color_extension.dart';
-import 'package:loginsignup/view/on_boarding/on_boarding-view.dart';
 import 'package:page_transition/page_transition.dart';
+
+import 'view/on_boarding/get_start_view.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,14 +19,12 @@ class MyApp extends StatelessWidget {
       // colors for the application as
       // you want
       theme: ThemeData(
-        primaryColor: AppColor.primaryColor1,
-        fontFamily: "Poppins"
-      ),
+          primaryColor: AppColor.primaryColor1, fontFamily: "Poppins"),
 
       // A widget which will be started on application startup
       home: AnimatedSplashScreen(
         splash: 'assets/img/splashscreen/SplashScreenImage.png',
-        nextScreen: OnBoardingView(),
+        nextScreen: GetStartedView(),
         splashIconSize: 250,
         duration: 2500,
         splashTransition: SplashTransition.fadeTransition,

@@ -25,27 +25,31 @@ class _OnBoardingViewState extends State<OnBoardingView> {
   }
 
   List pageArray = [
-  {
-    "title": "Goal Tracking",
-    "subtitle": "Effortlessly define and monitor your objectives. Our expertise can assist you in setting and tracking meaningful goals.",
-    "image": "assets/img/onboarding/1.png"
-  },
-  {
-    "title": "Achieve Excellence",
-    "subtitle": "Persist through challenges to achieve your aspirations. Temporary discomfort is a small price for everlasting success. Let's strive for excellence.",
-    "image": "assets/img/onboarding/2.png"
-  },
-  {
-    "title": "Nutritional Guidance",
-    "subtitle": "Embark on a journey towards a healthier lifestyle with our personalized dietary plans. Discover the joy of maintaining well-balanced and nutritious meals.",
-    "image": "assets/img/onboarding/3.png"
-  },
-  {
-    "title": "Enhance Sleep Quality",
-    "subtitle": "Elevate your sleep quality with our specialized solutions. Experience the positive impact of sound sleep on your overall well-being.",
-    "image": "assets/img/onboarding/4.png"
-  }
-];
+    {
+      "title": "Goal Tracking",
+      "subtitle":
+          "Effortlessly define and monitor your objectives. Our expertise can assist you in setting and tracking meaningful goals.",
+      "image": "assets/img/onboarding/1.png"
+    },
+    {
+      "title": "Achieve Excellence",
+      "subtitle":
+          "Persist through challenges to achieve your aspirations. Temporary discomfort is a small price for everlasting success. Let's strive for excellence.",
+      "image": "assets/img/onboarding/2.png"
+    },
+    {
+      "title": "Nutritional Guidance",
+      "subtitle":
+          "Embark on a journey towards a healthier lifestyle with our personalized dietary plans. Discover the joy of maintaining well-balanced and nutritious meals.",
+      "image": "assets/img/onboarding/3.png"
+    },
+    {
+      "title": "Enhance Sleep Quality",
+      "subtitle":
+          "Elevate your sleep quality with our specialized solutions. Experience the positive impact of sound sleep on your overall well-being.",
+      "image": "assets/img/onboarding/4.png"
+    }
+  ];
 
   @override
   Widget build(BuildContext context) {
