@@ -12,7 +12,7 @@ Widget build(BuildContext context) {
 	return MaterialApp(
 		
 	// Application name
-	title: 'FitStar',
+	title: 'FitnestX',
 		
 	// Application theme data, you can set the
 	// colors for the application as
@@ -24,8 +24,8 @@ Widget build(BuildContext context) {
 	// A widget which will be started on application startup
 	home: AnimatedSplashScreen(
 		splash: 'assets/SplashScreen/SplashScreenImage.png',
-		nextScreen: MyHomePage(title: 'FitStar'),
-    splashIconSize: 150,
+		nextScreen: MyHomePage(title: 'FitnestX'),
+    splashIconSize: 250,
     duration: 2500,
 		splashTransition: SplashTransition.fadeTransition,
     pageTransitionType: PageTransitionType.fade,
