@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
 
       // A widget which will be started on application startup
       home: AnimatedSplashScreen(
-        splash: 'assets/img/SplashScreen/SplashScreenImage.png',
+        splash: 'assets/img/splashscreen/SplashScreenImage.png',
         nextScreen: OnBoardingView(),
         splashIconSize: 250,
         duration: 2500,

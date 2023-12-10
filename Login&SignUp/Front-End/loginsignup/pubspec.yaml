@@ -45,7 +45,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: "AppIcon"
-  image_path: "assets/img/Logo/AppLogo.png"
+  image_path: "assets/img/logo/AppLogo.png"
   min_sdk_android: 16
   remove_alpha_ios: true
 
@@ -69,8 +69,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/
-    - assets/img/SplashScreen/SplashScreenImage.png
+    - assets/img/onboarding/
+    - assets/img/splashscreen/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
