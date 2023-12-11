@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loginsignup/view/login/profile_goal.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
 import '../../common_widget/textfield.dart';
@@ -176,7 +177,13 @@ class _CompleteProfileViewState extends State<LoginProfileView> {
                       SizedBox(
                         height: media.width * 0.07,
                       ),
-                      RoundButton(title: "Next >", onPressed: () {}),
+                      RoundButton(title: "Next >", onPressed: () {
+                        Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ProfileGoalView()));
+                      }),
                     ],
                   ),
                 ),
