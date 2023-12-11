@@ -103,8 +103,6 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                             curve: Curves.bounceInOut);
                         setState(() {});
                       } else {
-                        // Open Welcome Screen
-                        print("Open Login Screen/Welcome back screen.");
                         Navigator.push(
                             context,
                             MaterialPageRoute(

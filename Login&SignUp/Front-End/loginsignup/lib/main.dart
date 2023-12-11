@@ -3,6 +3,7 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:page_transition/page_transition.dart';
 
+import 'view/login/login_profile.dart';
 import 'view/on_boarding/get_start_view.dart';
 
 void main() => runApp(MyApp());
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
       // A widget which will be started on application startup
       home: AnimatedSplashScreen(
         splash: 'assets/img/splashscreen/SplashScreenImage.png',
-        nextScreen: GetStartedView(),
+        nextScreen: LoginProfileView(),
         splashIconSize: 250,
         duration: 2500,
         splashTransition: SplashTransition.fadeTransition,
