@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:loginsignup/view/login/welcome_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
 
@@ -7,10 +8,10 @@ class ProfileGoalView extends StatefulWidget {
   const ProfileGoalView({super.key});
 
   @override
-  State<ProfileGoalView> createState() => _WhatYourGoalViewState();
+  State<ProfileGoalView> createState() => _ProfileGoalViewState();
 }
 
-class _WhatYourGoalViewState extends State<ProfileGoalView> {
+class _ProfileGoalViewState extends State<ProfileGoalView> {
   CarouselController buttonCarouselController = CarouselController();
 
   List goalArray = [
@@ -86,8 +87,8 @@ class _WhatYourGoalViewState extends State<ProfileGoalView> {
                             Text(
                               gObj["subtitle"].toString(),
                               textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(color: AppColor.white, fontSize: 12),
+                              style: TextStyle(
+                                  color: AppColor.white, fontSize: 12),
                             ),
                           ],
                         ),
@@ -129,10 +130,7 @@ class _WhatYourGoalViewState extends State<ProfileGoalView> {
                 SizedBox(
                   height: media.width * 0.05,
                 ),
-                RoundButton(
-                    title: "Confirm",
-                    onPressed: () {
-                    }),
+                RoundButton(title: "Confirm", onPressed: () {}),
               ],
             ),
           )

@@ -39,21 +39,21 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               const RoundTextField(
                 hitText: "First Name",
-                icon: "assets/img/login/Profile.png",
+                icon: "assets/img/signup/Profile.png",
               ),
               SizedBox(
                 height: media.width * 0.04,
               ),
               const RoundTextField(
                 hitText: "Last Name",
-                icon: "assets/img/login/Profile.png",
+                icon: "assets/img/signup/Profile.png",
               ),
               SizedBox(
                 height: media.width * 0.04,
               ),
               const RoundTextField(
                 hitText: "Email",
-                icon: "assets/img/login/Message.png",
+                icon: "assets/img/signup/Message.png",
                 keywordtype: TextInputType.emailAddress,
               ),
               SizedBox(
@@ -61,7 +61,7 @@ class _SignUpViewState extends State<SignUpView> {
               ),
               RoundTextField(
                 hitText: "Password",
-                icon: "assets/img/login/Lock.png",
+                icon: "assets/img/signup/Lock.png",
                 obscureText: true,
                 rigtIcon: TextButton(
                     onPressed: () {},
@@ -70,7 +70,7 @@ class _SignUpViewState extends State<SignUpView> {
                         width: 20,
                         height: 20,
                         child: Image.asset(
-                          "assets/img/login/ShowPasswordEye.png",
+                          "assets/img/signup/ShowPasswordEye.png",
                           width: 20,
                           height: 20,
                           fit: BoxFit.contain,
@@ -148,7 +148,7 @@ class _SignUpViewState extends State<SignUpView> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Image.asset(
-                        "assets/img/login/Google.png",
+                        "assets/img/signup/Google.png",
                         width: 20,
                         height: 20,
                       ),
@@ -172,7 +172,7 @@ class _SignUpViewState extends State<SignUpView> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Image.asset(
-                        "assets/img/login/Facebook.png",
+                        "assets/img/signup/Facebook.png",
                         width: 20,
                         height: 20,
                       ),

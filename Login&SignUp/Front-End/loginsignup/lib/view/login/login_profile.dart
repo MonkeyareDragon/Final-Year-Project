@@ -8,10 +8,10 @@ class LoginProfileView extends StatefulWidget {
   const LoginProfileView({super.key});
 
   @override
-  State<LoginProfileView> createState() => _CompleteProfileViewState();
+  State<LoginProfileView> createState() => _LoginProfileViewState();
 }
 
-class _CompleteProfileViewState extends State<LoginProfileView> {
+class _LoginProfileViewState extends State<LoginProfileView> {
   TextEditingController txtDate = TextEditingController();
 
   @override
@@ -177,13 +177,15 @@ class _CompleteProfileViewState extends State<LoginProfileView> {
                       SizedBox(
                         height: media.width * 0.07,
                       ),
-                      RoundButton(title: "Next >", onPressed: () {
-                        Navigator.push(
+                      RoundButton(
+                          title: "Next >",
+                          onPressed: () {
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         const ProfileGoalView()));
-                      }),
+                          }),
                     ],
                   ),
                 ),
