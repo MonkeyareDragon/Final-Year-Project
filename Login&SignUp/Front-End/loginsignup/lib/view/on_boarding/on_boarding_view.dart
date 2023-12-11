@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/on_boarding_page.dart';
+import '../login/signup_view.dart';
 
 class OnBoardingView extends StatefulWidget {
   const OnBoardingView({super.key});
@@ -104,6 +105,10 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                       } else {
                         // Open Welcome Screen
                         print("Open Login Screen/Welcome back screen.");
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignUpView()));
                       }
                     },
                   ),
