@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:loginsignup/view/login/login_view.dart';
+import 'package:loginsignup/view/login/profile_goal.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
 import '../../common_widget/textfield.dart';
@@ -12,6 +14,7 @@ class SignUpView extends StatefulWidget {
 
 class _SignUpViewState extends State<SignUpView> {
   bool isCheck = false;
+  bool _isPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -62,15 +65,21 @@ class _SignUpViewState extends State<SignUpView> {
               RoundTextField(
                 hitText: "Password",
                 icon: "assets/img/signup/Lock.png",
-                obscureText: true,
+                obscureText: !_isPasswordVisible,
                 rigtIcon: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
                     child: Container(
                         alignment: Alignment.center,
                         width: 20,
                         height: 20,
                         child: Image.asset(
-                          "assets/img/signup/ShowPasswordEye.png",
+                          _isPasswordVisible
+                              ? "assets/img/signup/ShowPasswordEye.png"
+                              : "assets/img/signup/HidePasswordEye.png",
                           width: 20,
                           height: 20,
                           fit: BoxFit.contain,
@@ -105,7 +114,14 @@ class _SignUpViewState extends State<SignUpView> {
               SizedBox(
                 height: media.width * 0.3,
               ),
-              RoundButton(title: "Register", onPressed: () {}),
+              RoundButton(
+                  title: "Register",
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ProfileGoalView()));
+                  }),
               SizedBox(
                 height: media.width * 0.04,
               ),
@@ -184,7 +200,12 @@ class _SignUpViewState extends State<SignUpView> {
                 height: media.width * 0.04,
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginView()));
+                },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

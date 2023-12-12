@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loginsignup/view/login/welcome_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
 import '../../common_widget/textfield.dart';
@@ -12,6 +13,7 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   bool isCheck = false;
+  bool _isPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -53,15 +55,21 @@ class _LoginViewState extends State<LoginView> {
                 RoundTextField(
                   hitText: "Password",
                   icon: "assets/img/signup/Lock.png",
-                  obscureText: true,
+                  obscureText: !_isPasswordVisible,
                   rigtIcon: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
                       child: Container(
                           alignment: Alignment.center,
                           width: 20,
                           height: 20,
                           child: Image.asset(
-                            "assets/img/signup/ShowPasswordEye.png",
+                            _isPasswordVisible
+                                ? "assets/img/signup/ShowPasswordEye.png"
+                                : "assets/img/signup/HidePasswordEye.png",
                             width: 20,
                             height: 20,
                             fit: BoxFit.contain,
@@ -84,12 +92,18 @@ class _LoginViewState extends State<LoginView> {
                   ],
                 ),
                 const Spacer(),
-                RoundButton(title: "Login", onPressed: () {}),
+                RoundButton(
+                    title: "Login",
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const WelcomeView()));
+                    }),
                 SizedBox(
                   height: media.width * 0.04,
                 ),
                 Row(
-                  // crossAxisAlignment: CrossAxisAlignment.,
                   children: [
                     Expanded(
                         child: Container(

@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:loginsignup/view/login/welcome_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
 
