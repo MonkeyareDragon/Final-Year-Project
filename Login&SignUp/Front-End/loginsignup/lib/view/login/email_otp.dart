@@ -1,19 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:loginsignup/constant/api.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
 import '../../common_widget/textfield.dart';
+import 'login_profile.dart';
 
 class EmailOtpPage extends StatefulWidget {
+  final String email;
+
+  EmailOtpPage({super.key, required this.email});
+
   @override
   _EmailOtpPageState createState() => _EmailOtpPageState();
 }
 
 class _EmailOtpPageState extends State<EmailOtpPage> {
-  String otp = '';
+  late String email;
+  final otpController = TextEditingController();
+  final ApiService apiService = ApiService();
 
-  void _submitOTP() {
-    // TODO: Implement OTP verification logic
+  @override
+  void initState() {
+    super.initState();
+    email = widget.email;
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    otpController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submitOTP() async {
+    final String otp = otpController.text.trim();
+
+    final Map<String, dynamic> result =
+        await apiService.sendOTP(email, otp);
+
+    if (result['success']) {
+      print('Login successful! Token: ${result['token']}');
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginProfileView()));
+    } else {
+      print('Login failed. Error: ${result['error']}');
+    }
   }
 
   @override
@@ -50,6 +82,7 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
                   hitText: "Activation Code",
                   icon: "assets/img/signup/Message.png",
                   keywordtype: TextInputType.numberWithOptions(),
+                  controller: otpController,
                   rigtIcon: TextButton(
                     onPressed: () {},
                     child: Text(
@@ -61,7 +94,7 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
                     ),
                   )),
               SizedBox(height: 35),
-              RoundButton(title: "Login", onPressed: () {}),
+              RoundButton(title: "Login", onPressed: _submitOTP),
             ],
           ),
         ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:loginsignup/common/color_extension.dart';
-import 'package:loginsignup/view/login/email_otp.dart';
 import 'package:loginsignup/view/on_boarding/get_start_view.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -24,7 +23,7 @@ class MyApp extends StatelessWidget {
       // A widget which will be started on application startup
       home: AnimatedSplashScreen(
         splash: 'assets/img/splashscreen/SplashScreenImage.png',
-        nextScreen: EmailOtpPage(),
+        nextScreen: GetStartedView(),
         splashIconSize: 250,
         duration: 2500,
         splashTransition: SplashTransition.fadeTransition,

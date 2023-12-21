@@ -39,11 +39,35 @@ class ApiService {
       }),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       // Successful login
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       print(responseData); // Print the response data
       return {'success': true, "detail":"Verification email sent."};
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+      return {'success': false, 'error': 'Invalid credentials'};
+    }
+  }
+
+  //write the code for sending otp from email_otp.dart
+  Future<Map<String, dynamic>> sendOTP(String email, String otp) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/v1/users/verify-otp-code/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'otp_code': otp,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Successful login
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      print(responseData); // Print the response data
+      return {'success': true, "detail": "Email verified."};
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
       return {'success': false, 'error': 'Invalid credentials'};

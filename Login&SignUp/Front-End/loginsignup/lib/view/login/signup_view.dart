@@ -5,6 +5,7 @@ import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
 import '../../common_widget/textfield.dart';
 import '../../constant/api.dart';
+import 'email_otp.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
@@ -37,8 +38,27 @@ class _SignUpViewState extends State<SignUpView> {
 
     if (result['success']) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ProfileGoalView()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => EmailOtpPage(
+                    key: null,
+                    email: email,
+                  )));
     } else {
+      // Create an alert dialog to display some errors
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text(result['error']),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
       print('Register failed. Error: ${result['error']}');
     }
   }
