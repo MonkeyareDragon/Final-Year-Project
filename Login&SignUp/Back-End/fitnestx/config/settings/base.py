@@ -80,6 +80,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+    "phonenumber_field",
 ]
 
 LOCAL_APPS = [
@@ -273,13 +274,13 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "fitnestx.users.adapters.AccountAdapter"
+#ACCOUNT_ADAPTER = "fitnestx.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/forms.html
-ACCOUNT_FORMS = {"signup": "fitnestx.users.forms.UserSignupForm"}
+#ACCOUNT_FORMS = {"signup": "fitnestx.users.forms.UserSignupForm"}
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "fitnestx.users.adapters.SocialAccountAdapter"
+#SOCIALACCOUNT_ADAPTER = "fitnestx.users.adapters.SocialAccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/forms.html
-SOCIALACCOUNT_FORMS = {"signup": "fitnestx.users.forms.UserSocialSignupForm"}
+#SOCIALACCOUNT_FORMS = {"signup": "fitnestx.users.forms.UserSocialSignupForm"}
 
 # django-rest-framework
 # -------------------------------------------------------------------------------

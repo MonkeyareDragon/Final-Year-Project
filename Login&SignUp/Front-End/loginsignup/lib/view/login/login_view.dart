@@ -3,6 +3,7 @@ import 'package:loginsignup/view/login/welcome_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
 import '../../common_widget/textfield.dart';
+import '../../constant/api.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -14,6 +15,33 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   bool isCheck = false;
   bool _isPasswordVisible = false;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final ApiService apiService = ApiService();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    final String email = emailController.text.trim();
+    final String password = passwordController.text.trim();
+
+    final Map<String, dynamic> result = await apiService.login(email, password);
+
+    if (result['success']) {
+      print('Login successful! Token: ${result['token']}');
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => WelcomeView()));
+    } else {
+      print('Login failed. Error: ${result['error']}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -44,10 +72,11 @@ class _LoginViewState extends State<LoginView> {
                 SizedBox(
                   height: media.width * 0.04,
                 ),
-                const RoundTextField(
+                RoundTextField(
                   hitText: "Email",
                   icon: "assets/img/signup/Message.png",
                   keywordtype: TextInputType.emailAddress,
+                  controller: emailController,
                 ),
                 SizedBox(
                   height: media.width * 0.04,
@@ -56,6 +85,7 @@ class _LoginViewState extends State<LoginView> {
                   hitText: "Password",
                   icon: "assets/img/signup/Lock.png",
                   obscureText: !_isPasswordVisible,
+                  controller: passwordController,
                   rigtIcon: TextButton(
                       onPressed: () {
                         setState(() {
@@ -92,14 +122,7 @@ class _LoginViewState extends State<LoginView> {
                   ],
                 ),
                 const Spacer(),
-                RoundButton(
-                    title: "Login",
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const WelcomeView()));
-                    }),
+                RoundButton(title: "Login", onPressed: _login),
                 SizedBox(
                   height: media.width * 0.04,
                 ),

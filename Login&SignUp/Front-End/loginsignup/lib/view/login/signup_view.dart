@@ -4,6 +4,7 @@ import 'package:loginsignup/view/login/profile_goal.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
 import '../../common_widget/textfield.dart';
+import '../../constant/api.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
@@ -15,7 +16,33 @@ class SignUpView extends StatefulWidget {
 class _SignUpViewState extends State<SignUpView> {
   bool isCheck = false;
   bool _isPasswordVisible = false;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final ApiService apiService = ApiService();
+
   @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _register() async {
+    final String email = emailController.text.trim();
+    final String password = passwordController.text.trim();
+
+    final Map<String, dynamic> result =
+        await apiService.register(email, password);
+
+    if (result['success']) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ProfileGoalView()));
+    } else {
+      print('Register failed. Error: ${result['error']}');
+    }
+  }
+
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     return Scaffold(
@@ -54,10 +81,11 @@ class _SignUpViewState extends State<SignUpView> {
               SizedBox(
                 height: media.width * 0.04,
               ),
-              const RoundTextField(
+              RoundTextField(
                 hitText: "Email",
                 icon: "assets/img/signup/Message.png",
                 keywordtype: TextInputType.emailAddress,
+                controller: emailController,
               ),
               SizedBox(
                 height: media.width * 0.04,
@@ -66,6 +94,7 @@ class _SignUpViewState extends State<SignUpView> {
                 hitText: "Password",
                 icon: "assets/img/signup/Lock.png",
                 obscureText: !_isPasswordVisible,
+                controller: passwordController,
                 rigtIcon: TextButton(
                     onPressed: () {
                       setState(() {
@@ -115,13 +144,9 @@ class _SignUpViewState extends State<SignUpView> {
                 height: media.width * 0.3,
               ),
               RoundButton(
-                  title: "Register",
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ProfileGoalView()));
-                  }),
+                title: "Register",
+                onPressed: _register,
+              ),
               SizedBox(
                 height: media.width * 0.04,
               ),
