@@ -51,7 +51,7 @@ class ApiService {
   }
 
   //write the code for sending otp from email_otp.dart
-  Future<Map<String, dynamic>> sendOTP(String email, String otp) async {
+  Future<Map<String, dynamic>> verifyOTP(String email, String otp) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/v1/users/verify-otp-code/'),
       headers: <String, String>{
@@ -68,6 +68,28 @@ class ApiService {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       print(responseData); // Print the response data
       return {'success': true, "detail": "Email verified."};
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+      return {'success': false, 'error': 'Invalid credentials'};
+    }
+  }
+
+  Future<Map<String, dynamic>> resendOTP(String email) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/v1/users/resend/verification-code/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Successful login
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      print(responseData); // Print the response data
+      return {'success': true, "detail": "Send OTP code to email."};
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
       return {'success': false, 'error': 'Invalid credentials'};

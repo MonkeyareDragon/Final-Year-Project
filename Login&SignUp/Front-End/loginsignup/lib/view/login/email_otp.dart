@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:loginsignup/constant/api.dart';
 
@@ -19,6 +21,10 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
   late String email;
   final otpController = TextEditingController();
   final ApiService apiService = ApiService();
+  int countdownTime = 180; // 3 minutes in seconds
+  bool isResending = false;
+  Timer? _timer;
+
 
   @override
   void initState() {
@@ -26,18 +32,10 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
     email = widget.email;
   }
 
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    otpController.dispose();
-    super.dispose();
-  }
-
   Future<void> _submitOTP() async {
     final String otp = otpController.text.trim();
 
-    final Map<String, dynamic> result =
-        await apiService.sendOTP(email, otp);
+    final Map<String, dynamic> result = await apiService.verifyOTP(email, otp);
 
     if (result['success']) {
       print('Login successful! Token: ${result['token']}');
@@ -46,6 +44,59 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
     } else {
       print('Login failed. Error: ${result['error']}');
     }
+  }
+
+  void updateCountdownTime(int newTime) {
+    setState(() {
+      countdownTime = newTime;
+      if (newTime == 0) {
+        isResending = false;
+      }
+    });
+  }
+
+  void startCountdownTimer() {
+    const oneSec = const Duration(seconds: 1);
+    var threeMinutes = 3 * 60; // 3 minutes in seconds
+
+    new Timer.periodic(
+      oneSec,
+      (Timer timer) => setState(() {
+        if (threeMinutes < 1) {
+          timer.cancel();
+        } else {
+          threeMinutes = threeMinutes - 1;
+          updateCountdownTime(threeMinutes);
+        }
+      }),
+    );
+  }
+
+  void _resendOtp() async {
+    if (isResending) {
+      print('Cannot resend OTP during countdown');
+      return;
+    }
+
+    isResending = true;
+    // Call the API to resend the OTP
+    final Map<String, dynamic> result = await apiService.resendOTP(email);
+
+    if (result['success']) {
+      print('OTP resent successfully');
+      // Start the countdown timer
+      startCountdownTimer();
+    } else {
+      print('Failed to resend OTP. Error: ${result['error']}');
+    }
+  }
+
+   @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    otpController.dispose();
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -79,21 +130,32 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
               ),
               SizedBox(height: 35),
               RoundTextField(
-                  hitText: "Activation Code",
-                  icon: "assets/img/signup/Message.png",
-                  keywordtype: TextInputType.numberWithOptions(),
-                  controller: otpController,
-                  rigtIcon: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Resend",
-                      style: TextStyle(
-                        color: AppColor.black,
-                        fontSize: 16,
-                      ),
+                hitText: "Activation Code",
+                icon: "assets/img/signup/Message.png",
+                keywordtype: TextInputType.numberWithOptions(),
+                controller: otpController,
+                rigtIcon: TextButton(
+                  onPressed: _resendOtp,
+                  child: Text(
+                    "Resend",
+                    style: TextStyle(
+                      color: AppColor.black,
+                      fontSize: 16,
                     ),
-                  )),
-              SizedBox(height: 35),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              if (isResending)  
+                Text(
+                  'Time remaining: $countdownTime seconds',
+                  style: TextStyle(
+                    color: AppColor.black,
+                    fontSize: 16,
+                  ),
+                  
+                ),
+              SizedBox(height: 15),
               RoundButton(title: "Login", onPressed: _submitOTP),
             ],
           ),
