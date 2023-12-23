@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loginsignup/view/login/password_recovery.dart';
 import 'package:loginsignup/view/login/welcome_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
@@ -109,17 +110,25 @@ class _LoginViewState extends State<LoginView> {
                 SizedBox(
                   height: media.width * 0.04,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Forgot your password?",
-                      style: TextStyle(
-                          color: AppColor.gray,
-                          fontSize: 12,
-                          decoration: TextDecoration.underline),
-                    ),
-                  ],
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PasswordRecoveryScreen()));
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Forgot your password?",
+                        style: TextStyle(
+                            color: AppColor.gray,
+                            fontSize: 12,
+                            decoration: TextDecoration.underline),
+                      ),
+                    ],
+                  ),
                 ),
                 const Spacer(),
                 RoundButton(title: "Login", onPressed: _login),

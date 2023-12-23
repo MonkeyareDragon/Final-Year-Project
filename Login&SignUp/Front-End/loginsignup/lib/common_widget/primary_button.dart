@@ -7,12 +7,14 @@ class RoundButton extends StatelessWidget {
   final String title;
   final RoundButtonType type;
   final VoidCallback onPressed;
+  final bool isBlack;
 
   const RoundButton(
       {super.key,
       required this.title,
       this.type = RoundButtonType.bgGradient,
-      required this.onPressed});
+      required this.onPressed,
+      this.isBlack = false});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class RoundButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: AppColor.primaryG,
+                colors: isBlack ? [AppColor.black, AppColor.black] : AppColor.primaryG,
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight),
             borderRadius: BorderRadius.circular(25),

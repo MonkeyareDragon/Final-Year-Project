@@ -94,7 +94,7 @@ class PassWordResetView(APIView):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({"detail": "Password reset link sent."})
+        return Response({"detail": "Password reset link sent."}, status=status.HTTP_200_OK)
 
 
 class PasswordResetConfirmView(GenericAPIView):
