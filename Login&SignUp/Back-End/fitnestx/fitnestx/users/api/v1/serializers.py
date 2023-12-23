@@ -16,7 +16,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from fitnestx.core.otp import send_email_verification_code, validate_otp
+from fitnestx.core.otp import send_email_verification_code, validate_otp, send_password_reset_email
 from fitnestx.users.models import User
 
 
@@ -105,28 +105,20 @@ class PassWordResetSerializer(serializers.Serializer):
 
     email = serializers.EmailField()
 
-    password_reset_form_class = PasswordResetForm
-
     def validate_email(self, value):
-        # Create PasswordResetForm with the serializer
-        self.reset_form = self.password_reset_form_class(data=self.initial_data)
-        if not self.reset_form.is_valid():
-            raise serializers.ValidationError(self.reset_form.errors)
-
+        """Validate that the email is registered."""
+        try:
+            user = User.objects.get(email=value)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User with this email does not exist.")
         return value
 
     def save(self):
-        request = self.context.get("request")
-        # Set some values to trigger the send_email method.
-        opts = {
-            "use_https": request.is_secure(),
-            "from_email": getattr(settings, "DEFAULT_FROM_EMAIL"),
-            "request": request,
-        }
-
-        self.reset_form.save(**opts)
-
-
+        """Generate a one-use only link for resetting password and send it to the user."""
+        email = self.validated_data["email"]
+        user = User.objects.get(email=email)
+        send_password_reset_email(self, user)
+    
 class PasswordResetConfirmSerializer(serializers.Serializer):
     new_password1 = serializers.CharField(max_length=128)
     new_password2 = serializers.CharField(max_length=128)
