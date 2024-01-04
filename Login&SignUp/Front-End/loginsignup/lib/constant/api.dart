@@ -40,7 +40,7 @@ class ApiService {
     );
 
     if (response.statusCode == 201) {
-      // Successful login
+      // Successful register
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       print(responseData); // Print the response data
       return {'success': true, "detail":"Verification email sent."};
@@ -50,7 +50,6 @@ class ApiService {
     }
   }
 
-  //write the code for sending otp from email_otp.dart
   Future<Map<String, dynamic>> verifyOTP(String email, String otp) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/v1/users/verify-otp-code/'),

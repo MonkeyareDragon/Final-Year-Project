@@ -180,30 +180,6 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: media.width * 0.04,
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: AppColor.white,
-                          border: Border.all(
-                            width: 1,
-                            color: AppColor.gray.withOpacity(0.4),
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Image.asset(
-                          "assets/img/signup/Facebook.png",
-                          width: 20,
-                          height: 20,
-                        ),
-                      ),
-                    )
                   ],
                 ),
                 SizedBox(
