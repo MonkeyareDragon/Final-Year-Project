@@ -309,3 +309,5 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+# Keras Model Url
+MODEL_FILEPATH = "fitnestx/static/model/HAR_model.keras"
