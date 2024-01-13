@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loginsignup/view/home/home.dart';
+import 'package:loginsignup/view/home/home_view.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';

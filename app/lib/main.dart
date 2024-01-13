@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/view/nav_bar/main_nav_bar_view.dart';
-import 'package:loginsignup/view/on_boarding/get_start_view.dart';
 import 'package:page_transition/page_transition.dart';
 
 void main() => runApp(MyApp());

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/nav_button.dart';
+import 'package:loginsignup/view/home/blank_view.dart';
+import 'package:loginsignup/view/home/home_view.dart';
 
 class MainNavBarViewState extends StatefulWidget {
   const MainNavBarViewState({super.key});
@@ -11,10 +13,13 @@ class MainNavBarViewState extends StatefulWidget {
 
 class MainNavBarViewStateState extends State<MainNavBarViewState> {
   int selectNav = 0;
+  final PageStorageBucket bucket = PageStorageBucket();
+  Widget curentNav = HomePage();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.white,
+      body: PageStorage(bucket: bucket, child: curentNav),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: SizedBox(
         width: 70,
@@ -56,6 +61,7 @@ class MainNavBarViewStateState extends State<MainNavBarViewState> {
                 isActive: selectNav == 0,
                 onTap: () {
                   selectNav = 0;
+                  curentNav = HomePage();
                   if (mounted) {
                     setState(() {});
                   }
@@ -66,6 +72,7 @@ class MainNavBarViewStateState extends State<MainNavBarViewState> {
                 isActive: selectNav == 1,
                 onTap: () {
                   selectNav = 1;
+                  curentNav = BlankView();
                   if (mounted) {
                     setState(() {});
                   }
@@ -79,6 +86,7 @@ class MainNavBarViewStateState extends State<MainNavBarViewState> {
                 isActive: selectNav == 2,
                 onTap: () {
                   selectNav = 2;
+                  curentNav = BlankView();
                   if (mounted) {
                     setState(() {});
                   }
@@ -89,6 +97,7 @@ class MainNavBarViewStateState extends State<MainNavBarViewState> {
               isActive: selectNav == 3,
               onTap: () {
                 selectNav = 3;
+                curentNav = BlankView();
                 if (mounted) {
                   setState(() {});
                 }
