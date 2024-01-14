@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/workout_display_row.dart';
+import 'package:loginsignup/view/home/activity_track_view.dart';
+import 'package:loginsignup/view/home/notification_view.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
@@ -135,7 +137,14 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationView(),
+                            ),
+                          );
+                        },
                         icon: Image.asset(
                           "assets/img/home/notification_active.png",
                           width: 25,
@@ -247,7 +256,14 @@ class _HomePageState extends State<HomePage> {
                               type: RoundButtonType.bgGradient,
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
-                              onPressed: () {}))
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ActivityTrackerView(),
+                                  ),
+                                );
+                              }))
                     ],
                   ),
                 ),
