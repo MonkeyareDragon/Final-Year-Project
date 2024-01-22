@@ -3,6 +3,7 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/nav_button.dart';
 import 'package:loginsignup/view/home/blank_view.dart';
 import 'package:loginsignup/view/home/home_view.dart';
+import 'package:loginsignup/view/profile/profile.dart';
 
 class MainNavBarViewState extends StatefulWidget {
   const MainNavBarViewState({super.key});
@@ -97,7 +98,7 @@ class MainNavBarViewStateState extends State<MainNavBarViewState> {
               isActive: selectNav == 3,
               onTap: () {
                 selectNav = 3;
-                curentNav = BlankView();
+                curentNav = ProfileView();
                 if (mounted) {
                   setState(() {});
                 }
