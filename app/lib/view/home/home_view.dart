@@ -5,6 +5,7 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/workout_display_row.dart';
 import 'package:loginsignup/view/home/activity_track_view.dart';
+import 'package:loginsignup/view/home/finished_workout_view.dart';
 import 'package:loginsignup/view/home/notification_view.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
@@ -260,7 +261,8 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const ActivityTrackerView(),
+                                    builder: (context) =>
+                                        const ActivityTrackerView(),
                                   ),
                                 );
                               }))
@@ -934,7 +936,16 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       var wObj = lastWorkoutArr[index] as Map? ?? {};
                       return InkWell(
-                          onTap: () {}, child: WorkoutRow(wObj: wObj));
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const FinishedWorkoutView(),
+                              ),
+                            );
+                          },
+                          child: WorkoutRow(wObj: wObj));
                     }),
                 SizedBox(
                   height: media.width * 0.1,
