@@ -4,6 +4,7 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/up_comming_workot.dart';
 import 'package:loginsignup/common_widget/what_train_row.dart';
+import 'package:loginsignup/view/workout/workout_detail_view.dart';
 
 class WorkOutTrackerView extends StatefulWidget {
   const WorkOutTrackerView({super.key});
@@ -325,7 +326,7 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
                         var wObj = whatArr[index] as Map? ?? {};
                         return InkWell(
                           onTap: (){
-                            
+                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  WorkoutDetailView( dObj: wObj, ) ));
                           },
                           child:  WhatTrainRow(wObj: wObj) );
                       }),
