@@ -3,6 +3,7 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/exercise_set_sction.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/view/workout/workout_schedule.dart';
 import 'package:loginsignup/view/workout/workout_steps_description.dart';
 
 class WorkoutDetailView extends StatefulWidget {
@@ -246,7 +247,9 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                           title: "Schedule Workout",
                           time: "5/27, 09:00 AM",
                           color: AppColor.primaryColor2.withOpacity(0.3),
-                          onPressed: () {}),
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const WorkoutScheduleView() )  );
+                          }),
                       SizedBox(
                         height: media.width * 0.02,
                       ),
