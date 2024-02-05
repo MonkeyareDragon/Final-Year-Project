@@ -21,39 +21,39 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
   List eventArr = [
     {
       "name": "Ab Workout",
-      "start_time": "25/05/2023 07:30 AM",
+      "start_time": "05/02/2024 07:30 AM",
     },
     {
       "name": "Upperbody Workout",
-      "start_time": "25/05/2023 09:00 AM",
+      "start_time": "05/02/2024 09:00 AM",
     },
     {
       "name": "Lowerbody Workout",
-      "start_time": "25/05/2023 03:00 PM",
+      "start_time": "05/02/2024 03:00 PM",
     },
     {
       "name": "Ab Workout",
-      "start_time": "26/05/2023 07:30 AM",
+      "start_time": "05/02/2024 07:30 AM",
     },
     {
       "name": "Upperbody Workout",
-      "start_time": "26/05/2023 09:00 AM",
+      "start_time": "05/02/2024 01:00 AM",
     },
     {
       "name": "Lowerbody Workout",
-      "start_time": "26/05/2023 03:00 PM",
+      "start_time": "05/02/2024 03:00 PM",
     },
     {
       "name": "Ab Workout",
-      "start_time": "27/05/2023 07:30 AM",
+      "start_time": "05/02/2024 03:30 AM",
     },
     {
       "name": "Upperbody Workout",
-      "start_time": "27/05/2023 09:00 AM",
+      "start_time": "05/02/2024 09:00 AM",
     },
     {
       "name": "Lowerbody Workout",
-      "start_time": "27/05/2023 03:00 PM",
+      "start_time": "05/02/2024 09:00 PM",
     }
   ];
 
@@ -166,7 +166,6 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
             dayBGColor: Colors.grey.withOpacity(0.15),
             titleSpaceBetween: 15,
             backgroundColor: Colors.transparent,
-            // fullCalendar: false,
             fullCalendarScroll: FullCalendarScroll.horizontal,
             fullCalendarDay: WeekDay.short,
             selectedDateColor: Colors.white,
@@ -180,7 +179,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
 
             onDateSelected: (date) {
               _selectedDateAppBBar = date;
-              //setDayEventWorkoutList();
+              setDayEventWorkoutList();
             },
             selectedDayLogo: Container(
               width: double.maxFinite,
