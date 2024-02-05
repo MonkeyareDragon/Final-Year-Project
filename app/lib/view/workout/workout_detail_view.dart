@@ -3,6 +3,7 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/exercise_set_sction.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/view/workout/workout_steps_description.dart';
 
 class WorkoutDetailView extends StatefulWidget {
   final Map dObj;
@@ -353,7 +354,16 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                             var sObj = exercisesArr[index] as Map? ?? {};
                             return ExercisesSetSection(
                               sObj: sObj,
-                              onPressed: (obj) {},
+                              onPressed: (obj) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => WorkoutStepDescription(
+                                      eObj: obj,
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           }),
                       SizedBox(
