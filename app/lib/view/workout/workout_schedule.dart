@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common/date_function.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/view/workout/add_schedule_view.dart';
 
 class WorkoutScheduleView extends StatefulWidget {
   const WorkoutScheduleView({
@@ -416,7 +417,14 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         ],
       ),
       floatingActionButton: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddScheduleView(
+                        date: _selectedDateAppBBar,
+                      )));
+        },
         child: Container(
           width: 55,
           height: 55,
