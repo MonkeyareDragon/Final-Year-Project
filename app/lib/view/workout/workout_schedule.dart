@@ -172,12 +172,10 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
             selectedDateColor: Colors.white,
             dateColor: Colors.black,
             locale: 'en',
-
             initialDate: DateTime.now(),
             calendarEventColor: AppColor.primaryColor2,
             firstDate: DateTime.now().subtract(const Duration(days: 140)),
             lastDate: DateTime.now().add(const Duration(days: 60)),
-
             onDateSelected: (date) {
               _selectedDateAppBBar = date;
               setDayEventWorkoutList();
@@ -236,105 +234,100 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                     alignment: Alignment(pos, 0),
                                     child: InkWell(
                                       onTap: () {
-                                        showDialog(
+                                        showModalBottomSheet(
                                           context: context,
                                           builder: (context) {
-                                            return AlertDialog(
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              contentPadding: EdgeInsets.zero,
-                                              content: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 15,
-                                                        horizontal: 20),
-                                                decoration: BoxDecoration(
-                                                  color: AppColor.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        InkWell(
-                                                          onTap: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: Container(
-                                                            margin:
-                                                                const EdgeInsets
-                                                                    .all(8),
-                                                            height: 40,
-                                                            width: 40,
-                                                            alignment: Alignment
-                                                                .center,
-                                                            decoration: BoxDecoration(
-                                                                color: AppColor
-                                                                    .lightGray,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10)),
-                                                            child: Image.asset(
-                                                              "assets/img/home/closed_btn.png",
-                                                              width: 15,
-                                                              height: 15,
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          "Workout Schedule",
-                                                          style: TextStyle(
+                                            return Container(
+                                              height: media.height * 0.4,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 15,
+                                                      horizontal: 20),
+                                              decoration: BoxDecoration(
+                                                color: AppColor.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Container(
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          height: 40,
+                                                          width: 40,
+                                                          alignment:
+                                                              Alignment.center,
+                                                          decoration: BoxDecoration(
                                                               color: AppColor
-                                                                  .black,
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700),
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () {},
-                                                          child: Container(
-                                                            margin:
-                                                                const EdgeInsets
-                                                                    .all(8),
-                                                            height: 40,
-                                                            width: 40,
-                                                            alignment: Alignment
-                                                                .center,
-                                                            decoration: BoxDecoration(
-                                                                color: AppColor
-                                                                    .lightGray,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10)),
-                                                            child: Image.asset(
-                                                              "assets/img/home/more_btn.png",
-                                                              width: 15,
-                                                              height: 15,
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            ),
+                                                                  .lightGray,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                          child: Image.asset(
+                                                            "assets/img/home/closed_btn.png",
+                                                            width: 15,
+                                                            height: 15,
+                                                            fit: BoxFit.contain,
                                                           ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Text(
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "Workout Schedule",
+                                                        style: TextStyle(
+                                                            color:
+                                                                AppColor.black,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w700),
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {},
+                                                        child: Container(
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          height: 40,
+                                                          width: 40,
+                                                          alignment:
+                                                              Alignment.center,
+                                                          decoration: BoxDecoration(
+                                                              color: AppColor
+                                                                  .lightGray,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                          child: Image.asset(
+                                                            "assets/img/home/more_btn.png",
+                                                            width: 15,
+                                                            height: 15,
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  Center(
+                                                    child: Text(
                                                       sObj["name"].toString(),
                                                       style: TextStyle(
                                                           color: AppColor.black,
@@ -342,34 +335,42 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                                           fontWeight:
                                                               FontWeight.w700),
                                                     ),
-                                                    const SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    Row(children: [
-                                                      Image.asset(
-                                                        "assets/img/time_workout.png",
-                                                        height: 20,
-                                                        width: 20,
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 8,
-                                                      ),
-                                                      Text(
-                                                        "${getDayTitle(sObj["start_time"].toString())}|${getStringDateToOtherFormate(sObj["start_time"].toString(), outFormatStr: "h:mm aa")}",
-                                                        style: TextStyle(
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Center(
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Image.asset(
+                                                          "assets/img/home/time_workout.png",
+                                                          height: 20,
+                                                          width: 20,
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 15,
+                                                        ),
+                                                        Text(
+                                                          "${getDayTitle(sObj["start_time"].toString())} | ${getStringDateToOtherFormate(sObj["start_time"].toString(), outFormatStr: "h:mm aa")}",
+                                                          style: TextStyle(
                                                             color:
                                                                 AppColor.gray,
-                                                            fontSize: 12),
-                                                      )
-                                                    ]),
-                                                    const SizedBox(
-                                                      height: 15,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    RoundButton(
-                                                        title: "Mark Done",
-                                                        onPressed: () {}),
-                                                  ],
-                                                ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 35,
+                                                  ),
+                                                  RoundButton(
+                                                      title: "Mark Done",
+                                                      onPressed: () {}),
+                                                ],
                                               ),
                                             );
                                           },
