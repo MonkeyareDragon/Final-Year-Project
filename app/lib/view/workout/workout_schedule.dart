@@ -238,7 +238,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                           context: context,
                                           builder: (context) {
                                             return Container(
-                                              height: media.height * 0.4,
+                                              height: media.height * 0.3,
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       vertical: 15,
@@ -364,9 +364,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                                                       ],
                                                     ),
                                                   ),
-                                                  const SizedBox(
-                                                    height: 35,
-                                                  ),
+                                                  const Spacer(),
                                                   RoundButton(
                                                       title: "Mark Done",
                                                       onPressed: () {}),

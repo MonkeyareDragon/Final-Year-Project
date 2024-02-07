@@ -3,8 +3,8 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/nav_button.dart';
 import 'package:loginsignup/view/home/blank_view.dart';
 import 'package:loginsignup/view/home/home_view.dart';
+import 'package:loginsignup/view/nav_bar/select_screen_view.dart';
 import 'package:loginsignup/view/profile/profile.dart';
-import 'package:loginsignup/view/workout/workout_tracker_view.dart';
 
 class MainNavBarViewState extends StatefulWidget {
   const MainNavBarViewState({super.key});
@@ -74,7 +74,7 @@ class MainNavBarViewStateState extends State<MainNavBarViewState> {
                 isActive: selectNav == 1,
                 onTap: () {
                   selectNav = 1;
-                  curentNav = const WorkOutTrackerView();
+                  curentNav = const SelectScreenView();
                   if (mounted) {
                     setState(() {});
                   }
