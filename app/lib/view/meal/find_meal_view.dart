@@ -3,6 +3,7 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/meal_category_cell.dart';
 import 'package:loginsignup/common_widget/meal_recommendation_cell.dart';
 import 'package:loginsignup/common_widget/popular_meal_row.dart';
+import 'package:loginsignup/view/meal/food_details_view.dart';
 
 class FindMealView extends StatefulWidget {
   final Map eObj;
@@ -283,7 +284,17 @@ class _FindMealView extends State<FindMealView> {
                 itemBuilder: (context, index) {
                   var fObj = popularArr[index] as Map? ?? {};
                   return InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FoodDetailsView(
+                            dObj: fObj,
+                            mObj: widget.eObj,
+                          ),
+                        ),
+                      );
+                    },
                     child: PopularMealRow(
                       mObj: fObj,
                     ),
