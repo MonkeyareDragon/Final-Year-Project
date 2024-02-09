@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/today_sleep_schedule_row.dart';
+import 'package:loginsignup/view/sleep/sleep_schedule_view.dart';
 
 class SleepTrackerView extends StatefulWidget {
   const SleepTrackerView({super.key});
@@ -291,7 +292,15 @@ class _SleepTrackerViewState extends State<SleepTrackerView> {
                             type: RoundButtonType.bgGradient,
                             fontSize: 11,
                             fontWeight: FontWeight.w400,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SleepScheduleView(),
+                                ),
+                              );
+                            },
                           ),
                         )
                       ],
