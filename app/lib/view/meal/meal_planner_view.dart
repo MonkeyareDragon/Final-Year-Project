@@ -5,6 +5,7 @@ import 'package:loginsignup/common_widget/find_eat_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/todays_meal_row.dart';
 import 'package:loginsignup/view/meal/find_meal_view.dart';
+import 'package:loginsignup/view/meal/meal_schedule_view.dart';
 
 class MealPlannerView extends StatefulWidget {
   const MealPlannerView({super.key});
@@ -270,7 +271,16 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                             type: RoundButtonType.bgGradient,
                             fontSize: 11,
                             fontWeight: FontWeight.w400,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MealScheduleView(),
+                                ),
+                              );
+
+                            },
                           ),
                         )
                       ],
