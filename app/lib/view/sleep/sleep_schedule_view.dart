@@ -2,6 +2,7 @@ import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/view/sleep/add_alarm_view.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import '../../common_widget/today_sleep_schedule_row.dart';
 
@@ -15,6 +16,7 @@ class SleepScheduleView extends StatefulWidget {
 class _SleepScheduleViewState extends State<SleepScheduleView> {
   CalendarAgendaController _calendarAgendaControllerAppBar =
       CalendarAgendaController();
+  late DateTime _selectedDateAppBBar;
 
   List todaySleepArr = [
     {
@@ -36,6 +38,7 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
   @override
   void initState() {
     super.initState();
+    _selectedDateAppBBar = DateTime.now();
   }
 
   @override
@@ -197,11 +200,14 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
                   selectedDateColor: Colors.white,
                   dateColor: Colors.black,
                   locale: 'en',
+
                   initialDate: DateTime.now(),
                   calendarEventColor: AppColor.primaryColor2,
                   firstDate: DateTime.now().subtract(const Duration(days: 140)),
                   lastDate: DateTime.now().add(const Duration(days: 60)),
+
                   onDateSelected: (date) {
+                    _selectedDateAppBBar = date;
                   },
                   selectedDayLogo: Container(
                     width: double.maxFinite,
@@ -291,7 +297,16 @@ class _SleepScheduleViewState extends State<SleepScheduleView> {
         ),
       ),
       floatingActionButton: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddAlarmView(
+                date: _selectedDateAppBBar,
+              ),
+            ),
+          );
+        },
         child: Container(
           width: 55,
           height: 55,
