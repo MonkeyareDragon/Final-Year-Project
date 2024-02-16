@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/view/login/password_recovery.dart';
+import 'package:loginsignup/view/login/signup_view.dart';
 import 'package:loginsignup/view/login/welcome_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';
@@ -186,7 +187,12 @@ class _LoginViewState extends State<LoginView> {
                   height: media.width * 0.04,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignUpView()));
+                  },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

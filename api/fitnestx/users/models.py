@@ -15,7 +15,6 @@ class User(AbstractUser):
     )
     USER_TYPE = (("USER", "USER"),("PRO-USER", "PRO-USER"))
 
-    name = CharField(_("Name of User"), blank=True, max_length=255)
     email = EmailField(_("Email Address"), unique=True)
     email_verified = BooleanField(default=False)
     social_auth = CharField(
@@ -26,9 +25,9 @@ class User(AbstractUser):
         help_text="This field indicates through which social app has user logged in or signup",
     )
     user_type = CharField(max_length=15, choices=USER_TYPE, default="USER")
-    first_name = None  # type: ignore
-    last_name = None  # type: ignore
-    username = None  # type: ignore
+    first_name = CharField(_("First Name of User"), blank=True, max_length=255)
+    last_name = CharField(_("Last Name of User"), blank=True, max_length=255)
+    username = CharField(_("Username of User"), blank=True, max_length=255)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

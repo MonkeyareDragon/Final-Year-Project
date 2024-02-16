@@ -18,6 +18,8 @@ class _SignUpViewState extends State<SignUpView> {
   bool _isPasswordVisible = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final ApiService apiService = ApiService();
 
   @override
@@ -31,9 +33,11 @@ class _SignUpViewState extends State<SignUpView> {
   Future<void> _register() async {
     final String email = emailController.text.trim();
     final String password = passwordController.text.trim();
+    final String firstName = firstNameController.text.trim();
+    final String lastName = lastNameController.text.trim();
 
     final Map<String, dynamic> result =
-        await apiService.register(email, password);
+        await apiService.register(email, password, firstName, lastName);
 
     if (result['success']) {
       Navigator.push(
@@ -86,16 +90,18 @@ class _SignUpViewState extends State<SignUpView> {
               SizedBox(
                 height: media.width * 0.05,
               ),
-              const RoundTextField(
+              RoundTextField(
                 hitText: "First Name",
                 icon: "assets/img/signup/Profile.png",
+                controller: firstNameController,
               ),
               SizedBox(
                 height: media.width * 0.04,
               ),
-              const RoundTextField(
+              RoundTextField(
                 hitText: "Last Name",
                 icon: "assets/img/signup/Profile.png",
+                controller: lastNameController,
               ),
               SizedBox(
                 height: media.width * 0.04,
