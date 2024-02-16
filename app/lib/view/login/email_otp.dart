@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:loginsignup/constant/api.dart';
+import 'package:loginsignup/controller/api.dart';
 
 import '../../common/color_extension.dart';
 import '../../common_widget/primary_button.dart';

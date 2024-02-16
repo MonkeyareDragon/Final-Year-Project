@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from fitnestx.mod.models import SensorData
+from fitnestx.activity.models import SensorData
 
 class SensorDataSerializer(serializers.Serializer):
     data = serializers.ListField(child=serializers.ListField(child=serializers.FloatField()))

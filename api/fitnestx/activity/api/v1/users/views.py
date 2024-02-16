@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions, status
-from fitnestx.mod.models import SensorData
+from fitnestx.activity.models import SensorData
 from .serializers import SensorDataSerializer
 from rest_framework.response import Response
 import numpy as np
