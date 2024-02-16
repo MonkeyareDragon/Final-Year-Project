@@ -17,7 +17,7 @@ from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from fitnestx.core.otp import send_email_verification_code, validate_otp, send_password_reset_email
-from fitnestx.users.models import User
+from fitnestx.users.models import User, UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -249,3 +249,17 @@ class PasswordChangeSerializer(serializers.Serializer):
             from django.contrib.auth import update_session_auth_hash
 
             update_session_auth_hash(self.request, self.user)
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    real_name = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+    
+    def __init__(self, *args, **kwargs):
+        self.show_real_name = kwargs.pop('show_real_name', False)
+        super(UserProfileSerializer, self).__init__(*args, **kwargs)
+
+    def get_real_name(self, obj):
+        return obj.real_name if self.show_real_name else None

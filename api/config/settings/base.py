@@ -86,7 +86,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "fitnestx.users",
     "fitnestx.core",
-    "fitnestx.mod",
+    "fitnestx.activity",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -311,3 +311,6 @@ SPECTACULAR_SETTINGS = {
 # ------------------------------------------------------------------------------
 # Keras Model Url
 MODEL_FILEPATH = "fitnestx/static/model/HAR_model.keras"
+
+#Default Profile Image Url
+AVATAR_URI_PREFIX = "fitnestx/static/images/avator"

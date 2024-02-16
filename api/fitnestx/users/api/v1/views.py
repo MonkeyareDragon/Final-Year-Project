@@ -1,6 +1,7 @@
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.debug import sensitive_post_parameters
+from fitnestx.users.models import UserProfile
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -22,6 +23,7 @@ from .serializers import (
     PassWordResetSerializer,
     ResendEmailVerificationCodeSrializer,
     TokenObtainPairSerializer,
+    UserProfileSerializer,
     UserRegisterationSerializer,
     UserSerializer,
     VerirfyOtpSerializer,
@@ -174,3 +176,24 @@ class PasswordChangeView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"detail": _("New password has been saved.")})
+
+class UserProfileCreateAPIView(CreateAPIView):
+    """
+    Creates user profile with details like gender, DOB, height, weight and goal.
+    """
+    permission_classes = ()
+    
+    def post(self, request):
+        # Ensure user ID is provided in the request data
+        user_id = request.data.get('user')
+        if user_id:
+            # Assign the provided user ID to the user profile
+            request.data['user'] = user_id
+            
+            serializer = UserProfileSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error": "User ID is missing in the request data."}, status=status.HTTP_400_BAD_REQUEST)
