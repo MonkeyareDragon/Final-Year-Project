@@ -118,4 +118,26 @@ class ApiService {
       return {'success': false, 'error': 'Invalid credentials'};
     }
   }
+
+  Future<Map<String, dynamic>> setProfile(int userid, String gender, DateTime dob, int weight, int height, String goal) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/v1/users/profile/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, String>{
+        
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Successful login
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      print(responseData); // Print the response data
+      return {'success': true, "detail": "Send OTP code to email."};
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+      return {'success': false, 'error': 'Invalid credentials'};
+    }
+  }
 }

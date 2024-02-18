@@ -1,6 +1,6 @@
 # in your_app/admin.py
 from django.contrib import admin
-from .models import User
+from .models import User, UserProfile
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -23,3 +23,9 @@ class UserAdmin(admin.ModelAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
     )
+
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('gender', 'dob', 'weight', 'height', 'goal')
+    list_filter = ('gender', 'goal')
+
+admin.site.register(UserProfile, UserProfileAdmin)
