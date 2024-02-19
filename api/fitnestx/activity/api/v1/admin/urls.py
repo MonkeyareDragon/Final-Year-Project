@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from fitnestx.activity.api.v1.users.views import SensorDataListCreateView
+from fitnestx.activity.api.v1.user.views import SensorDataListCreateView
 
 app_name = "activity.users"
 
