@@ -23,7 +23,7 @@ from fitnestx.users.models import User, UserProfile
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "name", "email", "is_staff", "is_superuser"]
+        fields = ["id", "username", "email", "is_staff", "is_superuser"]
 
 
 class UserRegisterationSerializer(serializers.ModelSerializer):

@@ -10,4 +10,5 @@ urlpatterns = [
     # path("meal/admin/", include("fitnestx.meal.api.v1.admin.urls", namespace="meal-admin")),
     # path("workout/user/", include("fitnestx.workout.api.v1.user.urls", namespace="workout-user")),
     # path("workout/admin/", include("fitnestx.workout.api.v1.admin.urls", namespace="workout-admin")),
+    path("dashboard/", include("fitnestx.dashboard.urls", namespace="dashboard")),
 ]
