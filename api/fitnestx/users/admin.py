@@ -1,28 +1,29 @@
 # in your_app/admin.py
 from django.contrib import admin
 from .models import User, UserProfile
+from django.contrib.auth.admin import UserAdmin
 
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'username', 'first_name', 'last_name', 'user_type', 'is_active', 'is_staff', 'email_verified')
-    search_fields = ('email', 'name')
-    list_filter = ('user_type', 'is_active', 'is_staff')
-    ordering = ('email',)
-
+class CustomUserAdmin(UserAdmin):
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Personal Info', {'fields': ('name',)}),
-        ('Permissions', {'fields': ('user_permissions',)}),
+        (None, {'fields': ('username', 'password')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
-        ('User Type', {'fields': ('user_type',)}),
+        # Add any additional fields from your User model here
+        ('Custom fields', {'fields': ('email_verified', 'social_auth', 'user_type')}),
     )
-
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2'),
+            'fields': ('username', 'email', 'password1', 'password2'),
         }),
     )
+    # Specify which fields should be displayed in the User list view
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff')
+    search_fields = ('username', 'email', 'first_name', 'last_name')
+    ordering = ('username',)
+
+admin.site.register(User, CustomUserAdmin)
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('gender', 'dob', 'weight', 'height', 'goal')

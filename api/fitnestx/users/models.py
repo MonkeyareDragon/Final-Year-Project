@@ -35,7 +35,7 @@ class User(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self):
-        return self.name or self.email or self.mobile or ""
+        return self.username or self.email or ""
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
