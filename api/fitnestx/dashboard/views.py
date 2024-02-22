@@ -5,6 +5,8 @@ from .forms import UserCreateForm
 from fitnestx.users.models import User
 
 def home(request):
+    users = User.objects.all()
+    
     #Check to see if logging in
     if request.method == "POST":
         email = request.POST['email']
@@ -19,7 +21,7 @@ def home(request):
             return redirect('api_v1:dashboard:home')
         else:
             messages.warning(request, "Invalid username or password! Please try again.")
-    return render(request, 'dashboard/home.html', {})
+    return render(request, 'dashboard/home.html', {'users': users, 'title': 'Home'})
 
 def login_user(request):
     pass
