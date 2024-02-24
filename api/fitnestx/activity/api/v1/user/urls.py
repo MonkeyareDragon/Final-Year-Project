@@ -1,9 +1,7 @@
 from django.urls import include, path
 
-from fitnestx.activity.api.v1.user.views import SensorDataListCreateView
-
-app_name = "activity.users"
+app_name = "room.users"
 
 urlpatterns = [
-    path("predict/", SensorDataListCreateView.as_view(), name="sensor_data_list"),
+        path("users/", include("fitnestx.activity.urls", namespace="users-rooms")),
 ]
