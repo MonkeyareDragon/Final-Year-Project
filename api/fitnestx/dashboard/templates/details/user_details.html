@@ -1,0 +1,35 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="mb-4">User Details</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>User Information</h2>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Username:</strong> {{ user_record.user.username }}</li>
+                <li class="list-group-item"><strong>Email:</strong> {{ user_record.user.email }}</li>
+                <li class="list-group-item"><strong>First Name:</strong> {{ user_record.user.first_name }}</li>
+                <li class="list-group-item"><strong>Last Name:</strong> {{ user_record.user.last_name }}</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h2>User Profile Information</h2>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Avatar:</strong> <img src="{{ user_record.avatar }}" alt="Avatar" class="img-fluid"></li>
+                <li class="list-group-item"><strong>Gender:</strong> {{ user_record.gender }}</li>
+                <li class="list-group-item"><strong>Date of Birth:</strong> {{ user_record.dob }}</li>
+                <li class="list-group-item"><strong>Weight:</strong> {{ user_record.weight }}</li>
+                <li class="list-group-item"><strong>Height:</strong> {{ user_record.height }}</li>
+                <li class="list-group-item"><strong>Goal:</strong> {{ user_record.goal }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a href="{% url 'api_v1:dashboard:table_user' %}" class="btn btn-secondary me-2">Back</a>
+        <a href="#" class="btn btn-primary me-2">Update</a>
+        <a href="{% url 'api_v1:dashboard:delete_details' user_record.id%}" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+
+{% endblock %}

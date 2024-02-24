@@ -1,0 +1,51 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<h1>All Users</h1>
+
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">User ID</th>
+            <th scope="col">Username</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Gender</th>
+            <th scope="col">Date of Birth</th>
+            <th scope="col">Weight</th>
+            <th scope="col">Height</th>
+            <th scope="col">Goal</th>
+          </tr>
+        </thead>
+        <tbody>       
+            {% if users %}
+            {% for user in users %}
+                <tr>
+                    <td><a href="{% url 'api_v1:dashboard:details' user.id %}">{{ user.id }}</a></td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.first_name }}</td>
+                    <td>{{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    {% if user.userprofile %}
+                        <td>{{ user.userprofile.gender }}</td>
+                        <td>{{ user.userprofile.dob }}</td>
+                        <td>{{ user.userprofile.weight }}</td>
+                        <td>{{ user.userprofile.height }}</td>
+                        <td>{{ user.userprofile.goal }}</td>
+                        <!-- You can display other profile fields here -->
+                    {% else %}
+                        <!-- Handle the case where the user does not have a profile -->
+                        <td colspan="5">No profile found</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="11">No users found</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}

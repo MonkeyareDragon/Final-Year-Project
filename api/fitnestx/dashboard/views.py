@@ -2,7 +2,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import UserCreateForm
-from fitnestx.users.models import User
+from fitnestx.users.models import User, UserProfile
+from django.urls import reverse
 
 def home(request):
     users = User.objects.all()
@@ -45,6 +46,38 @@ def register_user(request):
             return redirect('api_v1:dashboard:home')
     else:
         form = UserCreateForm()
-        return render(request, 'dashboard/register.html', {'form': form, 'title': 'Register'})
+        return render(request, 'authentication/register.html', {'form': form, 'title': 'Register'})
     
-    return render(request, 'dashboard/register.html', {'form': form, 'title': 'Register'})
+    return render(request, 'authentication/register.html', {'form': form, 'title': 'Register'})
+
+def redirect_to_user(request):
+    users = User.objects.all()
+    
+    # Redirecting to the 'table:user' URL with namespace
+    return render(request, 'table/user.html', {'users': users, 'title': 'User'})
+
+def user_record(request, pk):
+    if request.user.is_authenticated:
+        try:
+            user_profile = UserProfile.objects.select_related('user').get(user_id=pk)
+            return render(request, 'details/user_details.html', {'user_record': user_profile, 'title': 'Record'})
+        except UserProfile.DoesNotExist:
+            messages.warning(request, "User profile does not exist.")
+            return redirect('api_v1:dashboard:table_user')
+    else:   
+        messages.warning(request, "You must be logged in to view that page.")
+        return redirect('api_v1:dashboard:home')
+    
+from django.shortcuts import get_object_or_404
+
+def delete_user_record(request, pk):
+    if request.user.is_authenticated:
+        try:
+            user_profile = get_object_or_404(UserProfile.objects.select_related('user'), user_id=pk)
+            return render(request, 'details/user_details.html', {'user_record': user_profile, 'title': 'Record'})
+        except UserProfile.DoesNotExist:
+            messages.error(request, "User profile does not exist.")
+            return redirect('api_v1:dashboard:home')
+    else:   
+        messages.warning(request, "You must be logged in to view that page.")
+        return redirect('api_v1:dashboard:home')
