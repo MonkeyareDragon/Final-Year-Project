@@ -25,6 +25,9 @@ class WorkoutSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class WorkoutExerciseSerializer(serializers.ModelSerializer):
+    exercise_name = serializers.CharField(source='exercise.name')
+    exercise_time_required = serializers.CharField(source='exercise.time_required')
+
     class Meta:
         model = WorkoutExercise
-        fields = '__all__'
+        fields = ['exercise_name', 'exercise_time_required', 'set_count']

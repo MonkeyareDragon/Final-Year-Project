@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import EquipmentList, EquipmentDetail, ExerciseList, ExerciseDetail, ExercisePerformDetails, ExercisePerformList, WorkoutList, WorkoutDetail, WorkoutExerciseList, WorkoutExerciseDetail
+from .views import EquipmentList, EquipmentDetail, ExerciseList, ExerciseDetail, ExercisePerformDetails, ExercisePerformList, WorkoutEquipmentAPIView, WorkoutExerciseDetailsAPIView, WorkoutList, WorkoutDetail, WorkoutExerciseList, WorkoutExerciseDetail
 
 app_name = "workout.users"
 
@@ -13,5 +13,7 @@ urlpatterns = [
     path('workout/', WorkoutList.as_view(), name='workout-list'),
     path('workout/<int:pk>/', WorkoutDetail.as_view(), name='workout-detail'),
     path('workout-exercise/', WorkoutExerciseList.as_view(), name='workout-exercise-list'),
-    path('workout-exercise/<int:pk>/', WorkoutExerciseDetail.as_view(), name='workout-exercise-detail'),
+    path('workout-exercise/<int:workout_id>/', WorkoutExerciseDetail.as_view(), name='workout-exercise-detail'),
+    path('workout/<int:workout_id>/exercises-details/', WorkoutExerciseDetailsAPIView.as_view(), name='workout-exercises'),
+    path('workout/<int:workout_id>/equipments/', WorkoutEquipmentAPIView.as_view(), name='workout-equipment'),
 ]

@@ -7,6 +7,7 @@ class Workout {
   final String name;
   final Duration timeRequired;
   final int caloriesBurn;
+  final int exerciseCount;
   final String difficulty;
   final List<Exercise> exercises;
   final List<Equipment> equipments;
@@ -16,6 +17,7 @@ class Workout {
     required this.name,
     required this.timeRequired,
     required this.caloriesBurn,
+    required this.exerciseCount,
     required this.difficulty,
     required this.exercises,
     required this.equipments,
@@ -37,6 +39,7 @@ class Workout {
       name: json['name'],
       timeRequired: Duration(seconds: json['time_required']),
       caloriesBurn: json['calories_burn'],
+      exerciseCount: json['exercise_count'],
       difficulty: json['difficulty'],
       exercises: exercises,
       equipments: equipments,

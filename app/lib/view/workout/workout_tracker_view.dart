@@ -44,9 +44,10 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
       setState(() {
         workout = workouts
             .map((workouts) => {
+                  "workoutId": workouts.id,
                   "image": "assets/img/home/barbell.png",
                   "title": workouts.name,
-                  "exercises": "14 Exercises",
+                  "exercises": workouts.exerciseCount.toString() + " Exercises",
                   "time": workouts.timeRequired.inMinutes.toString() + " mins",
                 })
             .toList();
@@ -338,6 +339,7 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
                                   MaterialPageRoute(
                                       builder: (context) => WorkoutDetailView(
                                             dObj: wObj,
+                                            workoutId: wObj['id'],
                                           )));
                             },
                             child: WhatTrainRow(wObj: wObj));
