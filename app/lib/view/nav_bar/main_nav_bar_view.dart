@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/nav_button.dart';
+import 'package:loginsignup/view/activity/activity_prediction.dart';
 import 'package:loginsignup/view/home/blank_view.dart';
 import 'package:loginsignup/view/home/home_view.dart';
 import 'package:loginsignup/view/nav_bar/select_screen_view.dart';
@@ -27,7 +28,13 @@ class MainNavBarViewStateState extends State<MainNavBarViewState> {
         width: 70,
         height: 70,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            selectNav = 5;
+                  curentNav = ActivityPredictionView();
+                  if (mounted) {
+                    setState(() {});
+                  }
+          },
           child: Container(
             width: 65,
             height: 65,

@@ -1,32 +1,9 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, status
+from .utils import predict_sensor_data
 from fitnestx.activity.models import SensorData
 from .serializers import SensorDataSerializer
 from rest_framework.response import Response
-import numpy as np
-import tensorflow as tf
-from datetime import datetime
-import config.settings.base as settings
 from rest_framework.permissions import IsAuthenticated
-
-model = tf.keras.models.load_model(settings.MODEL_FILEPATH)
-
-def predict_sensor_data(sensor_data):
-    data = np.array(sensor_data['data'])  # Convert to NumPy array
-    data = np.expand_dims(data, axis=0)   # Add batch dimension
-
-    # Make predictions
-    predictions = model.predict(data)
-
-    class_labels = {0: 'Walking', 1: 'Jogging', 2: 'Stairs', 3: 'Sitting', 4: 'Standing'}
-
-    predicted_class_index = np.argmax(predictions)
-    predicted_class_label = class_labels[predicted_class_index]
-
-    # Set the predicted activity and current date and time
-    sensor_data['predicted_activity'] = predicted_class_label
-    sensor_data['date_and_time'] = datetime.now()
-
-    return sensor_data
 
 class SensorDataListCreateView(generics.ListCreateAPIView):
     queryset = SensorData.objects.all()
