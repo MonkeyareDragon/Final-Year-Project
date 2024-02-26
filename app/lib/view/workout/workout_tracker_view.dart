@@ -4,6 +4,8 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/up_comming_workot.dart';
 import 'package:loginsignup/common_widget/what_train_row.dart';
+import 'package:loginsignup/controller/workout_api.dart';
+import 'package:loginsignup/model/workout.dart';
 import 'package:loginsignup/view/workout/workout_detail_view.dart';
 
 class WorkOutTrackerView extends StatefulWidget {
@@ -14,7 +16,6 @@ class WorkOutTrackerView extends StatefulWidget {
 }
 
 class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
-
   List latestArr = [
     {
       "image": "assets/img/home/Workout1.png",
@@ -28,27 +29,33 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
     },
   ];
 
-  List whatArr = [
-    {
-      "image": "assets/img/home/what_1.png",
-      "title": "Fullbody Workout",
-      "exercises": "11 Exercises",
-      "time": "32mins"
-    },
-    {
-      "image": "assets/img/home/what_2.png",
-      "title": "Lowebody Workout",
-      "exercises": "12 Exercises",
-      "time": "40mins"
-    },
-    {
-      "image": "assets/img/home/what_3.png",
-      "title": "AB Workout",
-      "exercises": "14 Exercises",
-      "time": "20mins"
+  List workout = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Call the API to fetch equipments and update the youArr list
+    fetchEquipmentsAndUpdateList();
+  }
+
+  Future<void> fetchEquipmentsAndUpdateList() async {
+    try {
+      List<Workout> workouts = await fetchWorkout();
+      setState(() {
+        workout = workouts
+            .map((workouts) => {
+                  "image": "assets/img/home/barbell.png",
+                  "title": workouts.name,
+                  "exercises": "14 Exercises",
+                  "time": workouts.timeRequired.inMinutes.toString() + " mins",
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
     }
-  ];
-  
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -317,18 +324,23 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
                       ),
                     ],
                   ),
-                   ListView.builder(
+                  ListView.builder(
                       padding: EdgeInsets.zero,
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: whatArr.length,
+                      itemCount: workout.length,
                       itemBuilder: (context, index) {
-                        var wObj = whatArr[index] as Map? ?? {};
+                        var wObj = workout[index] as Map? ?? {};
                         return InkWell(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) =>  WorkoutDetailView( dObj: wObj, ) ));
-                          },
-                          child:  WhatTrainRow(wObj: wObj) );
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => WorkoutDetailView(
+                                            dObj: wObj,
+                                          )));
+                            },
+                            child: WhatTrainRow(wObj: wObj));
                       }),
                   SizedBox(
                     height: media.width * 0.1,
@@ -342,13 +354,13 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
     );
   }
 
-   LineTouchData get lineTouchData1 => LineTouchData(
+  LineTouchData get lineTouchData1 => LineTouchData(
         handleBuiltInTouches: true,
         touchTooltipData: LineTouchTooltipData(
           tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
         ),
       );
-  
+
   List<LineChartBarData> get lineBarsData1 => [
         lineChartBarData1_1,
         lineChartBarData1_2,

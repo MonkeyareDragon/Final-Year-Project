@@ -3,6 +3,8 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/exercise_set_sction.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/controller/workout_api.dart';
+import 'package:loginsignup/model/equipment.dart';
 import 'package:loginsignup/view/workout/workout_schedule.dart';
 import 'package:loginsignup/view/workout/workout_steps_description.dart';
 
@@ -28,11 +30,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
     },
   ];
 
-  List youArr = [
-    {"image": "assets/img/home/barbell.png", "title": "Barbell"},
-    {"image": "assets/img/home/skipping_rope.png", "title": "Skipping Rope"},
-    {"image": "assets/img/home/bottle.png", "title": "Bottle 1 Liters"},
-  ];
+  List youArr = [];
 
   List exercisesArr = [
     {
@@ -106,6 +104,29 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
       ],
     }
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Call the API to fetch equipments and update the youArr list
+    fetchEquipmentsAndUpdateList();
+  }
+
+  Future<void> fetchEquipmentsAndUpdateList() async {
+    try {
+      List<Equipment> equipments = await fetchEquipments();
+      setState(() {
+        youArr = equipments
+            .map((equipment) => {
+                  "image": "assets/img/home/barbell.png",
+                  "title": equipment.name,
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
