@@ -339,7 +339,7 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
                                   MaterialPageRoute(
                                       builder: (context) => WorkoutDetailView(
                                             dObj: wObj,
-                                            workoutId: wObj['id'],
+                                            workoutId: wObj["workoutId"],
                                           )));
                             },
                             child: WhatTrainRow(wObj: wObj));

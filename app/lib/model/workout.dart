@@ -34,10 +34,24 @@ class Workout {
         .map((equipmentJson) => Equipment.fromJson(equipmentJson))
         .toList();
 
+    // Check if the time_required value is in the correct format
+    final timeRequiredString = json['time_required'];
+    final durationRegExp = RegExp(r'^\d{2}:\d{2}:\d{2}$');
+    if (!durationRegExp.hasMatch(timeRequiredString)) {
+      throw FormatException(
+          'Invalid time_required format: $timeRequiredString');
+    }
+
+    // Parse the time_required into Duration
+    final timeComponents = timeRequiredString.split(':');
+    final hours = int.parse(timeComponents[0]);
+    final minutes = int.parse(timeComponents[1]);
+    final seconds = int.parse(timeComponents[2]);
+
     return Workout(
       id: json['id'],
       name: json['name'],
-      timeRequired: Duration(seconds: json['time_required']),
+      timeRequired: Duration(hours: hours, minutes: minutes, seconds: seconds),
       caloriesBurn: json['calories_burn'],
       exerciseCount: json['exercise_count'],
       difficulty: json['difficulty'],

@@ -13,4 +13,6 @@ class Equipment {
       description: json['description'],
     );
   }
+
+  map(Map<String, dynamic> Function(dynamic equipments) param0) {}
 }

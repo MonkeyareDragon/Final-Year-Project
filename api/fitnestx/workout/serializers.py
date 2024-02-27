@@ -17,17 +17,17 @@ class ExercisePerformSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class WorkoutSerializer(serializers.ModelSerializer):
-    exercises = serializers.PrimaryKeyRelatedField(queryset=Exercise.objects.all(), many=True)
-    equipments = serializers.PrimaryKeyRelatedField(queryset=Equipment.objects.all(), many=True)
-
+    exercises = ExerciseSerializer(many=True)
+    equipments = EquipmentSerializer(many=True)
     class Meta:
         model = Workout
         fields = '__all__'
 
 class WorkoutExerciseSerializer(serializers.ModelSerializer):
+    workout_id = serializers.IntegerField(source='workout.id')
     exercise_name = serializers.CharField(source='exercise.name')
     exercise_time_required = serializers.CharField(source='exercise.time_required')
 
     class Meta:
         model = WorkoutExercise
-        fields = ['exercise_name', 'exercise_time_required', 'set_count']
+        fields = ['workout_id', 'exercise_name', 'exercise_time_required', 'set_count']

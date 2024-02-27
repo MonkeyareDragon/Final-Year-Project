@@ -4,7 +4,7 @@ import 'package:loginsignup/common_widget/exercise_set_sction.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/controller/workout_api.dart';
-import 'package:loginsignup/model/workout.dart';
+import 'package:loginsignup/model/equipment.dart';
 import 'package:loginsignup/view/workout/workout_schedule.dart';
 import 'package:loginsignup/view/workout/workout_steps_description.dart';
 
@@ -20,106 +20,44 @@ class WorkoutDetailView extends StatefulWidget {
 
 class _WorkoutDetailViewState extends State<WorkoutDetailView> {
 
-  List workout = [];
-  List equipmentArr = [];
-  List exercisesArr = [
+  List latestArr = [
     {
-      "name": "Set 1",
-      "set": [
-        {
-          "image": "assets/img/home/img_1.png",
-          "title": "Warm Up",
-          "value": "05:00"
-        },
-        {
-          "image": "assets/img/home/img_2.png",
-          "title": "Jumping Jack",
-          "value": "12x"
-        },
-        {
-          "image": "assets/img/home/img_1.png",
-          "title": "Skipping",
-          "value": "15x"
-        },
-        {
-          "image": "assets/img/home/img_2.png",
-          "title": "Squats",
-          "value": "20x"
-        },
-        {
-          "image": "assets/img/home/img_1.png",
-          "title": "Arm Raises",
-          "value": "00:53"
-        },
-        {
-          "image": "assets/img/home/img_2.png",
-          "title": "Rest and Drink",
-          "value": "02:00"
-        },
-      ],
+      "image": "assets/img/home/Workout1.png",
+      "title": "Fullbody Workout",
+      "time": "Today, 03:00pm"
     },
     {
-      "name": "Set 2",
-      "set": [
-        {
-          "image": "assets/img/home/img_1.png",
-          "title": "Warm Up",
-          "value": "05:00"
-        },
-        {
-          "image": "assets/img/home/img_2.png",
-          "title": "Jumping Jack",
-          "value": "12x"
-        },
-        {
-          "image": "assets/img/home/img_1.png",
-          "title": "Skipping",
-          "value": "15x"
-        },
-        {
-          "image": "assets/img/home/img_2.png",
-          "title": "Squats",
-          "value": "20x"
-        },
-        {
-          "image": "assets/img/home/img_1.png",
-          "title": "Arm Raises",
-          "value": "00:53"
-        },
-        {
-          "image": "assets/img/home/img_2.png",
-          "title": "Rest and Drink",
-          "value": "02:00"
-        },
-      ],
-    }
+      "image": "assets/img/home/Workout2.png",
+      "title": "Upperbody Workout",
+      "time": "June 05, 02:00pm"
+    },
   ];
+
+  List equipmentArr = [];
+  List exercisesArr = [];
 
   @override
   void initState() {
     super.initState();
-    // Call the API to fetch equipments and update the youArr list
-    fetchWorkoutDetails();
-  }
+    fetchEquipmentsAndUpdateList();
+  } 
 
-  Future<void> fetchWorkoutDetails() async {
-    try {
-      List<Workout> workouts = await fetchWorkout();
-      setState(() {
-        workout = workouts
-            .map((workouts) => {
-                  "workoutId": workouts.id,
-                  "image": "assets/img/home/barbell.png",
-                  "title": workouts.name,
-                  "exercises": workouts.exerciseCount.toString() + " Exercises",
-                  "time": workouts.timeRequired.inMinutes.toString() + " mins",
-                })
-            .toList();
+  Future<void> fetchEquipmentsAndUpdateList() async {
+  try {
+    Equipment equipments = (await fetchEquipmentById(widget.workoutId)) as Equipment;
+    setState(() {
+         equipmentArr = equipments
+          .map((equipments) => {
+                "image": "assets/img/home/barbell.png",
+                "title": equipments.name,
+              })
+          .toList();
       });
-    } catch (e) {
-      print('Error fetching equipments: $e');
-    }
+  } catch (e) {
+    print('Error fetching equipments: $e');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

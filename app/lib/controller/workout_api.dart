@@ -9,8 +9,6 @@ const String baseUrl = 'http://10.0.2.2:8000/api/v1';
 String token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExNTI2MDQzLCJqdGkiOiIxYTBmNDdmYzQzNjY0NjYwYmIxNWJmMWI1YjljYmI0YSIsInVzZXJfaWQiOjJ9.Bn7VD-KbEJKJUluxoaS1DoGzMMhlJIiR7-twjhXr1Y0';
 
-
-
 // API call to fetch all the data of equipments
 Future<List<Equipment>> fetchEquipments() async {
   try {
@@ -34,17 +32,22 @@ Future<List<Equipment>> fetchEquipments() async {
 }
 
 // API call to fetch details of a specific equipment by ID
-Future<Equipment> fetchEquipmentById(int id) async {
+Future<List<Equipment>> fetchEquipmentById(int id) async {
   try {
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/equipment/$id/'),
+      Uri.parse('$baseUrl/workout/users/workout/$id/equipments/'),
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
 
     if (response.statusCode == 200) {
-      return Equipment.fromJson(json.decode(response.body));
+      List<dynamic> responseData = json.decode(response.body);
+
+      // Assuming the response is a list of equipment objects
+      List<Equipment> equipments = responseData.map((data) => Equipment.fromJson(data)).toList();
+
+      return equipments;
     } else {
       throw Exception('Failed to load equipments');
     }
@@ -53,10 +56,6 @@ Future<Equipment> fetchEquipmentById(int id) async {
     throw Exception('Failed to fetch equipments: $e');
   }
 }
-
-
-
-
 
 
 // API call to fetch all the data of exercises
@@ -85,7 +84,7 @@ Future<List<Exercise>> fetchExercises() async {
 Future<Exercise> fetchExercisesById(int id) async {
   try {
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/exercises/$id/'),
+      Uri.parse('$baseUrl/workout/users/workout-exercise/$id/'),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -101,11 +100,6 @@ Future<Exercise> fetchExercisesById(int id) async {
     throw Exception('Failed to fetch exercises: $e');
   }
 }
-
-
-
-
-
 
 // API call to fetch all the data of workout
 Future<List<Workout>> fetchWorkout() async {
@@ -149,11 +143,6 @@ Future<Workout> fetchWorkoutById(int id) async {
     throw Exception('Failed to fetch workout: $e');
   }
 }
-
-
-
-
-
 
 // API call to fetch all the data of workout-exercises
 Future<List<WorkoutExercise>> fetchWorkoutExercises() async {
