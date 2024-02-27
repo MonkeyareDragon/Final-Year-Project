@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Equipment, Exercise, Workout, WorkoutExercise, ExercisePerform
+from .models import Equipment, Exercise, Workout, WorkoutExercise, ExercisePerform, WorkoutSchedule
 
 class WorkoutExerciseInline(admin.TabularInline):
     model = WorkoutExercise
@@ -16,7 +16,7 @@ class ExerciseAdmin(admin.ModelAdmin):
     inlines = [ExercisePerformInline]
 
 class EquipmentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'description']
+    list_display = ['id', 'equipment_image', 'name', 'description']
     search_fields = ['name']
 
 class WorkoutAdmin(admin.ModelAdmin):
@@ -32,7 +32,13 @@ class ExercisePerformAdmin(admin.ModelAdmin):
     def exercises_id(self, obj):
         return ", ".join([str(exercise.id) for exercise in obj.exercises.all()])
 
+class WorkoutScheduleAdmin(admin.ModelAdmin):
+    list_display = ('id', 'date', 'time', 'workout', 'user', 'notify_status')
+    list_filter = ('date', 'workout', 'user', 'notify_status')
+    search_fields = ('date', 'workout__name', 'user__username')
+
 admin.site.register(Equipment, EquipmentAdmin)
 admin.site.register(Exercise, ExerciseAdmin)
 admin.site.register(Workout, WorkoutAdmin)
 admin.site.register(ExercisePerform, ExercisePerformAdmin)
+admin.site.register(WorkoutSchedule, WorkoutScheduleAdmin)
