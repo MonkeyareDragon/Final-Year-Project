@@ -63,12 +63,15 @@ class FoodMakingSteps(models.Model):
         return f"Step {self.step_no}: {self.food.name}"
     
 class FoodSchedule(models.Model):
+    SCHEDULE_STATUS = (("Pending", "Pending"),("Completed", "Completed"))
+    
     date = models.DateField()
     time = models.TimeField()
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='food_schedule_user', on_delete=models.CASCADE)
     notification_note = models.TextField(blank=True)
     notify_status = models.BooleanField(default=False)
+    status = models.CharField(max_length=15, choices=SCHEDULE_STATUS, default="Pending")
 
     class Meta:
         unique_together = ('date', 'time', 'user')

@@ -58,12 +58,15 @@ class WorkoutExercise(models.Model):
         return f"{self.workout.name} - {self.exercise.name} ({self.set_count} sets)"
 
 class WorkoutSchedule(models.Model):
+    SCHEDULE_STATUS = (("Pending", "Pending"),("Completed", "Completed"))
+    
     date = models.DateField()
     time = models.TimeField()
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='workout_schedule_user', on_delete=models.CASCADE)
     notification_note = models.TextField(blank=True)
     notify_status = models.BooleanField(default=False)
+    status = models.CharField(max_length=15, choices=SCHEDULE_STATUS, default="Pending")
 
     class Meta:
         unique_together = ('date', 'time', 'user')
