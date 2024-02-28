@@ -1,6 +1,6 @@
 from datetime import timedelta
 from django.db import models
-from fitnestx.activity.utils import calculate_calories_burned, calculate_flights_climbed, calculate_jogging_distance, get_activity_level, get_age_years, save_calories_burn
+from fitnestx.activity.utils import calculate_calories_burned, calculate_flights_climbed, calculate_jogging_distance, get_activity_level, get_age_years
 from fitnestx.users.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -16,10 +16,20 @@ class SensorData(models.Model):
 
 class ActivityGoal(models.Model):
     user = models.ForeignKey(User, related_name='activity_user_id', on_delete=models.CASCADE)
+    date = models.DateField()
     calories_burn = models.PositiveIntegerField(default=0)
+    target_calories_burn = models.PositiveIntegerField(default=0)
+    calories_burn_complete_staus = models.BooleanField(default=False)
     steps = models.PositiveIntegerField(default=0)
+    target_steps = models.PositiveIntegerField(default=0)
+    steps_complete_staus = models.BooleanField(default=False)
     running_distance = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    target_running_distance = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    running_distance_complete_staus = models.BooleanField(default=False)
     flights_climbed = models.PositiveIntegerField(default=0)
+    target_flights_climbed = models.PositiveIntegerField(default=0)
+    flights_climbed_complete_staus = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False)
     
     def _update_calories_burn(self):
         """
@@ -82,6 +92,14 @@ class ActivityGoal(models.Model):
     
     def save(self, *args, **kwargs):
         
+        self.calories_burn_status = self.calories_burn >= self.target_calories_burn
+        self.steps_status = self.steps >= self.target_steps
+        self.running_distance_status = self.running_distance >= self.target_running_distance
+        self.flights_climbed_status = self.flights_climbed >= self.target_flights_climbed
+        
+        self.is_completed = all([self.calories_burn_status, self.steps_status, 
+                                 self.running_distance_status, self.flights_climbed_status])
+        
         self._update_calories_burn()
         self._update_steps()
         self._update_running_distance()
@@ -90,6 +108,9 @@ class ActivityGoal(models.Model):
 
     def __str__(self):
         return f"{self.user.first_name} activity"
+    
+    class Meta:
+        unique_together = ('user', 'date')
 
 @receiver(post_save, sender=SensorData)
 def update_activity_goal_data_on_sensor_data_update(sender, instance, created, **kwargs):
