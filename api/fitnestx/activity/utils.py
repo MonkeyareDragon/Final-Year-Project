@@ -1,7 +1,6 @@
 #import numpy as np
 #import tensorflow as tf
-from datetime import date, datetime
-from fitnestx.activity.models import SensorData
+from datetime import date
 import config.settings.base as settings
 
 #model = tf.keras.models.load_model(settings.MODEL_FILEPATH)
@@ -40,40 +39,16 @@ def get_age_years(dob):
     return age_years
 
 
-def get_activity_level(user):
-    """
-    Get the activity level status based on the user's SensorData activity table for the current day.
-    
-    Args:
-        user (User): User object for whom the activity level is to be determined.
-        
-    Returns:
-        str: Activity level status ("sedentary", "lightly active", "moderately active", "very active", "extra active").
-            Returns None if no activity data is available for the current day.
-    """
-    today = date.today()
-    sensor_data = SensorData.objects.filter(user=user, date_and_time__date=today)
-
-    if not sensor_data:
-        return "sedentary"  # No activity data available for the current day
-
-    total_activity = sum([data['activity_level'] for data in sensor_data])
-
-    if total_activity < 100:
-        return "sedentary"
-    elif total_activity < 500:
-        return "lightly active"
-    elif total_activity < 1000:
-        return "moderately active"
-    elif total_activity < 1500:
-        return "very active"
-    else:
-        return "extra active"
-
-
 def calculate_calories_burned(height_cm, weight_kg, age_years, gender, activity_level):
+    
+    height_cm = float(height_cm)
+    weight_kg = float(weight_kg)
+    age_years = float(age_years)
+    
     # Constants for calculating Basal Metabolic Rate (BMR)
-    if activity_level.lower() == "sedentary":
+    if activity_level.lower() == "low activity":
+        activity_factor = 0.1
+    elif activity_level.lower() == "sedentary":
         activity_factor = 1.2
     elif activity_level.lower() == "lightly active":
         activity_factor = 1.375
@@ -114,6 +89,8 @@ def calculate_jogging_distance(height_cm, gender, jogging_steps):
     Returns:
     - jogging_distance_km (float): Jogging distance in kilometers
     """
+    # Convert height_cm to float
+    height_cm = float(height_cm)
     # Source: 
     if gender.lower() == 'male':
         step_length_cm = 0.415 * height_cm

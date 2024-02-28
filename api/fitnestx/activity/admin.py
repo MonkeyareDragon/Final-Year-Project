@@ -7,7 +7,7 @@ class SensorDataAdmin(admin.ModelAdmin):
     list_filter = ['predicted_activity']
 
 class ActivityGoalAdmin(admin.ModelAdmin):
-    list_display = ('user', 'calories_burn', 'steps', 'running_distance', 'flights_climbed')
+    list_display = ('user', 'calories_burn', 'steps', 'running_distance', 'flights_climbed', 'target_calories_burn', 'calories_burn_complete_staus')
     list_filter = ('user',)
     search_fields = ('user__username',)
 

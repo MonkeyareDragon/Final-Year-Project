@@ -1,9 +1,44 @@
 from datetime import timedelta
 from django.db import models
-from fitnestx.activity.utils import calculate_calories_burned, calculate_flights_climbed, calculate_jogging_distance, get_activity_level, get_age_years
+from fitnestx.activity.utils import calculate_calories_burned, calculate_flights_climbed, calculate_jogging_distance, get_age_years
 from fitnestx.users.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from datetime import date
+from collections import Counter
+
+def get_activity_level(user):
+    """
+    Get the activity level status based on the user's SensorData activity table for the current day.
+    
+    Args:
+        user (User): User object for whom the activity level is to be determined.
+        
+    Returns:
+        str: Activity level status ("sedentary", "lightly active", "moderately active", "very active", "extra active").
+            Returns None if no activity data is available for the current day.
+    """
+    today = date.today()
+    sensor_data = SensorData.objects.filter(user=user, date_and_time__date=today)
+
+    if not sensor_data:
+        return "sedentary"  # No activity data available for the current day
+
+    activity_counter = Counter(data.predicted_activity for data in sensor_data)
+    total_activity = sum(activity_counter.values())
+
+    if total_activity < 10:
+        return "low activity"
+    elif total_activity < 100:
+        return "sedentary"
+    elif total_activity < 500:
+        return "lightly active"
+    elif total_activity < 1000:
+        return "moderately active"
+    elif total_activity < 1500:
+        return "very active"
+    else:
+        return "extra active"
 
 class SensorData(models.Model):
     user = models.ForeignKey(User, related_name='user_id', on_delete=models.CASCADE)
@@ -90,20 +125,32 @@ class ActivityGoal(models.Model):
             flights_climbed = calculate_flights_climbed(stairs_steps)
             self.flights_climbed = flights_climbed
     
+    def _update_completion_status(self):
+        """
+        Update completion status based on actual values compared to targets.
+        """
+        self.calories_burn_complete_staus = self.calories_burn >= self.target_calories_burn
+        self.steps_complete_staus = self.steps >= self.target_steps
+        self.running_distance_complete_staus = self.running_distance >= self.target_running_distance
+        self.flights_climbed_complete_staus = self.flights_climbed >= self.target_flights_climbed
+
+        # Set is_completed to True if all completion statuses are True
+        self.is_completed = all([
+            self.calories_burn_complete_staus,
+            self.steps_complete_staus,
+            self.running_distance_complete_staus,
+            self.flights_climbed_complete_staus
+        ])
+    
     def save(self, *args, **kwargs):
-        
-        self.calories_burn_status = self.calories_burn >= self.target_calories_burn
-        self.steps_status = self.steps >= self.target_steps
-        self.running_distance_status = self.running_distance >= self.target_running_distance
-        self.flights_climbed_status = self.flights_climbed >= self.target_flights_climbed
-        
-        self.is_completed = all([self.calories_burn_status, self.steps_status, 
-                                 self.running_distance_status, self.flights_climbed_status])
-        
+
         self._update_calories_burn()
         self._update_steps()
         self._update_running_distance()
         self._update_flights_climbed()
+        
+        self._update_completion_status()
+            
         super().save(*args, **kwargs)
 
     def __str__(self):

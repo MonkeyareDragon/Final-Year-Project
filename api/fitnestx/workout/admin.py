@@ -20,7 +20,7 @@ class EquipmentAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 class WorkoutAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'time_required', 'calories_burn', 'difficulty', 'exercise_count']
+    list_display = ['id', 'name', 'time_required', 'total_calories', 'difficulty', 'exercise_count']
     list_filter = ['difficulty']
     search_fields = ['name']
     inlines = [WorkoutExerciseInline]
