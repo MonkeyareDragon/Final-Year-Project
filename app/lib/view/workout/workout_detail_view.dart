@@ -4,7 +4,8 @@ import 'package:loginsignup/common_widget/exercise_set_sction.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/controller/workout_api.dart';
-import 'package:loginsignup/model/equipment.dart';
+import 'package:loginsignup/model/workout/equipment.dart';
+import 'package:loginsignup/model/workout/exercise.dart';
 import 'package:loginsignup/view/workout/workout_schedule.dart';
 import 'package:loginsignup/view/workout/workout_steps_description.dart';
 
@@ -19,7 +20,6 @@ class WorkoutDetailView extends StatefulWidget {
 }
 
 class _WorkoutDetailViewState extends State<WorkoutDetailView> {
-
   List latestArr = [
     {
       "image": "assets/img/home/Workout1.png",
@@ -34,30 +34,55 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
   ];
 
   List equipmentArr = [];
-  List exercisesArr = [];
+  List exerciseSetArr = [];
 
   @override
   void initState() {
     super.initState();
-    fetchEquipmentsAndUpdateList();
-  } 
-
-  Future<void> fetchEquipmentsAndUpdateList() async {
-  try {
-    Equipment equipments = (await fetchEquipmentById(widget.workoutId)) as Equipment;
-    setState(() {
-         equipmentArr = equipments
-          .map((equipments) => {
-                "image": "assets/img/home/barbell.png",
-                "title": equipments.name,
-              })
-          .toList();
-      });
-  } catch (e) {
-    print('Error fetching equipments: $e');
+    fetchEquipmentsDataList();
+    fetchExerciseSetDataList();
   }
-}
 
+  Future<void> fetchEquipmentsDataList() async {
+    try {
+      List<Equipment> equipmentList =
+          await fetchEquipmentById(widget.workoutId);
+      setState(() {
+        equipmentArr = equipmentList
+            .map((equipment) => {
+                  "image": equipment.equipmentImage,
+                  "title": equipment.name,
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
+
+  Future<void> fetchExerciseSetDataList() async {
+    try {
+      List<ExerciseSet> exerciseSetList =
+          await fetchWorkoutExercisesSetById(widget.workoutId);
+      setState(() {
+        exerciseSetArr = exerciseSetList
+            .map((exerciseSet) => {
+                  "set_count": exerciseSet.setCount,
+                  "set": exerciseSet.exerciseSetSet
+                      .map((exercise) => {
+                            "exercise_image": exercise.exerciseImage,
+                            "exercise_name": exercise.exerciseName,
+                            "exercise_time_required":
+                                exercise.exerciseTimeRequired,
+                          })
+                      .toList(),
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching exercise sets: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +198,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  "${widget.dObj["exercises"].toString()} | ${widget.dObj["time"].toString()} | 320 Calories Burn",
+                                  "${widget.dObj["exercises"].toString()} | ${widget.dObj["time"].toString()} | ${widget.dObj["calories"].toString()} Calories Burns",
                                   style: TextStyle(
                                       color: AppColor.gray, fontSize: 12),
                                 ),
@@ -212,7 +237,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                       IconTitleNextRow(
                           icon: "assets/img/home/difficulity.png",
                           title: "Difficulity",
-                          time: "Beginner",
+                          time: widget.dObj["difficulty"].toString(),
                           color: AppColor.secondaryColor2.withOpacity(0.3),
                           onPressed: () {}),
                       SizedBox(
@@ -261,7 +286,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                             borderRadius:
                                                 BorderRadius.circular(15)),
                                         alignment: Alignment.center,
-                                        child: Image.asset(
+                                        child: Image.network(
                                           yObj["image"].toString(),
                                           width: media.width * 0.2,
                                           height: media.width * 0.2,
@@ -297,7 +322,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                           TextButton(
                             onPressed: () {},
                             child: Text(
-                              "${equipmentArr.length} Sets",
+                              "${exerciseSetArr.length} Sets",
                               style:
                                   TextStyle(color: AppColor.gray, fontSize: 12),
                             ),
@@ -308,9 +333,9 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                           padding: EdgeInsets.zero,
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: exercisesArr.length,
+                          itemCount: exerciseSetArr.length,
                           itemBuilder: (context, index) {
-                            var sObj = exercisesArr[index] as Map? ?? {};
+                            var sObj = exerciseSetArr[index] as Map? ?? {};
                             return ExercisesSetSection(
                               sObj: sObj,
                               onPressed: (obj) {

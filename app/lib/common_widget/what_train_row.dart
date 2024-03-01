@@ -79,7 +79,7 @@ class WhatTrainRow extends StatelessWidget {
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(30),
-                    child: Image.asset(
+                    child: Image.network(
                       wObj["image"].toString(),
                       width: 90,
                       height: 90,

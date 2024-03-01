@@ -1,5 +1,7 @@
 from django.db import models
 from fitnestx.users.models import User
+from PIL import Image
+from django.db.models import Sum, Count
 
 class Equipment(models.Model):
     equipment_image = models.ImageField(upload_to='equipment_img/', null=True, blank=True)
@@ -8,6 +10,18 @@ class Equipment(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        
+        self.update_image_size()
+        super(Equipment, self).save(*args, **kwargs)
+    
+    def update_image_size(self):
+        image = Image.open(self.equipment_image)
+        if image.width > 132 or image.height> 106:
+            output_size = (132, 106)
+            image.thumbnail(output_size)
+            image.save(self.equipment_image.path)
 
 class Exercise(models.Model):
     exercise_image = models.ImageField(upload_to='exercise_img/', null=True, blank=True)
@@ -20,6 +34,18 @@ class Exercise(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        
+        self.update_image_size()
+        super(Exercise, self).save(*args, **kwargs)
+    
+    def update_image_size(self):
+        image = Image.open(self.exercise_image)
+        if image.width > 120 or image.height> 120:
+            output_size = (120, 120)
+            image.thumbnail(output_size)
+            image.save(self.exercise_image.path)
 
 class ExercisePerform(models.Model):
     header = models.CharField(max_length=100)
@@ -34,7 +60,7 @@ class Workout(models.Model):
     workout_image = models.ImageField(upload_to='workout_img/', null=True, blank=True)
     name = models.CharField(max_length=100)
     time_required = models.DurationField()
-    total_calories = models.IntegerField()
+    total_calories = models.IntegerField(default=0)
     difficulty = models.CharField(max_length=20)
     exercise_count = models.IntegerField(default=0) 
     exercises = models.ManyToManyField(Exercise, through='WorkoutExercise')
@@ -44,11 +70,27 @@ class Workout(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        sum_calories = sum(exercise.calories_burn for exercise in self.exercises.all())
-        self.total_calories = sum_calories
-        self.exercise_count = self.exercises.count()
-        super().save(*args, **kwargs)
+        super(Workout, self).save(*args, **kwargs) 
+        
+        self.update_calories_and_count()
+        self.update_image_size()
+        super(Workout, self).save(*args, **kwargs)
+        
+        
+    def update_calories_and_count(self):
+        aggregated_data = self.exercises.aggregate(total_calories=Sum('calories_burn'), exercise_count=Count('id'))
+        self.total_calories = aggregated_data['total_calories'] or 0
+        self.exercise_count = aggregated_data['exercise_count'] or 0
+    
+    
+    def update_image_size(self):
+        image = Image.open(self.workout_image)
+        if image.width > 150 or image.height> 212:
+            output_size = (150, 212)
+            image.thumbnail(output_size)
+            image.save(self.workout_image.path)
 
+        
 class WorkoutExercise(models.Model):
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE, related_name='workout_exercise')
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)

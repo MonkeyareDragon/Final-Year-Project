@@ -5,7 +5,7 @@ import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/up_comming_workot.dart';
 import 'package:loginsignup/common_widget/what_train_row.dart';
 import 'package:loginsignup/controller/workout_api.dart';
-import 'package:loginsignup/model/workout.dart';
+import 'package:loginsignup/model/workout/workout.dart';
 import 'package:loginsignup/view/workout/workout_detail_view.dart';
 
 class WorkOutTrackerView extends StatefulWidget {
@@ -45,10 +45,12 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
         workout = workouts
             .map((workouts) => {
                   "workoutId": workouts.id,
-                  "image": "assets/img/home/barbell.png",
+                  "image": workouts.workoutImage,
                   "title": workouts.name,
                   "exercises": workouts.exerciseCount.toString() + " Exercises",
                   "time": workouts.timeRequired.inMinutes.toString() + " mins",
+                  "calories": workouts.totalcaclories.toString(),
+                  "difficulty": workouts.difficulty,
                 })
             .toList();
       });

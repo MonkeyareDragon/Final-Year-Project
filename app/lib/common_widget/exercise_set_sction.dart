@@ -17,12 +17,12 @@ class ExercisesSetSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          sObj["name"].toString(),
+          "Set ${sObj["set_count"].toString()}",
           style: TextStyle(
-              color: AppColor.black, fontSize: 12, fontWeight: FontWeight.w500),
+              color: AppColor.black, fontSize: 12, fontWeight: FontWeight.w700),
         ),
         const SizedBox(
-          height: 8,
+          height: 10,
         ),
         ListView.builder(
             padding: EdgeInsets.zero,

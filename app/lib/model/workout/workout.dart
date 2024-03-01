@@ -1,22 +1,24 @@
 // model_workout.dart
-import 'package:loginsignup/model/equipment.dart';
-import 'package:loginsignup/model/exercise.dart';
+import 'package:loginsignup/model/workout/equipment.dart';
+import 'package:loginsignup/model/workout/exercise.dart';
 
 class Workout {
-  final int id;
-  final String name;
-  final Duration timeRequired;
-  final int caloriesBurn;
-  final int exerciseCount;
-  final String difficulty;
-  final List<Exercise> exercises;
-  final List<Equipment> equipments;
+  int id;
+  String workoutImage;
+  String name;
+  Duration timeRequired;
+  int totalcaclories;
+  int exerciseCount;
+  String difficulty;
+  List<Exercise> exercises;
+  List<Equipment> equipments;
 
   Workout({
     required this.id,
+    required this.workoutImage,
     required this.name,
     required this.timeRequired,
-    required this.caloriesBurn,
+    required this.totalcaclories,
     required this.exerciseCount,
     required this.difficulty,
     required this.exercises,
@@ -50,9 +52,10 @@ class Workout {
 
     return Workout(
       id: json['id'],
+      workoutImage: json['workout_image'],
       name: json['name'],
       timeRequired: Duration(hours: hours, minutes: minutes, seconds: seconds),
-      caloriesBurn: json['calories_burn'],
+      totalcaclories: json['total_calories'],
       exerciseCount: json['exercise_count'],
       difficulty: json['difficulty'],
       exercises: exercises,

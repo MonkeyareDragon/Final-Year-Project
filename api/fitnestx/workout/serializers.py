@@ -23,11 +23,20 @@ class WorkoutSerializer(serializers.ModelSerializer):
         model = Workout
         fields = '__all__'
 
-class WorkoutExerciseSerializer(serializers.ModelSerializer):
-    workout_id = serializers.IntegerField(source='workout.id')
-    exercise_name = serializers.CharField(source='exercise.name')
-    exercise_time_required = serializers.CharField(source='exercise.time_required')
+class WorkoutExerciseSetSerializer(serializers.ModelSerializer):
+    set = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkoutExercise
-        fields = ['workout_id', 'exercise_name', 'exercise_time_required', 'set_count']
+        fields = ['set_count', 'set']
+
+    def get_set(self, obj):
+        exercises = Exercise.objects.filter(workoutexercise__workout=obj.workout, workoutexercise__set_count=obj.set_count)
+        exercise_data = []
+        for exercise in exercises:
+            exercise_data.append({
+                "exercise_image": exercise.exercise_image.url,
+                "exercise_name": exercise.name,
+                "exercise_time_required": exercise.time_required
+            })
+        return exercise_data

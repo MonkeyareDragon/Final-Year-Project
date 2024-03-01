@@ -9,13 +9,13 @@ class ExercisesRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(5),
-            child: Image.asset(
-              eObj["image"].toString(),
+            child: Image.network(
+              eObj["exercise_image"].toString(),
               width: 60,
               height: 60,
               fit: BoxFit.cover,
@@ -29,11 +29,11 @@ class ExercisesRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                eObj["title"].toString(),
+                eObj["exercise_name"].toString(),
                 style: TextStyle(color: AppColor.black, fontSize: 14, fontWeight: FontWeight.w500),
               ),
               Text(
-                eObj["value"].toString(),
+                eObj["exercise_time_required"].toString(),
                 style: TextStyle(
                   color: AppColor.gray,
                   fontSize: 12,

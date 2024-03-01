@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from .models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise
-from .serializers import EquipmentSerializer, ExercisePerformSerializer, ExerciseSerializer, WorkoutSerializer, WorkoutExerciseSerializer
+from .serializers import EquipmentSerializer, ExercisePerformSerializer, ExerciseSerializer, WorkoutExerciseSetSerializer, WorkoutSerializer
 
 class EquipmentList(generics.ListAPIView):
     queryset = Equipment.objects.all()
@@ -40,7 +40,7 @@ class WorkoutDetail(generics.RetrieveAPIView):
 
 class WorkoutExerciseList(generics.ListAPIView):
     queryset = WorkoutExercise.objects.all()
-    serializer_class = WorkoutExerciseSerializer
+    serializer_class = WorkoutExerciseSetSerializer
 
 class WorkoutExerciseDetailsAPIView(APIView):
     def get(self, request, workout_id, *args, **kwargs):
@@ -63,17 +63,8 @@ class WorkoutEquipmentAPIView(APIView):
             return Response({"message": "Workout not found"}, status=404)
 
 class WorkoutExerciseDetail(ListAPIView):
-    serializer_class = WorkoutExerciseSerializer
+    serializer_class = WorkoutExerciseSetSerializer
 
     def get_queryset(self):
         workout_id = self.kwargs.get('workout_id')
-        print(workout_id)
-        return WorkoutExercise.objects.filter(workout__id=workout_id)
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        if queryset.exists():
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(data={"detail": "No Workout Exercises found for the given workout_id"}, status=status.HTTP_404_NOT_FOUND)
+        return WorkoutExercise.objects.filter(workout_id=workout_id).distinct('set_count')
