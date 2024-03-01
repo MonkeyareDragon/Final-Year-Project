@@ -45,35 +45,68 @@ class ExerciseSet {
   });
 
   factory ExerciseSet.fromJson(Map<String, dynamic> json) {
-  return ExerciseSet(
-    setCount: json['set_count'],
-    exerciseSetSet: (json['set'] as List)
-        .map((exercise) => Set.fromJson(exercise))
-        .toList(),
-  );
-}
-
+    return ExerciseSet(
+      setCount: json['set_count'],
+      exerciseSetSet: (json['set'] as List)
+          .map((exercise) => Set.fromJson(exercise))
+          .toList(),
+    );
+  }
 }
 
 class Set {
+  int exerciseId;
   String exerciseImage;
   String exerciseName;
   String exerciseTimeRequired;
+  String exerciseDifficulty;
+  int exerciseCaloriesBurn;
+  String exerciseDescription;
+  int exerciseCustomRepeats;
 
   Set({
+    required this.exerciseId,
     required this.exerciseImage,
     required this.exerciseName,
     required this.exerciseTimeRequired,
-  }){
+    required this.exerciseDifficulty,
+    required this.exerciseCaloriesBurn,
+    required this.exerciseDescription,
+    required this.exerciseCustomRepeats,
+  }) {
     this.exerciseImage = UrlUtil.getImageUrl(exerciseImage);
-  
   }
 
   factory Set.fromJson(Map<String, dynamic> json) {
     return Set(
+      exerciseId: json['exercise_id'],
       exerciseImage: json['exercise_image'],
       exerciseName: json['exercise_name'],
       exerciseTimeRequired: json['exercise_time_required'],
+      exerciseDifficulty: json['exercise_difficulty'],
+      exerciseCaloriesBurn: json['exercise_calories_burn'],
+      exerciseDescription: json['exercise_description'],
+      exerciseCustomRepeats: json['exercise_custom_repeats'],
+    );
+  }
+}
+
+class ExerciseDescription {
+  String header;
+  String description;
+  int stepNo;
+
+  ExerciseDescription({
+    required this.header,
+    required this.description,
+    required this.stepNo,
+  });
+
+  factory ExerciseDescription.fromJson(Map<String, dynamic> json) {
+    return ExerciseDescription(
+      header: json['header'],
+      description: json['description'],
+      stepNo: json['step_no'],
     );
   }
 }

@@ -14,7 +14,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
 class ExercisePerformSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExercisePerform
-        fields = '__all__'
+        fields = ['header', 'description', 'step_no']
         
 class WorkoutSerializer(serializers.ModelSerializer):
     exercises = ExerciseSerializer(many=True)
@@ -35,8 +35,13 @@ class WorkoutExerciseSetSerializer(serializers.ModelSerializer):
         exercise_data = []
         for exercise in exercises:
             exercise_data.append({
+                "exercise_id": exercise.id,
                 "exercise_image": exercise.exercise_image.url,
                 "exercise_name": exercise.name,
-                "exercise_time_required": exercise.time_required
+                "exercise_time_required": exercise.time_required,
+                "exercise_difficulty": exercise.difficulty,
+                "exercise_calories_burn": exercise.calories_burn,
+                "exercise_description": exercise.description,
+                "exercise_custom_repeats": exercise.custom_repeats,
             })
         return exercise_data

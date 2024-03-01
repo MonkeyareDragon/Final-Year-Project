@@ -70,10 +70,15 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                   "set_count": exerciseSet.setCount,
                   "set": exerciseSet.exerciseSetSet
                       .map((exercise) => {
+                            "exercise_id": exercise.exerciseId,
                             "exercise_image": exercise.exerciseImage,
                             "exercise_name": exercise.exerciseName,
                             "exercise_time_required":
                                 exercise.exerciseTimeRequired,
+                            "exercise_difficulty": exercise.exerciseDifficulty,
+                            "exercise_calories_burn": exercise.exerciseCaloriesBurn,
+                            "exercise_description": exercise.exerciseDescription,
+                            "exercise_custom_repeats": exercise.exerciseCustomRepeats,
                           })
                       .toList(),
                 })
@@ -345,6 +350,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                                     builder: (context) =>
                                         WorkoutStepDescription(
                                       eObj: obj,
+                                      exerciseId: obj["exercise_id"],
                                     ),
                                   ),
                                 );

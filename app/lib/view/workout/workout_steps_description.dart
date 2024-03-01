@@ -3,43 +3,45 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/stpes_details_row.dart';
+import 'package:loginsignup/controller/workout_api.dart';
+import 'package:loginsignup/model/workout/exercise.dart';
 import 'package:readmore/readmore.dart';
 
 class WorkoutStepDescription extends StatefulWidget {
   final Map eObj;
-  const WorkoutStepDescription({super.key, required this.eObj});
+  final int exerciseId;
+  const WorkoutStepDescription({super.key, required this.eObj, required this.exerciseId});
 
   @override
   State<WorkoutStepDescription> createState() => _WorkoutStepDescription();
 }
 
 class _WorkoutStepDescription extends State<WorkoutStepDescription> {
-  List stepArr = [
-    {
-      "no": "01",
-      "title": "Spread Your Arms",
-      "detail":
-          "To make the gestures feel more relaxed, stretch your arms as you start this movement. No bending of hands."
-    },
-    {
-      "no": "02",
-      "title": "Rest at The Toe",
-      "detail":
-          "The basis of this movement is jumping. Now, what needs to be considered is that you have to use the tips of your feet"
-    },
-    {
-      "no": "03",
-      "title": "Adjust Foot Movement",
-      "detail":
-          "Jumping Jack is not just an ordinary jump. But, you also have to pay close attention to leg movements."
-    },
-    {
-      "no": "04",
-      "title": "Clapping Both Hands",
-      "detail":
-          "This cannot be taken lightly. You see, without realizing it, the clapping of your hands helps you to keep your rhythm while doing the Jumping Jack"
-    },
-  ];
+  List stepArr = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchEquipmentsDataList();
+  }
+
+  Future<void> fetchEquipmentsDataList() async {
+    try {
+      List<ExerciseDescription> exerciseDescList =
+          await fetchExerciseDescriptionById(widget.eObj["exercise_id"]);
+      setState(() {
+        stepArr = exerciseDescList
+            .map((exerciseDesc) => {
+                  "step_no": exerciseDesc.stepNo,
+                  "header": exerciseDesc.header,
+                  "description": exerciseDesc.description,
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,8 +108,8 @@ class _WorkoutStepDescription extends State<WorkoutStepDescription> {
                     decoration: BoxDecoration(
                         gradient: LinearGradient(colors: AppColor.primaryG),
                         borderRadius: BorderRadius.circular(20)),
-                    child: Image.asset(
-                      "assets/img/home/video_temp.png",
+                    child: Image.network(
+                      widget.eObj["exercise_image"].toString(),
                       width: media.width,
                       height: media.width * 0.43,
                       fit: BoxFit.contain,
@@ -134,7 +136,7 @@ class _WorkoutStepDescription extends State<WorkoutStepDescription> {
                 height: 15,
               ),
               Text(
-                widget.eObj["title"].toString(),
+                widget.eObj["exercise_name"].toString(),
                 style: TextStyle(
                     color: AppColor.black,
                     fontSize: 16,
@@ -144,7 +146,7 @@ class _WorkoutStepDescription extends State<WorkoutStepDescription> {
                 height: 4,
               ),
               Text(
-                "Easy | 390 Calories Burn",
+                "${widget.eObj["exercise_difficulty"].toString()} | ${widget.eObj["exercise_calories_burn"].toString()} Calories Burn",
                 style: TextStyle(
                   color: AppColor.gray,
                   fontSize: 12,
@@ -164,7 +166,7 @@ class _WorkoutStepDescription extends State<WorkoutStepDescription> {
                 height: 4,
               ),
               ReadMoreText(
-                'A jumping jack, also known as a star jump and called a side-straddle hop in the US military, is a physical jumping exercise performed by jumping to a position with the legs spread wide A jumping jack, also known as a star jump and called a side-straddle hop in the US military, is a physical jumping exercise performed by jumping to a position with the legs spread wide',
+                widget.eObj["exercise_description"].toString(),
                 trimLines: 4,
                 colorClickableText: AppColor.black,
                 trimMode: TrimMode.Line,
@@ -211,6 +213,9 @@ class _WorkoutStepDescription extends State<WorkoutStepDescription> {
                     isLast: stepArr.last == sObj,
                   );
                 }),
+              ),
+              const SizedBox(
+                height: 25,
               ),
               Text(
                 "Custom Repetitions",

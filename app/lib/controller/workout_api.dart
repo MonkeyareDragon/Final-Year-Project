@@ -207,3 +207,29 @@ Future<List<ExerciseSet>> fetchWorkoutExercisesSetById(int id) async {
   }
 }
 
+
+// API call to fetch details of a specific Exercise Description (How to do it) by ID
+Future<List<ExerciseDescription>> fetchExerciseDescriptionById(int id) async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/workout/users/exercise-perform/$id/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> responseData = json.decode(response.body);
+
+      List<ExerciseDescription> exercisedescription =
+          responseData.map((data) => ExerciseDescription.fromJson(data)).toList();
+
+      return exercisedescription;
+    } else {
+      throw Exception('Failed to load Exercise Description');
+    }
+  } catch (e) {
+    print('Error fetching Exercise Description: $e');
+    throw Exception('Failed to fetch Exercise Description: $e');
+  }
+}
