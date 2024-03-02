@@ -38,7 +38,7 @@ class MealCategoryCell extends StatelessWidget {
                   color: AppColor.white,
                   borderRadius:  BorderRadius.circular(17.5)),
           
-              child: Image.asset(
+              child: Image.network(
                   cObj["image"].toString(),
                   width: 35,
                   height: 35,

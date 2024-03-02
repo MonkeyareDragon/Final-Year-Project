@@ -35,10 +35,10 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
   void initState() {
     super.initState();
     // Call the API to fetch equipments and update the youArr list
-    fetchEquipmentsAndUpdateList();
+    fetchEquipmentsDetailsList();
   }
 
-  Future<void> fetchEquipmentsAndUpdateList() async {
+  Future<void> fetchEquipmentsDetailsList() async {
     try {
       List<Workout> workouts = await fetchWorkout();
       setState(() {

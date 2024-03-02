@@ -2,55 +2,93 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/food_making_steps_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/controller/meal/meal_apis.dart';
+import 'package:loginsignup/model/meal/food_make_steps.dart';
+import 'package:loginsignup/model/meal/ingredient.dart';
+import 'package:loginsignup/model/meal/nutrition.dart';
 import 'package:readmore/readmore.dart';
 
 class FoodDetailsView extends StatefulWidget {
   final Map mObj;
   final Map dObj;
-  const FoodDetailsView({super.key, required this.dObj, required this.mObj});
+  final int foodid;
+  const FoodDetailsView({super.key, required this.dObj, required this.mObj, required this.foodid});
 
   @override
   State<FoodDetailsView> createState() => _FoodDetailsView();
 }
 
 class _FoodDetailsView extends State<FoodDetailsView> {
-  List nutritionArr = [
-    {"image": "assets/img/home/burn.png", "title": "180kCal"},
-    {"image": "assets/img/home/egg.png", "title": "30g fats"},
-    {"image": "assets/img/home/proteins.png", "title": "20g proteins"},
-    {"image": "assets/img/home/carbo.png", "title": "50g carbo"},
-  ];
+  List nutritionArr = [];
+  List ingredientsArr = [];
+  List stepArr = [];
 
-  List ingredientsArr = [
-    {
-      "image": "assets/img/home/flour.png",
-      "title": "Wheat Flour",
-      "value": "100grm"
-    },
-    {"image": "assets/img/home/sugar.png", "title": "Sugar", "value": "3 tbsp"},
-    {
-      "image": "assets/img/home/baking_soda.png",
-      "title": "Baking Soda",
-      "value": "2tsp"
-    },
-    {"image": "assets/img/home/eggs.png", "title": "Eggs", "value": "2 items"},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    nutritionListDisplay();
+    ingredientListDisplay();
+    foodMakingStepsListDisplay();
+  }
 
-  List stepArr = [
-    {"no": "1", "detail": "Prepare all of the ingredients that needed"},
-    {"no": "2", "detail": "Mix flour, sugar, salt, and baking powder"},
-    {
-      "no": "3",
-      "detail":
-          "In a seperate place, mix the eggs and liquid milk until blended"
-    },
-    {
-      "no": "4",
-      "detail":
-          "Put the egg and milk mixture into the dry ingredients, Stir untul smooth and smooth"
-    },
-    {"no": "5", "detail": "Prepare all of the ingredients that needed"},
-  ];
+  Future<void> nutritionListDisplay() async {
+    try {
+      List<Nutrition> nutritions =
+          await fetchNutritionsBaseOnFood(widget.foodid);
+      setState(() {
+        nutritionArr = nutritions
+            .map((nutritions) => {
+                  "nutrition_id": nutritions.id,
+                  "nutrition_image": nutritions.nutritionImage,
+                  "nutrition_name": nutritions.name,
+                  "nutrition_quantity": nutritions.quantity,
+                  "nutrition_property": nutritions.property,
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
+
+
+   Future<void> ingredientListDisplay() async {
+    try {
+      List<Ingredient> ingredients =
+          await fetchIngredientBaseOnFood(widget.foodid);
+      setState(() {
+        ingredientsArr = ingredients
+            .map((ingredients) => {
+                  "ingredient_id": ingredients.id,
+                  "ingredient_image": ingredients.ingredientImage,
+                  "name": ingredients.name,
+                  "quantity_required": ingredients.quantityRequired,
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
+
+
+  Future<void> foodMakingStepsListDisplay() async {
+    try {
+      List<FoodMakingSteps> steps =
+          await fetchFoodMakingStepsBaseOnFood(widget.foodid);
+      setState(() {
+        stepArr = steps
+            .map((steps) => {
+                  "id": steps.id,
+                  "description": steps.description,
+                  "step_no": steps.stepNumber,
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,8 +169,8 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                     scale: 1.25,
                     child: Align(
                       alignment: Alignment.bottomCenter,
-                      child: Image.asset(
-                        widget.dObj["b_image"].toString(),
+                      child: Image.network(
+                        widget.dObj["food_image"].toString(),
                         width: media.width * 0.50,
                         height: media.width * 0.50,
                         fit: BoxFit.contain,
@@ -186,14 +224,14 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.dObj["name"].toString(),
+                                    widget.dObj["food_name"].toString(),
                                     style: TextStyle(
                                         color: AppColor.black,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700),
                                   ),
                                   Text(
-                                    "by James Ruth",
+                                    "by ${widget.dObj["author"].toString()}",
                                     style: TextStyle(
                                         color: AppColor.gray, fontSize: 12),
                                   ),
@@ -251,8 +289,8 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Image.asset(
-                                    nObj["image"].toString(),
+                                  Image.network(
+                                    nObj["nutrition_image"].toString(),
                                     width: 15,
                                     height: 15,
                                     fit: BoxFit.contain,
@@ -260,7 +298,7 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      nObj["title"].toString(),
+                                      "${nObj["nutrition_quantity"].toString()}${nObj["nutrition_property"].toString()} ${nObj["nutrition_name"].toString()}",
                                       style: TextStyle(
                                           color: AppColor.black, fontSize: 12),
                                     ),
@@ -290,7 +328,7 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: ReadMoreText(
-                          'Pancakes are some people\'s favorite breakfast, who doesn\'t like pancakes? Especially with the real honey splash on top of the pancakes, of course everyone loves that! besides being Pancakes are some people\'s favorite breakfast, who doesn\'t like pancakes? Especially with the real honey splash on top of the pancakes, of course everyone loves that! besides being',
+                          widget.dObj["description"].toString(),
                           trimLines: 4,
                           colorClickableText: AppColor.black,
                           trimMode: TrimMode.Line,
@@ -354,8 +392,8 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     alignment: Alignment.center,
-                                    child: Image.asset(
-                                      nObj["image"].toString(),
+                                    child: Image.network(
+                                      nObj["ingredient_image"].toString(),
                                       width: 45,
                                       height: 45,
                                       fit: BoxFit.contain,
@@ -365,12 +403,12 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                                     height: 4,
                                   ),
                                   Text(
-                                    nObj["title"].toString(),
+                                    nObj["name"].toString(),
                                     style: TextStyle(
                                         color: AppColor.black, fontSize: 12),
                                   ),
                                   Text(
-                                    nObj["value"].toString(),
+                                    nObj["quantity_required"].toString(),
                                     style: TextStyle(
                                         color: AppColor.gray, fontSize: 10),
                                   ),
@@ -431,7 +469,7 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: RoundButton(
-                          title: "Add to ${widget.mObj["name"]} Meal",
+                          title: "Add to ${widget.mObj["meal_name"]} Meal",
                           onPressed: () {},
                         ),
                       ),

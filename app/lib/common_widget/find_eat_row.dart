@@ -37,8 +37,8 @@ class FindEatRow extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Image.asset(
-                fObj["image"].toString(),
+              Image.network(
+                fObj["meal_image"].toString(),
                 width: media.width * 0.3,
                 height: media.width * 0.25,
                 fit: BoxFit.contain,
@@ -48,7 +48,7 @@ class FindEatRow extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
-              fObj["name"],
+              fObj["meal_name"],
               style: TextStyle(
                   color: AppColor.black,
                   fontSize: 14,
@@ -58,7 +58,7 @@ class FindEatRow extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
-              fObj["number"],
+              fObj["meal_count"].toString() + "+ Foods",
               style: TextStyle(color: AppColor.gray, fontSize: 12),
             ),
           ),

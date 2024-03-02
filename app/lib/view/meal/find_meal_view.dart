@@ -3,11 +3,15 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/meal_category_cell.dart';
 import 'package:loginsignup/common_widget/meal_recommendation_cell.dart';
 import 'package:loginsignup/common_widget/popular_meal_row.dart';
+import 'package:loginsignup/controller/meal/meal_apis.dart';
+import 'package:loginsignup/model/meal/category.dart';
+import 'package:loginsignup/model/meal/food.dart';
 import 'package:loginsignup/view/meal/food_details_view.dart';
 
 class FindMealView extends StatefulWidget {
   final Map eObj;
-  const FindMealView({super.key, required this.eObj});
+  final int mealid;
+  const FindMealView({super.key, required this.eObj, required this.mealid});
 
   @override
   State<FindMealView> createState() => _FindMealView();
@@ -16,59 +20,9 @@ class FindMealView extends StatefulWidget {
 class _FindMealView extends State<FindMealView> {
   TextEditingController txtSearch = TextEditingController();
 
-  List categoryArr = [
-    {
-      "name": "Salad",
-      "image": "assets/img/home/c_1.png",
-    },
-    {
-      "name": "Cake",
-      "image": "assets/img/home/c_2.png",
-    },
-    {
-      "name": "Pie",
-      "image": "assets/img/home/c_3.png",
-    },
-    {
-      "name": "Smoothies",
-      "image": "assets/img/home/c_4.png",
-    },
-    {
-      "name": "Salad",
-      "image": "assets/img/home/c_1.png",
-    },
-    {
-      "name": "Cake",
-      "image": "assets/img/home/c_2.png",
-    },
-    {
-      "name": "Pie",
-      "image": "assets/img/home/c_3.png",
-    },
-    {
-      "name": "Smoothies",
-      "image": "assets/img/home/c_4.png",
-    },
-  ];
+  List categoryArr = [];
 
-  List popularArr = [
-    {
-      "name": "Blueberry Pancake",
-      "image": "assets/img/home/f_1.png",
-      "b_image": "assets/img/home/pancake_1.png",
-      "size": "Medium",
-      "time": "30mins",
-      "kcal": "230kCal"
-    },
-    {
-      "name": "Salmon Nigiri",
-      "image": "assets/img/home/f_2.png",
-      "b_image": "assets/img/home/nigiri.png",
-      "size": "Medium",
-      "time": "20mins",
-      "kcal": "120kCal"
-    },
-  ];
+  List popularArr = [];
 
   List recommendArr = [
     {
@@ -86,6 +40,54 @@ class _FindMealView extends State<FindMealView> {
       "kcal": "230kCal"
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    categoryListDisplay();
+    foodListDisplay();
+  }
+
+  Future<void> categoryListDisplay() async {
+    try {
+      List<Category> categories =
+          await fetchCategoryDetailsOnMealID(widget.mealid);
+      setState(() {
+        categoryArr = categories
+            .map((categories) => {
+                  "name": categories.name,
+                  "image": categories.categoryImage,
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
+
+
+  Future<void> foodListDisplay() async {
+    try {
+      List<Food> foods =
+          await fetchFoodDetailsOnMealID(widget.mealid);
+      setState(() {
+        popularArr = foods
+            .map((foods) => {
+                  "food_id": foods.id,
+                  "food_image": foods.foodImage,
+                  "food_name": foods.name,
+                  "cooking_difficulty": foods.cookingDifficulty,
+                  "time_required": foods.timeRequired,
+                  "calories": foods.calories,
+                  "author": foods.author,
+                  "description": foods.description
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +120,7 @@ class _FindMealView extends State<FindMealView> {
           ),
         ),
         title: Text(
-          widget.eObj["name"].toString(),
+          widget.eObj["meal_name"].toString(),
           style: TextStyle(
               color: AppColor.black, fontSize: 16, fontWeight: FontWeight.w700),
         ),
@@ -291,6 +293,7 @@ class _FindMealView extends State<FindMealView> {
                           builder: (context) => FoodDetailsView(
                             dObj: fObj,
                             mObj: widget.eObj,
+                            foodid: fObj["food_id"],
                           ),
                         ),
                       );

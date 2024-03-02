@@ -4,6 +4,8 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/find_eat_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/todays_meal_row.dart';
+import 'package:loginsignup/controller/meal/meal_apis.dart';
+import 'package:loginsignup/model/meal/meal.dart';
 import 'package:loginsignup/view/meal/find_meal_view.dart';
 import 'package:loginsignup/view/meal/meal_schedule_view.dart';
 
@@ -28,18 +30,31 @@ class _MealPlannerViewState extends State<MealPlannerView> {
     },
   ];
 
-  List findEatArr = [
-    {
-      "name": "Breakfast",
-      "image": "assets/img/home/m_3.png",
-      "number": "120+ Foods"
-    },
-    {
-      "name": "Lunch",
-      "image": "assets/img/home/m_4.png",
-      "number": "130+ Foods"
-    },
-  ];
+  List findEatArr = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchWorkoutDataList();
+  }
+
+  Future<void> fetchWorkoutDataList() async {
+    try {
+      List<Meal> meals = await fetchMealDetails();
+      setState(() {
+        findEatArr = meals
+            .map((meals) => {
+                  "meal_id": meals.id,
+                  "meal_name": meals.name,
+                  "meal_image": meals.mealImage,
+                  "meal_count": meals.foodCount,
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +294,6 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                                       const MealScheduleView(),
                                 ),
                               );
-
                             },
                           ),
                         )
@@ -376,7 +390,14 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                     var fObj = findEatArr[index] as Map? ?? {};
                     return InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => FindMealView(eObj: fObj) ) );
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FindMealView(
+                                eObj: fObj,
+                                mealid: fObj["meal_id"],
+                              ),
+                            ));
                       },
                       child: FindEatRow(
                         fObj: fObj,

@@ -17,8 +17,8 @@ class PopularMealRow extends StatelessWidget {
             boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 2)]),
         child: Row(
           children: [
-            Image.asset(
-              mObj["image"].toString(),
+            Image.network(
+              mObj["food_image"].toString(),
               width: 50,
               height: 50,
               fit: BoxFit.contain,
@@ -31,14 +31,14 @@ class PopularMealRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    mObj["name"].toString(),
+                    mObj["food_name"].toString(),
                     style: TextStyle(
                         color: AppColor.black,
                         fontSize: 14,
                         fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    "${mObj["size"]} | ${mObj["time"]} | ${mObj["kcal"]}",
+                    "${mObj["cooking_difficulty"]} | ${mObj["time_required"]} | ${mObj["calories"]}",
                     style: TextStyle(color: AppColor.gray, fontSize: 12),
                   )
                 ],

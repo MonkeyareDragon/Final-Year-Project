@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:loginsignup/model/workout/equipment.dart';
 import 'package:loginsignup/model/workout/exercise.dart';
 import 'package:loginsignup/model/workout/workout.dart';
-import 'package:loginsignup/model/workout_exercise.dart';
+import 'package:loginsignup/model/workout/workout_exercise.dart';
 
 const String baseUrl = 'http://10.0.2.2:8000/api/v1';
 String token =

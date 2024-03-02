@@ -51,7 +51,7 @@ class FoodMakingStepsRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Step ${ sObj["no"].toString()}",
+                "Step ${ sObj["step_no"].toString()}",
                 style: TextStyle(
                   color: AppColor.black,
                   fontSize: 14,
@@ -59,7 +59,7 @@ class FoodMakingStepsRow extends StatelessWidget {
                 ),
               ),
               Text(
-                sObj["detail"].toString(),
+                sObj["description"].toString(),
                 style: TextStyle(color: AppColor.gray, fontSize: 12),
               ),
             ],
