@@ -22,7 +22,7 @@ def get_activity_level(user):
     sensor_data = SensorData.objects.filter(user=user, date_and_time__date=today)
 
     if not sensor_data:
-        return "sedentary"  # No activity data available for the current day
+        return "low activity"  # No activity data available for the current day
 
     activity_counter = Counter(data.predicted_activity for data in sensor_data)
     total_activity = sum(activity_counter.values())
@@ -97,14 +97,16 @@ class ActivityGoal(models.Model):
         Update the steps based on predicted activity "Walking" from SensorData.
         """
         if self.user:
-            self.steps = SensorData.objects.filter(user=self.user, predicted_activity="Walking").count()
+            today = date.today()
+            self.steps = SensorData.objects.filter(user=self.user, date_and_time__date=today, predicted_activity="Walking").count()
     
     def _update_running_distance(self):
         """
         Update the running distance based on jogging steps.
         """
         if self.user:
-            jogging_steps = SensorData.objects.filter(user=self.user, predicted_activity="Jogging").count()
+            today = date.today()
+            jogging_steps = SensorData.objects.filter(user=self.user, date_and_time__date=today, predicted_activity="Jogging").count()
             user_profile = self.user.userprofile
             if user_profile:
                 height_cm = user_profile.height
@@ -121,7 +123,8 @@ class ActivityGoal(models.Model):
         Update the flights climbed based on stairs steps from SensorData.
         """
         if self.user:
-            stairs_steps = SensorData.objects.filter(user=self.user, predicted_activity="Stairs").count()
+            today = date.today()
+            stairs_steps = SensorData.objects.filter(user=self.user, date_and_time__date=today, predicted_activity="Stairs").count()
             flights_climbed = calculate_flights_climbed(stairs_steps)
             self.flights_climbed = flights_climbed
     

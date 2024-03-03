@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/nutrition_row.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/controller/activity/activity_goal_apis.dart';
+import 'package:loginsignup/model/activity/activity_goal.dart';
 
 class ActivityPredictionView extends StatefulWidget {
   @override
@@ -9,36 +10,58 @@ class ActivityPredictionView extends StatefulWidget {
 }
 
 class _ActivityPredictionView extends State<ActivityPredictionView> {
-  List nutritionArr = [
-    {
-      "title": "Calories",
-      "image": "assets/img/home/burn.png",
-      "unit_name": "kCal",
-      "value": "350",
-      "max_value": "500",
-    },
-    {
-      "title": "Steps",
-      "image": "assets/img/home/burn.png",
-      "unit_name": "Steps",
-      "value": "300",
-      "max_value": "1000",
-    },
-    {
-      "title": "Running Distance",
-      "image": "assets/img/home/burn.png",
-      "unit_name": "Km",
-      "value": "140",
-      "max_value": "1000",
-    },
-    {
-      "title": "Flights Climbed",
-      "image": "assets/img/home/burn.png",
-      "unit_name": "Floors",
-      "value": "140",
-      "max_value": "1000",
-    },
-  ];
+  List<Map<String, dynamic>> nutritionArr = []; // Update the list to hold Map<String, dynamic>
+
+  @override
+  void initState() {
+    super.initState();
+    fetchActivityData(); // Fetch activity data when the view initializes
+  }
+
+  // Method to fetch activity data from API
+  void fetchActivityData() async {
+    int userId = 2;
+    try {
+      ActivityGoal activityGoals = await fetchUserActiviytGoal(userId); // Pass user id as argument
+
+      // Update nutritionArr with fetched data
+      setState(() {
+        nutritionArr = [
+          {
+            "title": "Calories",
+            "image": "assets/img/home/burn.png",
+            "unit_name": "kCal",
+            "value": "${activityGoals.caloriesBurn}", // Update with actual calories burn value
+            "max_value": "${activityGoals.targetCaloriesBurn}", // Update with actual target calories burn value
+          },
+          {
+            "title": "Steps",
+            "image": "assets/img/home/burn.png",
+            "unit_name": "Steps",
+            "value": "${activityGoals.steps}", // Update with actual steps value
+            "max_value": "${activityGoals.targetSteps}", // Update with actual target steps value
+          },
+          {
+            "title": "Running Distance",
+            "image": "assets/img/home/burn.png",
+            "unit_name": "Km",
+            "value": "${activityGoals.runningDistance}", // Update with actual running distance value
+            "max_value": "${activityGoals.targetRunningDistance}", // Update with actual target running distance value
+          },
+          {
+            "title": "Flights Climbed",
+            "image": "assets/img/home/burn.png",
+            "unit_name": "Floors",
+            "value": "${activityGoals.flightsClimbed}", // Update with actual flights climbed value
+            "max_value": "${activityGoals.targetFlightsClimbed}", // Update with actual target flights climbed value
+          },
+        ];
+      });
+    } catch (e) {
+      print('Error fetching activity data: $e');
+      // Handle error fetching data
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +157,7 @@ class _ActivityPredictionView extends State<ActivityPredictionView> {
                           shrinkWrap: true,
                           itemCount: nutritionArr.length,
                           itemBuilder: (context, index) {
-                            var nObj = nutritionArr[index] as Map? ?? {};
+                            var nObj = nutritionArr[index];
 
                             return NutritionRow(
                               nObj: nObj,
