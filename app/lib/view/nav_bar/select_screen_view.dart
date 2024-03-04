@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
-import 'package:loginsignup/view/meal/meal_planner_view.dart';
 import 'package:loginsignup/view/sleep/sleep_tracker_view.dart';
 import 'package:loginsignup/view/workout/workout_tracker_view.dart';
 
@@ -23,20 +22,6 @@ class SelectScreenView extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const WorkOutTrackerView(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            RoundButton(
-              title: "Meal Planner",
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MealPlannerView(),
                   ),
                 );
               },

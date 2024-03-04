@@ -38,7 +38,7 @@ class PopularMealRow extends StatelessWidget {
                         fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    "${mObj["cooking_difficulty"]} | ${mObj["time_required"]} | ${mObj["calories"]}",
+                    "${mObj["cooking_difficulty"]} | ${mObj["time_required"]}mins | ${mObj["calories"]}kCal",
                     style: TextStyle(color: AppColor.gray, fontSize: 12),
                   )
                 ],

@@ -6,19 +6,25 @@ import 'package:loginsignup/controller/meal/meal_apis.dart';
 import 'package:loginsignup/model/meal/food_make_steps.dart';
 import 'package:loginsignup/model/meal/ingredient.dart';
 import 'package:loginsignup/model/meal/nutrition.dart';
+import 'package:loginsignup/view/meal/add_food_view.dart';
 import 'package:readmore/readmore.dart';
 
 class FoodDetailsView extends StatefulWidget {
   final Map mObj;
   final Map dObj;
   final int foodid;
-  const FoodDetailsView({super.key, required this.dObj, required this.mObj, required this.foodid});
+  const FoodDetailsView(
+      {super.key,
+      required this.dObj,
+      required this.mObj,
+      required this.foodid});
 
   @override
   State<FoodDetailsView> createState() => _FoodDetailsView();
 }
 
 class _FoodDetailsView extends State<FoodDetailsView> {
+  late DateTime _selectedDateAppBBar;
   List nutritionArr = [];
   List ingredientsArr = [];
   List stepArr = [];
@@ -26,6 +32,7 @@ class _FoodDetailsView extends State<FoodDetailsView> {
   @override
   void initState() {
     super.initState();
+    _selectedDateAppBBar = DateTime.now();
     nutritionListDisplay();
     ingredientListDisplay();
     foodMakingStepsListDisplay();
@@ -51,8 +58,7 @@ class _FoodDetailsView extends State<FoodDetailsView> {
     }
   }
 
-
-   Future<void> ingredientListDisplay() async {
+  Future<void> ingredientListDisplay() async {
     try {
       List<Ingredient> ingredients =
           await fetchIngredientBaseOnFood(widget.foodid);
@@ -70,7 +76,6 @@ class _FoodDetailsView extends State<FoodDetailsView> {
       print('Error fetching equipments: $e');
     }
   }
-
 
   Future<void> foodMakingStepsListDisplay() async {
     try {
@@ -468,9 +473,23 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: RoundButton(
-                          title: "Add to ${widget.mObj["meal_name"]} Meal",
-                          onPressed: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: RoundButton(
+                            title: "Add to ${widget.mObj["meal_name"]} Meal",
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddFoodView(
+                                    date: _selectedDateAppBBar,
+                                    mObj: widget.mObj,
+                                    dObj: widget.dObj,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],

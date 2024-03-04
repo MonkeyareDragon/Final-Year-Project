@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/nav_button.dart';
 import 'package:loginsignup/view/activity/activity_prediction.dart';
-import 'package:loginsignup/view/home/blank_view.dart';
 import 'package:loginsignup/view/home/home_view.dart';
+import 'package:loginsignup/view/meal/meal_planner_view.dart';
 import 'package:loginsignup/view/nav_bar/select_screen_view.dart';
 import 'package:loginsignup/view/profile/profile.dart';
 
@@ -95,7 +95,7 @@ class MainNavBarViewStateState extends State<MainNavBarViewState> {
                 isActive: selectNav == 2,
                 onTap: () {
                   selectNav = 2;
-                  curentNav = BlankView();
+                  curentNav = const MealPlannerView();
                   if (mounted) {
                     setState(() {});
                   }
