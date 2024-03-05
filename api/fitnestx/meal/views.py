@@ -1,9 +1,10 @@
-from rest_framework import generics, status
-from fitnestx.meal.models import Food, FoodMakingSteps, Meal
+from rest_framework import generics, status, viewsets
+from fitnestx.meal.models import Food, FoodMakingSteps, FoodSchedule, Meal
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
-from fitnestx.meal.serializers import CategorySerializer, FoodMakingStepsSerializer, FoodSerializer, IngredientSerializer, MealSerializer, NutritionSerializer
+from django.utils import timezone
+from fitnestx.meal.serializers import CategorySerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodSerializer, IngredientSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
 
 class MealList(generics.ListAPIView):
     queryset = Meal.objects.all()
@@ -56,3 +57,35 @@ class FoodMakingStepsListView(ListAPIView):
     def get_queryset(self):
         food_id = self.kwargs['food_id']
         return FoodMakingSteps.objects.filter(food_id=food_id).order_by('step_no')
+
+class FoodScheduleCreateAPIView(generics.CreateAPIView):
+    queryset = FoodSchedule.objects.all()
+    serializer_class = FoodScheduleSerializer
+
+class UpdateFoodScheduleNotificationView(viewsets.ModelViewSet):
+    serializer_class = UpdateFoodScheduleNotificationSerializer
+    
+    def get_queryset(self):
+        data = FoodSchedule.objects.filter(notify_status__lte=False)
+        return data
+
+    def update_notification(self):
+        schedule_data = self.get_queryset()
+        current_datetime = timezone.localtime(timezone.now())
+        current_time = current_datetime.time()
+        current_date = current_datetime.date()
+        
+        try:
+            for schedule in schedule_data:
+                if schedule.date <= current_date and schedule.time <= current_time:
+                    schedule.notification_note = f"Hello {schedule.user.username}, it's time for your scheduled meal: {schedule.food.name}."
+                    schedule.notify_status = True
+                    schedule.save()
+                else:
+                    return Response({"message": "No notification to update"})
+        except schedule_data.DoesNotExist:
+            return Response({"message": "No notification data is found"})
+    
+    def list(self, request, *args, **kwargs):
+        self.update_notification()
+        return super().list(request, *args, **kwargs)

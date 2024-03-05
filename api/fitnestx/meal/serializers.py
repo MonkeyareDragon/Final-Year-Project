@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from fitnestx.meal.models import Food, FoodMakingSteps, Ingredient, Meal, Category, Nutrition
+from fitnestx.meal.models import Food, FoodMakingSteps, FoodSchedule, Ingredient, Meal, Category, Nutrition
 
 class MealSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,3 +30,13 @@ class FoodMakingStepsSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodMakingSteps
         fields = '__all__'
+
+class FoodScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodSchedule
+        fields = '__all__'
+
+class UpdateFoodScheduleNotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodSchedule
+        fields = ['notification_note', 'notify_status']
