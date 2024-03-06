@@ -13,7 +13,7 @@ class NotificationRow extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(30),
-            child: Image.asset(
+            child: Image.network(
               nObj["image"].toString(),
               width: 40,
               height: 40,

@@ -1,6 +1,9 @@
 from datetime import datetime
+import os
+from PIL import Image
 from rest_framework import serializers
 from django.utils import timezone
+from config.settings import base as settings
 from fitnestx.meal.models import Food, FoodMakingSteps, FoodSchedule, Ingredient, Meal, Category, Nutrition
 
 class MealSerializer(serializers.ModelSerializer):
@@ -52,9 +55,25 @@ class DisplayFoodScheduleNotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodSchedule
         fields = ('image', 'notification_note', 'time', 'check_notification', 'send_datetime')
+    
+    def resize_image(self, image_url):
+        image_rel_path = image_url.split('media/')[-1]
+        image_path = os.path.join(settings.MEDIA_ROOT, image_rel_path)
+
+        image = Image.open(image_path)
+        image_resized = image.resize((100, 100))
+        image_name, image_extension = os.path.splitext(image_url)
+        resized_image_name = f"{image_name}_notification{image_extension}"
+        
+        image_resize_path = resized_image_name.split('media/')[-1]
+        resized_image_path = os.path.join(settings.MEDIA_ROOT, image_resize_path)
+        image_resized.save(resized_image_path)
+        
+        return resized_image_name
 
     def get_image(self, obj):
-        return obj.food.food_image.url
+        resized_image_path = self.resize_image(obj.food.food_image.url)
+        return resized_image_path
 
     def get_time(self, obj):
         current_datetime = timezone.localtime(timezone.now())

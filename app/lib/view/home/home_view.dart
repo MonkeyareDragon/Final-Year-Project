@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/workout_display_row.dart';
+import 'package:loginsignup/controller/meal/meal_notification_apis.dart';
+import 'package:loginsignup/model/meal/meal_notification.dart';
 import 'package:loginsignup/view/home/activity_track_view.dart';
 import 'package:loginsignup/view/home/finished_workout_view.dart';
 import 'package:loginsignup/view/home/notification_view.dart';
@@ -84,6 +86,35 @@ class _HomePageState extends State<HomePage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    mealNotificationListDisplay();
+  }
+
+  int userid = 2;
+  List notificationArr = [];
+
+  Future<void> mealNotificationListDisplay() async {
+    try {
+      List<MealNotification> notifications =
+          await fetchMealNotificationsOnUserID(userid);
+      setState(() {
+        notificationArr = notifications
+            .map((notifications) => {
+                  "image": notifications.image,
+                  "title": notifications.notificationNote,
+                  "time": notifications.time,
+                  "checkNotification": notifications.checkNotification,
+                  "sendDatetime": notifications.sendDatetime,
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching notifications: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
 
@@ -142,12 +173,16 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const NotificationView(),
+                              builder: (context) => NotificationView(
+                                  notificationArr: notificationArr),
                             ),
                           );
                         },
                         icon: Image.asset(
-                          "assets/img/home/notification_active.png",
+                          notificationArr.any((notification) =>
+                                  notification['checkNotification'])
+                              ? "assets/img/home/notification_active.png"
+                              : "assets/img/home/notification_passive.png",
                           width: 25,
                           height: 25,
                           fit: BoxFit.fitHeight,

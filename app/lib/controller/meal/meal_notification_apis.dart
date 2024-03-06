@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:loginsignup/model/meal/meal_notification.dart';
 
 const String baseUrl = 'http://10.0.2.2:8000/api/v1';
 String token =
@@ -27,5 +28,27 @@ Future<void> createFoodSchedule(Map<String, dynamic> requestData) async {
     }
   } catch (e) {
     print('Error creating FoodSchedule: $e');
+  }
+}
+
+// API call to fetch all the data of meal notification based on user id
+Future<List<MealNotification>> fetchMealNotificationsOnUserID(int id) async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/meal/users/notifications/$id/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((item) => MealNotification.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load meal notification');
+    }
+  } catch (e) {
+    print('Error fetching meal notification: $e');
+    throw Exception('Failed to fetch meal notification: $e');
   }
 }
