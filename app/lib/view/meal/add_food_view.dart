@@ -4,18 +4,49 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common/date_function.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/controller/meal/meal_notification_apis.dart';
+import 'package:intl/intl.dart';
 
 class AddFoodView extends StatefulWidget {
   final DateTime date;
   final Map mObj;
   final Map dObj;
-  const AddFoodView({super.key, required this.date, required this.mObj, required this.dObj});
+  const AddFoodView(
+      {super.key, required this.date, required this.mObj, required this.dObj});
 
   @override
   State<AddFoodView> createState() => _AddMealViewState();
 }
 
 class _AddMealViewState extends State<AddFoodView> {
+  late DateTime _selectedDate;
+  late DateTime _selectedTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = widget.date;
+    _selectedTime = DateTime.now();
+  }
+
+  Future<void> FoodSchedule(Map<String, dynamic> requestData) async {
+    await createFoodSchedule(requestData);
+  }
+
+  Future<void> _showDatePicker(BuildContext context) async {
+    final newDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+    if (newDate != null) {
+      setState(() {
+        _selectedDate = newDate;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -87,9 +118,14 @@ class _AddMealViewState extends State<AddFoodView> {
                 const SizedBox(
                   width: 8,
                 ),
-                Text(
-                  dateToString(widget.date, formatStr: "E, dd MMMM yyyy"),
-                  style: TextStyle(color: AppColor.gray, fontSize: 14),
+                TextButton(
+                  onPressed: () {
+                    _showDatePicker(context);
+                  },
+                  child: Text(
+                    dateToString(_selectedDate, formatStr: "E, dd MMMM yyyy"),
+                    style: TextStyle(color: AppColor.gray, fontSize: 14),
+                  ),
                 ),
               ],
             ),
@@ -106,7 +142,9 @@ class _AddMealViewState extends State<AddFoodView> {
             SizedBox(
               height: media.width * 0.35,
               child: CupertinoDatePicker(
-                onDateTimeChanged: (newDate) {},
+                onDateTimeChanged: (newTime) {
+                  _selectedTime = newTime;
+                },
                 initialDateTime: DateTime.now(),
                 use24hFormat: false,
                 minuteInterval: 1,
@@ -135,35 +173,52 @@ class _AddMealViewState extends State<AddFoodView> {
             const SizedBox(
               height: 10,
             ),
-             IconTitleNextRow(
-              icon: "assets/img/home/difficulity.png",
-              title: "Difficulity",
-              time: "${widget.dObj["cooking_difficulty"]}",
-              color: AppColor.lightGray,
-              onPressed: () {}),
-          const SizedBox(
-            height: 10,
-          ),
-          IconTitleNextRow(
-              icon: "assets/img/home/repetitions.png",
-              title: "Prepeartion Time",
-              time: "${widget.dObj["time_required"]}mins",
-              color: AppColor.lightGray,
-              onPressed: () {}),
-          const SizedBox(
-            height: 10,
-          ),
-          IconTitleNextRow(
-              icon: "assets/img/home/repetitions.png",
-              title: "Calories Obtain",
-              time: "${widget.dObj["calories"]}kCal",
-              color: AppColor.lightGray,
-              onPressed: () {}),
-          Spacer(),
-          RoundButton(title: "Save", onPressed: () {}),
-          const SizedBox(
-            height: 20,
-          ),
+            IconTitleNextRow(
+                icon: "assets/img/home/difficulity.png",
+                title: "Difficulity",
+                time: "${widget.dObj["cooking_difficulty"]}",
+                color: AppColor.lightGray,
+                onPressed: () {}),
+            const SizedBox(
+              height: 10,
+            ),
+            IconTitleNextRow(
+                icon: "assets/img/home/repetitions.png",
+                title: "Prepeartion Time",
+                time: "${widget.dObj["time_required"]}mins",
+                color: AppColor.lightGray,
+                onPressed: () {}),
+            const SizedBox(
+              height: 10,
+            ),
+            IconTitleNextRow(
+                icon: "assets/img/home/repetitions.png",
+                title: "Calories Obtain",
+                time: "${widget.dObj["calories"]}kCal",
+                color: AppColor.lightGray,
+                onPressed: () {}),
+            Spacer(),
+            RoundButton(
+                title: "Save",
+                onPressed: () {
+                  String formattedDate =
+                      DateFormat('yyyy-MM-dd').format(_selectedDate);
+                  
+                  String formateTime = DateFormat('hh:mm:ss').format(_selectedTime);
+
+                  Map<String, dynamic> requestData = {
+                    'date': formattedDate.toString(),
+                    'time': formateTime.toString(),
+                    'food': widget.dObj['food_id'],
+                    'user': 2
+                  };
+
+                  // Call the method with the request data
+                  createFoodSchedule(requestData);
+                }),
+            const SizedBox(
+              height: 10,
+            ),
           ],
         ),
       ),
