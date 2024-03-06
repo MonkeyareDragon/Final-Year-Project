@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from django.utils import timezone
-from fitnestx.meal.serializers import CategorySerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodSerializer, IngredientSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
+from fitnestx.meal.serializers import CategorySerializer, DisplayFoodScheduleNotificationSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodSerializer, IngredientSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
 
 class MealList(generics.ListAPIView):
     queryset = Meal.objects.all()
@@ -89,3 +89,10 @@ class UpdateFoodScheduleNotificationView(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         self.update_notification()
         return super().list(request, *args, **kwargs)
+
+class DisplayFoodScheduleNotificationView(generics.ListAPIView):
+    serializer_class = DisplayFoodScheduleNotificationSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return FoodSchedule.objects.filter(user_id=user_id, notify_status=True)
