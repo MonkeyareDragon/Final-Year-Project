@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
+import 'package:intl/intl.dart';
 
 class FoodScheduleRow extends StatelessWidget {
   final Map mObj;
@@ -8,6 +9,9 @@ class FoodScheduleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateTime time = DateFormat('HH:mm:ss').parse(mObj["time"]);
+    String formattedTime = DateFormat('h:mm a').format(time);
+    
     return Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
         child: Row(
@@ -21,7 +25,7 @@ class FoodScheduleRow extends StatelessWidget {
                     color: index % 2 == 0 ? AppColor.primaryColor2.withOpacity(0.4) : AppColor.secondaryColor2.withOpacity(0.4) ,
                     borderRadius: BorderRadius.circular(10)),
                   alignment: Alignment.center,
-                child: Image.asset(
+                child: Image.network(
                   mObj["image"].toString(),
                   width: 40,
                   height: 40,
@@ -44,7 +48,7 @@ class FoodScheduleRow extends StatelessWidget {
                         fontWeight: FontWeight.w700),
                   ),
                   Text(
-                    mObj["time"].toString(),
+                    formattedTime,
                     style: TextStyle(
                       color: AppColor.gray,
                       fontSize: 10,

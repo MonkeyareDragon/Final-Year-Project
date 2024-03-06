@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/food_schedule_row.dart';
 import 'package:loginsignup/common_widget/nutrition_row.dart';
+import 'package:loginsignup/controller/meal/meal_notification_apis.dart';
+import 'package:loginsignup/model/meal/meal_notification.dart';
+import 'package:intl/intl.dart';
 
 class MealScheduleView extends StatefulWidget {
   const MealScheduleView({super.key});
@@ -14,52 +17,6 @@ class MealScheduleView extends StatefulWidget {
 class _MealScheduleViewState extends State<MealScheduleView> {
   CalendarAgendaController _calendarAgendaControllerAppBar =
       CalendarAgendaController();
-      
-  List breakfastArr = [
-    {
-      "name": "Honey Pancake",
-      "time": "07:00am",
-      "image": "assets/img/home/honey_pan.png"
-    },
-    {
-      "name": "Coffee",
-      "time": "07:30am",
-      "image": "assets/img/home/coffee.png"
-    },
-  ];
-
-  List lunchArr = [
-    {
-      "name": "Chicken Steak",
-      "time": "01:00pm",
-      "image": "assets/img/home/chicken.png"
-    },
-    {
-      "name": "Milk",
-      "time": "01:20pm",
-      "image": "assets/img/home/glass-of-milk 1.png"
-    },
-  ];
-  List snacksArr = [
-    {
-      "name": "Orange",
-      "time": "04:30pm",
-      "image": "assets/img/home/orange.png"
-    },
-    {
-      "name": "Apple Pie",
-      "time": "04:40pm",
-      "image": "assets/img/home/apple_pie.png"
-    },
-  ];
-  List dinnerArr = [
-    {"name": "Salad", "time": "07:10pm", "image": "assets/img/home/salad.png"},
-    {
-      "name": "Oatmeal",
-      "time": "08:10pm",
-      "image": "assets/img/home/oatmeal.png"
-    },
-  ];
 
   List nutritionArr = [
     {
@@ -92,9 +49,48 @@ class _MealScheduleViewState extends State<MealScheduleView> {
     },
   ];
 
+  List<Map<String, dynamic>> mealDetailsList = [];
+
   @override
   void initState() {
     super.initState();
+    fetchMealScheduleData(DateTime.now());
+  }
+
+  Future<void> fetchMealScheduleData(DateTime selectedDate) async {
+    try {
+      final String formattedDate =
+          DateFormat('yyyy-MM-dd').format(selectedDate);
+
+      final List<MealSchedule> mealSchedules =
+          await fetchMealSchedulerDetailsOnUserID(2, formattedDate);
+
+      setState(() {
+        mealDetailsList.clear();
+      });
+
+      for (final mealSchedule in mealSchedules) {
+        final mealName = mealSchedule.mealName;
+        final mealTotalCalories = mealSchedule.totalCalorie;
+        final mealDetails = mealSchedule.mealScheduleDetail.map((detail) {
+          return {
+            "name": detail.name,
+            "time": detail.time,
+            "image": detail.image,
+            "status": detail.status,
+            "schedule_id": detail.scheduleId,
+          };
+        }).toList();
+
+        mealDetailsList.add({
+          'meal_name': mealName,
+          'total_calories': mealTotalCalories,
+          'details': mealDetails,
+        });
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
   }
 
   @override
@@ -189,6 +185,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
             firstDate: DateTime.now().subtract(const Duration(days: 140)),
             lastDate: DateTime.now().add(const Duration(days: 60)),
             onDateSelected: (date) {
+              fetchMealScheduleData(date);
             },
             selectedDayLogo: Container(
               width: double.maxFinite,
@@ -203,101 +200,76 @@ class _MealScheduleViewState extends State<MealScheduleView> {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "BreakFast",
-                          style: TextStyle(
+            child: ListView.builder(
+              itemCount: mealDetailsList.length,
+              itemBuilder: (context, index) {
+                final mealDetails = mealDetailsList[index];
+                final mealName = mealDetails['meal_name'];
+                final mealTotalCalories = mealDetails['total_calories'];
+                final details = mealDetails['details'];
+
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            mealName,
+                            style: TextStyle(
                               color: AppColor.black,
                               fontSize: 16,
-                              fontWeight: FontWeight.w700),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            "${breakfastArr.length} Items | 230 calories",
-                            style:
-                                TextStyle(color: AppColor.gray, fontSize: 12),
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: breakfastArr.length,
-                    itemBuilder: (context, index) {
-                      var mObj = breakfastArr[index] as Map? ?? {};
-                      return FoodScheduleRow(
-                        mObj: mObj,
-                        index: index,
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Dinner",
-                          style: TextStyle(
-                              color: AppColor.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700),
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            "${dinnerArr.length} Items | 120 calories",
-                            style:
-                                TextStyle(color: AppColor.gray, fontSize: 12),
+                          TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              "${details.length} Items | $mealTotalCalories calories",
+                              style: TextStyle(
+                                color: AppColor.gray,
+                                fontSize: 12,
+                              ),
+                            ),
                           ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: dinnerArr.length,
-                    itemBuilder: (context, index) {
-                      var mObj = dinnerArr[index] as Map? ?? {};
-                      return FoodScheduleRow(
-                        mObj: mObj,
-                        index: index,
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: media.width * 0.05,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Today Meal Nutritions",
-                          style: TextStyle(
+                    ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: details.length,
+                      itemBuilder: (context, index) {
+                        final detail = details[index];
+                        return FoodScheduleRow(
+                          mObj: detail,
+                          index: index,
+                        );
+                      },
+                    ),
+                    SizedBox(
+                      height: media.width * 0.05,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Today Meal Nutritions",
+                            style: TextStyle(
                               color: AppColor.black,
                               fontSize: 16,
-                              fontWeight: FontWeight.w700),
-                        ),
-                      ],
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  ListView.builder(
+                    ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -308,12 +280,14 @@ class _MealScheduleViewState extends State<MealScheduleView> {
                         return NutritionRow(
                           nObj: nObj,
                         );
-                      }),
-                  SizedBox(
-                    height: media.width * 0.05,
-                  ),
-                ],
-              ),
+                      },
+                    ),
+                    SizedBox(
+                      height: media.width * 0.05,
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ],

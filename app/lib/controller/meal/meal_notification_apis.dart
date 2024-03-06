@@ -52,3 +52,35 @@ Future<List<MealNotification>> fetchMealNotificationsOnUserID(int id) async {
     throw Exception('Failed to fetch meal notification: $e');
   }
 }
+
+
+
+// API call to fetch all the data of meal schedule details based on user id
+Future<List<MealSchedule>> fetchMealSchedulerDetailsOnUserID(int id, String requiredDate) async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/meal/users/meals-schedule/user/$id/date/$requiredDate/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> responseData = json.decode(response.body);
+
+      List<MealSchedule> mealSchedule = [];
+      for (var data in responseData) {
+        if (data['details'] != null && data['details'] is List) {
+          mealSchedule.add(MealSchedule.fromJson(data));
+        }
+      }
+    
+      return mealSchedule;
+    } else {
+      throw Exception('Failed to load meal schedule details');
+    }
+  } catch (e) {
+    print('Error fetching meal schedule details: $e');
+    throw Exception('Failed to fetch meal schedule details: $e');
+  }
+}

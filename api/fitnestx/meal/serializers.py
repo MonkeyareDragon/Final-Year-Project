@@ -97,3 +97,23 @@ class DisplayFoodScheduleNotificationSerializer(serializers.ModelSerializer):
     
     def get_send_datetime(self, obj):
         return obj.date.strftime('%Y-%m-%d') + ' ' + obj.time.strftime('%H:%M:%S')
+
+class FoodScheduleScreenSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    status = serializers.CharField(source='status', default='pending')
+    schedule_id = serializers.IntegerField(source='id', read_only=True)
+    
+    class Meta:
+        model = Food
+        fields = ['name', 'time', 'image', 'status', 'schedule_id']
+
+    def get_image(self, obj):
+        return obj.food_image.url
+
+class MealDetailScheduleScreenSerializer(serializers.ModelSerializer):
+    details = FoodSerializer(many=True, read_only=True)
+    total_calories = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Meal
+        fields = ['meal_name', 'total_calories', 'details']

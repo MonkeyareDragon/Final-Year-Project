@@ -1,5 +1,5 @@
 from django.urls import path
-from fitnestx.meal.views import DisplayFoodScheduleNotificationView, FoodMakingStepsListView, FoodScheduleCreateAPIView, UpdateFoodScheduleNotificationView, IngredientOnFoodDetails, MealFoodDetails, MealList, CategoryList, NutritionOnFoodDetails
+from fitnestx.meal.views import DisplayFoodScheduleNotificationView, FoodMakingStepsListView, FoodScheduleCreateAPIView, MealScheduleScreenDetailView, UpdateFoodScheduleNotificationView, IngredientOnFoodDetails, MealFoodDetails, MealList, CategoryList, NutritionOnFoodDetails
 
 app_name = "meal.users"
 
@@ -13,4 +13,5 @@ urlpatterns = [
     path('food-schedule/create/', FoodScheduleCreateAPIView.as_view(), name='food-schedule-create'),
     path('foodschedules/', UpdateFoodScheduleNotificationView.as_view({'get': 'list'}), name='foodschedules-update'),
     path('notifications/<int:user_id>/', DisplayFoodScheduleNotificationView.as_view(), name='food_schedule_notifications'),
+    path('meals-schedule/user/<int:user_id>/date/<str:date>/', MealScheduleScreenDetailView.as_view(), name='meal-schedule-screen-detail'),
 ]
