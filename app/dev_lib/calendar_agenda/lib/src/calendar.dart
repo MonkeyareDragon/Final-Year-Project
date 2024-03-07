@@ -323,7 +323,7 @@ class CalendarAgendaState extends State<CalendarAgenda>
             
           ),
           Positioned(
-            bottom: 0.0,
+            bottom: -10.0,
             child: dayList(),
           ),
         ],
@@ -378,7 +378,7 @@ class CalendarAgendaState extends State<CalendarAgenda>
         return Container(
           height: widget.fullCalendarScroll == FullCalendarScroll.vertical
               ? height
-              : (MediaQuery.of(context).size.height / 7) * 4.3,
+              : (MediaQuery.of(context).size.height / 7) * 4.6,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

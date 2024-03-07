@@ -18,43 +18,14 @@ class _MealScheduleViewState extends State<MealScheduleView> {
   CalendarAgendaController _calendarAgendaControllerAppBar =
       CalendarAgendaController();
 
-  List nutritionArr = [
-    {
-      "title": "Calories",
-      "image": "assets/img/home/burn.png",
-      "unit_name": "kCal",
-      "value": "350",
-      "max_value": "500",
-    },
-    {
-      "title": "Proteins",
-      "image": "assets/img/home/proteins.png",
-      "unit_name": "g",
-      "value": "300",
-      "max_value": "1000",
-    },
-    {
-      "title": "Fats",
-      "image": "assets/img/home/egg.png",
-      "unit_name": "g",
-      "value": "140",
-      "max_value": "1000",
-    },
-    {
-      "title": "Carbo",
-      "image": "assets/img/home/carbo.png",
-      "unit_name": "g",
-      "value": "140",
-      "max_value": "1000",
-    },
-  ];
-
+  List<Map<String, dynamic>> nutritionArr = [];
   List<Map<String, dynamic>> mealDetailsList = [];
 
   @override
   void initState() {
     super.initState();
     fetchMealScheduleData(DateTime.now());
+    fetchNutritionData(DateTime.now());
   }
 
   Future<void> fetchMealScheduleData(DateTime selectedDate) async {
@@ -90,6 +61,54 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       }
     } catch (e) {
       print('Error fetching data: $e');
+    }
+  }
+
+  // Method to fetch activity data from API
+  void fetchNutritionData(DateTime selectedDate) async {
+    int userId = 2;
+    final String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+    try {
+      DailyMealScheduleNutritions nutritionGoals =
+          await fetchDailyMealSchedulerNutritionOnUserID(
+              userId, formattedDate); // Pass user id as argument
+
+      // Update nutritionArr with fetched data
+      setState(() {
+        nutritionArr = [
+          {
+            "title": "Calories",
+            "image": "assets/img/home/burn.png",
+            "unit_name": "kCal",
+            "value": "${nutritionGoals.totalCalorie}",
+            "max_value": "${nutritionGoals.targetCalorie}",
+          },
+          {
+            "title": "Proteins",
+            "image": "assets/img/home/proteins.png",
+            "unit_name": "g",
+            "value": "${nutritionGoals.totalProtein}",
+            "max_value": "${nutritionGoals.targetProtein}",
+          },
+          {
+            "title": "Fats",
+            "image": "assets/img/home/egg.png",
+            "unit_name": "g",
+            "value": "${nutritionGoals.totalFat}",
+            "max_value": "${nutritionGoals.targetFat}",
+          },
+          {
+            "title": "Carbo",
+            "image": "assets/img/home/carbo.png",
+            "unit_name": "g",
+            "value": "${nutritionGoals.totalCarbohydrate}",
+            "max_value": "${nutritionGoals.targetCarbohydrate}",
+          },
+        ];
+      });
+    } catch (e) {
+      print('Error fetching activity data: $e');
+      // Handle error fetching data
     }
   }
 
@@ -186,6 +205,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
             lastDate: DateTime.now().add(const Duration(days: 60)),
             onDateSelected: (date) {
               fetchMealScheduleData(date);
+              fetchNutritionData(date);
             },
             selectedDayLogo: Container(
               width: double.maxFinite,
@@ -275,7 +295,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
                       shrinkWrap: true,
                       itemCount: nutritionArr.length,
                       itemBuilder: (context, index) {
-                        var nObj = nutritionArr[index] as Map? ?? {};
+                        var nObj = nutritionArr[index];
 
                         return NutritionRow(
                           nObj: nObj,

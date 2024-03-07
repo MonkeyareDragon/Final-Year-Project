@@ -6,7 +6,6 @@ const String baseUrl = 'http://10.0.2.2:8000/api/v1';
 String token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExNTI2MDQzLCJqdGkiOiIxYTBmNDdmYzQzNjY0NjYwYmIxNWJmMWI1YjljYmI0YSIsInVzZXJfaWQiOjJ9.Bn7VD-KbEJKJUluxoaS1DoGzMMhlJIiR7-twjhXr1Y0';
 
-
 Future<void> createFoodSchedule(Map<String, dynamic> requestData) async {
   final String apiUrl = '$baseUrl/meal/users/food-schedule/create/';
   print(requestData);
@@ -23,7 +22,8 @@ Future<void> createFoodSchedule(Map<String, dynamic> requestData) async {
     if (response.statusCode == 201) {
       print('FoodSchedule created successfully');
     } else {
-      print('Failed to create FoodSchedule. Status code: ${response.statusCode}');
+      print(
+          'Failed to create FoodSchedule. Status code: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
   } catch (e) {
@@ -53,13 +53,13 @@ Future<List<MealNotification>> fetchMealNotificationsOnUserID(int id) async {
   }
 }
 
-
-
 // API call to fetch all the data of meal schedule details based on user id
-Future<List<MealSchedule>> fetchMealSchedulerDetailsOnUserID(int id, String requiredDate) async {
+Future<List<MealSchedule>> fetchMealSchedulerDetailsOnUserID(
+    int id, String requiredDate) async {
   try {
     final response = await http.get(
-      Uri.parse('$baseUrl/meal/users/meals-schedule/user/$id/date/$requiredDate/'),
+      Uri.parse(
+          '$baseUrl/meal/users/meals-schedule/user/$id/date/$requiredDate/'),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -74,7 +74,7 @@ Future<List<MealSchedule>> fetchMealSchedulerDetailsOnUserID(int id, String requ
           mealSchedule.add(MealSchedule.fromJson(data));
         }
       }
-    
+
       return mealSchedule;
     } else {
       throw Exception('Failed to load meal schedule details');
@@ -82,5 +82,30 @@ Future<List<MealSchedule>> fetchMealSchedulerDetailsOnUserID(int id, String requ
   } catch (e) {
     print('Error fetching meal schedule details: $e');
     throw Exception('Failed to fetch meal schedule details: $e');
+  }
+}
+
+// API call to fetch all the data of meal schedule nurition details based on user id
+Future<DailyMealScheduleNutritions> fetchDailyMealSchedulerNutritionOnUserID(
+    int id, String requiredDate) async {
+  try {
+    final response = await http.get(
+      Uri.parse(
+          '$baseUrl/meal/users/schedule-nutrition/user/$id/date/$requiredDate/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = json.decode(response.body);
+      return DailyMealScheduleNutritions.fromJson(
+          data); // Return a single ActivityGoal object
+    } else {
+      throw Exception('Failed to load meal schedule nurition details');
+    }
+  } catch (e) {
+    print('Error fetching meal schedule nurition details: $e');
+    throw Exception('Failed to fetch meal schedule nurition details: $e');
   }
 }
