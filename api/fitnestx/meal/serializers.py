@@ -117,3 +117,13 @@ class MealDetailScheduleScreenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meal
         fields = ['meal_name', 'total_calories', 'details']
+
+class DailyNutritionDataSerializer(serializers.Serializer):
+    total_calorie = serializers.IntegerField()
+    target_calorie = serializers.IntegerField()
+    total_protein = serializers.IntegerField()
+    target_protein = serializers.IntegerField()
+    total_fat = serializers.IntegerField()
+    target_fat = serializers.IntegerField()
+    total_carbo = serializers.IntegerField()
+    target_carbo = serializers.IntegerField()

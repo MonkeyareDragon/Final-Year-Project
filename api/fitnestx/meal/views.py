@@ -1,10 +1,13 @@
 from rest_framework import generics, status, viewsets
-from fitnestx.meal.models import Food, FoodMakingSteps, FoodSchedule, Meal
+from fitnestx.meal.models import Food, FoodMakingSteps, FoodSchedule, Meal, Nutrition
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from django.utils import timezone
-from fitnestx.meal.serializers import CategorySerializer, DisplayFoodScheduleNotificationSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodSerializer, IngredientSerializer, MealDetailScheduleScreenSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
+from django.db.models import Sum, FloatField
+from django.db.models.functions import Coalesce, Cast
+from django.db import models
+from fitnestx.meal.serializers import CategorySerializer, DailyNutritionDataSerializer, DisplayFoodScheduleNotificationSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodSerializer, IngredientSerializer, MealDetailScheduleScreenSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
 
 class MealList(generics.ListAPIView):
     queryset = Meal.objects.all()
@@ -124,3 +127,47 @@ class MealScheduleScreenDetailView(APIView):
             }
             data.append(meal_data)
         return Response(data)
+    
+class DailyNutritionDataView(APIView):
+    def get(self, request, user_id, date):
+        total_calorie = FoodSchedule.objects.filter(
+            user=user_id,
+            date=date,
+            status='Completed'
+        ).aggregate(total_calorie=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='Calories')))['total_calorie'] or 0
+        
+        total_protein = FoodSchedule.objects.filter(
+            user=user_id,
+            date=date,
+            status='Completed'
+        ).aggregate(total_protein=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='protein')))['total_protein'] or 0
+        
+        total_fat = FoodSchedule.objects.filter(
+            user=user_id,
+            date=date,
+            status='Completed'
+        ).aggregate(total_fat=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='fat')))['total_fat'] or 0
+        
+        total_carbo = FoodSchedule.objects.filter(
+            user=user_id,
+            date=date,
+            status='Completed'
+        ).aggregate(total_carbo=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='carbo')))['total_carbo'] or 0
+        
+        target_calorie = 1500
+        target_protein = 2000  
+        target_fat = 1000 
+        target_carbo = 500 
+        
+        serializer = DailyNutritionDataSerializer(data={
+            'total_calorie': total_calorie,
+            'target_calorie': target_calorie,
+            'total_protein': total_protein,
+            'target_protein': target_protein,
+            'total_fat': total_fat,
+            'target_fat': target_fat,
+            'total_carbo': total_carbo,
+            'target_carbo': target_carbo,
+        })
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data)
