@@ -102,14 +102,18 @@ class FoodScheduleScreenSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     status = serializers.CharField(source='status', default='pending')
     schedule_id = serializers.IntegerField(source='id', read_only=True)
+    time_required = serializers.SerializerMethodField()
+    notify_status = serializers.BooleanField(default=False)
     
     class Meta:
         model = Food
-        fields = ['name', 'time', 'image', 'status', 'schedule_id']
+        fields = ['name', 'time', 'image', 'status', 'schedule_id', 'time_required', 'notify_status']
 
     def get_image(self, obj):
         return obj.food_image.url
 
+    def get_time_required(self, obj):
+        return obj.time_required
 class MealDetailScheduleScreenSerializer(serializers.ModelSerializer):
     details = FoodSerializer(many=True, read_only=True)
     total_calories = serializers.SerializerMethodField()
@@ -127,3 +131,8 @@ class DailyNutritionDataSerializer(serializers.Serializer):
     target_fat = serializers.IntegerField()
     total_carbo = serializers.IntegerField()
     target_carbo = serializers.IntegerField()
+
+class FoodScheduleStatusUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodSchedule
+        fields = ['id', 'status']

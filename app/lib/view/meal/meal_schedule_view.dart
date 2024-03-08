@@ -50,6 +50,8 @@ class _MealScheduleViewState extends State<MealScheduleView> {
             "image": detail.image,
             "status": detail.status,
             "schedule_id": detail.scheduleId,
+            "required_time": detail.requiredTime,
+            "notify_status": detail.notifyStatus,
           };
         }).toList();
 
@@ -108,8 +110,11 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       });
     } catch (e) {
       print('Error fetching activity data: $e');
-      // Handle error fetching data
     }
+  }
+
+  void _reloadPage() {
+    setState(() {});
   }
 
   @override
@@ -267,6 +272,7 @@ class _MealScheduleViewState extends State<MealScheduleView> {
                         return FoodScheduleRow(
                           mObj: detail,
                           index: index,
+                          onReload: _reloadPage,
                         );
                       },
                     ),

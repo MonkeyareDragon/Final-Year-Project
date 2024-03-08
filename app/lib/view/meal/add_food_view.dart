@@ -214,7 +214,7 @@ class _AddMealViewState extends State<AddFoodView> {
                   };
 
                   // Call the method with the request data
-                  createFoodSchedule(requestData);
+                  FoodSchedule(requestData);
                 }),
             const SizedBox(
               height: 10,

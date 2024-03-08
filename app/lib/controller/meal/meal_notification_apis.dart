@@ -109,3 +109,58 @@ Future<DailyMealScheduleNutritions> fetchDailyMealSchedulerNutritionOnUserID(
     throw Exception('Failed to fetch meal schedule nurition details: $e');
   }
 }
+
+// API call to patch all the status of the meal schedule
+Future<void> patchMealSchedulerStatus(int scheduleid) async {
+  try {
+    final response = await http.patch(
+      Uri.parse(
+          '$baseUrl/meal/users/food-schedule/$scheduleid/complete/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Meal schedule status updated successfully');
+    } if (response.statusCode == 403) {
+      print('Forbidden to update meal schedule status');
+    }
+    else {
+      print('Failed to update meal schedule status. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error updating meal schedule status: $e');
+    throw Exception('Failed to update meal schedule status: $e');
+  }
+}
+
+
+// API call to delete the given id of the meal schedule
+Future<void> deleteMealScheduler(int scheduleid) async {
+  try {
+    final response = await http.delete(
+      Uri.parse(
+          '$baseUrl/meal/users/food-schedule/$scheduleid/delete/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 204) {
+      print('Meal schedule have successfully deleted');
+    } else if (response.statusCode == 403) {
+      print('Forbidden to delete this meal schedule');
+    }
+    else {
+      print('Failed to delete meal schedule. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error deleting meal schedule status: $e');
+    throw Exception('Failed to deleting meal schedule status: $e');
+  }
+}

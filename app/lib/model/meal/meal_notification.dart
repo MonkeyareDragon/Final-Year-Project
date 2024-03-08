@@ -56,6 +56,8 @@ class MealScheduleDetail {
   String image;
   String status;
   int scheduleId;
+  int requiredTime;
+  bool notifyStatus;
 
   MealScheduleDetail({
     required this.name,
@@ -63,6 +65,8 @@ class MealScheduleDetail {
     required this.image,
     required this.status,
     required this.scheduleId,
+    required this.requiredTime,
+    required this.notifyStatus,
   }){
     this.image = UrlUtil.getImageUrl(image);
   }
@@ -74,6 +78,8 @@ class MealScheduleDetail {
       image: json['image'],
       status: json['status'],
       scheduleId: json['schedule_id'],
+      requiredTime: json['time_required'],
+      notifyStatus: json['notify_status'],
     );
   }
 }

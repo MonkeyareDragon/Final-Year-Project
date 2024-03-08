@@ -4,10 +4,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from django.utils import timezone
-from django.db.models import Sum, FloatField
-from django.db.models.functions import Coalesce, Cast
+from django.db.models import Sum
 from django.db import models
-from fitnestx.meal.serializers import CategorySerializer, DailyNutritionDataSerializer, DisplayFoodScheduleNotificationSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodSerializer, IngredientSerializer, MealDetailScheduleScreenSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
+from rest_framework.permissions import IsAuthenticated
+from fitnestx.meal.serializers import CategorySerializer, DailyNutritionDataSerializer, DisplayFoodScheduleNotificationSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodScheduleStatusUpdateSerializer, FoodSerializer, IngredientSerializer, MealDetailScheduleScreenSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
 
 class MealList(generics.ListAPIView):
     queryset = Meal.objects.all()
@@ -116,7 +116,9 @@ class MealScheduleScreenDetailView(APIView):
                             'time': food_schedule.time,
                             'image': food.food_image.url,
                             'status': food_schedule.status,
-                            'schedule_id': food_schedule.id
+                            'schedule_id': food_schedule.id,
+                            'time_required': food.time_required,
+                            'notify_status': food_schedule.notify_status,
                         }
                         details.append(food_data)
                         total_calories += food.calories
@@ -171,3 +173,31 @@ class DailyNutritionDataView(APIView):
         })
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
+
+class FoodScheduleStatusUpdateAPIView(generics.UpdateAPIView):
+    queryset = FoodSchedule.objects.all()
+    serializer_class = FoodScheduleStatusUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.user == request.user:
+            instance.status = 'Completed'
+            instance.save()
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        else:
+            return Response({'error': 'You do not have permission to change the status of this FoodSchedule.'}, status=status.HTTP_403_FORBIDDEN)
+
+class FoodScheduleDeleteAPIView(generics.DestroyAPIView):
+    queryset = FoodSchedule.objects.all()
+    serializer_class = FoodScheduleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.user == request.user:
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({'error': 'You do not have permission to delete this FoodSchedule.'}, status=status.HTTP_403_FORBIDDEN)
