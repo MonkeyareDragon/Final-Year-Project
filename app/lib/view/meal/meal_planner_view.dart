@@ -1,11 +1,14 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/find_eat_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/todays_meal_row.dart';
 import 'package:loginsignup/controller/meal/meal_apis.dart';
+import 'package:loginsignup/controller/meal/meal_notification_apis.dart';
 import 'package:loginsignup/model/meal/meal.dart';
+import 'package:loginsignup/model/meal/meal_notification.dart';
 import 'package:loginsignup/view/meal/find_meal_view.dart';
 import 'package:loginsignup/view/meal/meal_schedule_view.dart';
 
@@ -17,25 +20,49 @@ class MealPlannerView extends StatefulWidget {
 }
 
 class _MealPlannerViewState extends State<MealPlannerView> {
-  List todayMealArr = [
-    {
-      "name": "Salmon Nigiri",
-      "image": "assets/img/home/m_1.png",
-      "time": "28/05/2023 07:00 AM"
-    },
-    {
-      "name": "Lowfat Milk",
-      "image": "assets/img/home/m_2.png",
-      "time": "28/05/2023 08:00 AM"
-    },
-  ];
-
   List findEatArr = [];
+  List<Map<String, dynamic>> todayMealArr = [];
+  String selectedMealName = "Breakfast";
 
   @override
   void initState() {
     super.initState();
     fetchWorkoutDataList();
+    fetchTodayMealSchedule();
+  }
+
+  Future<void> fetchTodayMealSchedule() async {
+    try {
+      String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      String currentTime = DateFormat('HH:mm:ss').format(DateTime.now());
+
+      final List<TodayMeal> todaymealSchedules =
+          await fetchTodayScheduleMeals(2, currentDate, currentTime);
+
+      setState(() {
+        todayMealArr.clear();
+      });
+
+      for (final todaymealSchedule in todaymealSchedules) {
+        final mealName = todaymealSchedule.mealName;
+        final mealDetails = todaymealSchedule.details.map((detail) {
+          return {
+            "name": detail.name,
+            "image": detail.image,
+            "date": detail.date,
+            "time": detail.time,
+            "notify_status": detail.notifyStatus,
+          };
+        }).toList();
+
+        todayMealArr.add({
+          'meal_name': mealName,
+          'details': mealDetails,
+        });
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
   }
 
   Future<void> fetchWorkoutDataList() async {
@@ -322,27 +349,26 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton(
-                            items: [
-                              "Breakfast",
-                              "Lunch",
-                              "Dinner",
-                              "Snack",
-                              "Dessert"
-                            ]
-                                .map((name) => DropdownMenuItem(
-                                      value: name,
-                                      child: Text(
-                                        name,
-                                        style: TextStyle(
-                                            color: AppColor.gray, fontSize: 14),
-                                      ),
-                                    ))
-                                .toList(),
-                            onChanged: (value) {},
+                            items: todayMealArr.map((meal) {
+                              return DropdownMenuItem(
+                                value: meal['meal_name'],
+                                child: Text(
+                                  meal['meal_name'],
+                                  style: TextStyle(
+                                      color: AppColor.gray, fontSize: 14),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedMealName = value
+                                    .toString(); // Update selected meal name
+                              });
+                            },
                             icon:
                                 Icon(Icons.expand_more, color: AppColor.white),
                             hint: Text(
-                              "Breakfast",
+                              selectedMealName,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: AppColor.white, fontSize: 12),
@@ -361,10 +387,22 @@ class _MealPlannerViewState extends State<MealPlannerView> {
                     shrinkWrap: true,
                     itemCount: todayMealArr.length,
                     itemBuilder: (context, index) {
-                      var mObj = todayMealArr[index] as Map? ?? {};
-                      return TodayMealRow(
-                        mObj: mObj,
-                      );
+                      var mObj = todayMealArr[index];
+                      var mealName = mObj['meal_name'];
+                      var details = mObj['details'];
+                      if (mealName == selectedMealName) {
+                        return Column(
+                          children: details.map<Widget>((detail) {
+                            return TodayMealRow(
+                              mealName: mealName,
+                              detail: detail,
+                            );
+                          }).toList(),
+                        );
+                      } else {
+                        return SizedBox
+                            .shrink(); // Return empty SizedBox for non-matching meals
+                      }
                     },
                   ),
                 ],
@@ -444,7 +482,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
           FlSpot(4, 80),
           FlSpot(5, 25),
           FlSpot(6, 70),
-          FlSpot(7, 35),
+          FlSpot(7, 100),
         ],
       );
 

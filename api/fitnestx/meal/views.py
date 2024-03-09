@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.db.models import Sum
 from django.db import models
 from rest_framework.permissions import IsAuthenticated
+from datetime import datetime, timedelta
+from django.db.models import Q
 from fitnestx.meal.serializers import CategorySerializer, DailyNutritionDataSerializer, DisplayFoodScheduleNotificationSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodScheduleStatusUpdateSerializer, FoodSerializer, IngredientSerializer, MealDetailScheduleScreenSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
 
 class MealList(generics.ListAPIView):
@@ -201,3 +203,51 @@ class FoodScheduleDeleteAPIView(generics.DestroyAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response({'error': 'You do not have permission to delete this FoodSchedule.'}, status=status.HTTP_403_FORBIDDEN)
+
+class MealUpComingBarListView(APIView):
+    def get(self, request, user_id, date, time):
+        try:
+            datetime_str = f"{date} {time}"
+            datetime_obj = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            return Response({"error": "Invalid date or time format. Please provide date in format 'DD/MM/YYYY' and time in format 'HH:MM:SS'."}, status=400)
+
+        start_datetime = datetime_obj
+        end_datetime = start_datetime + timedelta(days=1)
+        print(start_datetime, end_datetime)
+
+        food_schedules = FoodSchedule.objects.filter(
+            Q(date__gte=start_datetime, date__lt=end_datetime) |
+            Q(date=start_datetime, time__gte=start_datetime.time()) |
+            Q(date=end_datetime.date(), time__lt=end_datetime.time())
+        ).filter(user_id=user_id)
+
+        data = []
+        for food_schedule in food_schedules:
+            food_data = {
+                'name': food_schedule.food.name,
+                'image': food_schedule.food.food_image.url,
+                'date': food_schedule.date.strftime("%Y/%m/%d"),
+                'time': food_schedule.time.strftime("%H:%M:%S"),
+                'notify_status': food_schedule.send_notification,
+            }
+            meal_name = None
+            for category in food_schedule.food.category_set.all():
+                for meal in category.meal_set.all():
+                    meal_name = meal.name
+                    break
+                if meal_name:
+                    break
+            meal_exists = False
+            for meal in data:
+                if meal['meal_name'] == meal_name:
+                    meal['details'].append(food_data)
+                    meal_exists = True
+                    break
+            if not meal_exists:
+                data.append({
+                    'meal_name': meal_name,
+                    'details': [food_data],
+                })
+
+        return Response(data)

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loginsignup/common/color_extension.dart';
-import 'package:loginsignup/common/date_function.dart';
 
 class TodayMealRow extends StatelessWidget {
-  final Map mObj;
-  const TodayMealRow({super.key, required this.mObj});
+  final String mealName;
+  final Map<String, dynamic> detail;
+  const TodayMealRow({super.key, required this.mealName, required this.detail});
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +20,8 @@ class TodayMealRow extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Image.asset(
-                mObj["image"].toString(),
+              child: Image.network(
+                detail["image"].toString(),
                 width: 40,
                 height: 40,
                 fit: BoxFit.cover,
@@ -34,14 +35,14 @@ class TodayMealRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    mObj["name"].toString(),
+                    detail["name"].toString(),
                     style: TextStyle(
                         color: AppColor.black,
                         fontSize: 12,
                         fontWeight: FontWeight.w500),
                   ),
                   Text(
-                     "${getDayTitle(mObj["time"].toString())} | ${getStringDateToOtherFormate(mObj["time"].toString(), outFormatStr: "h:mm aa")}",
+                    "${DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.parse('${detail["date"].toString().replaceAll('/', '-')} ${detail["time"]}'))}",
                     style: TextStyle(
                       color: AppColor.gray,
                       fontSize: 10,
@@ -53,7 +54,9 @@ class TodayMealRow extends StatelessWidget {
             IconButton(
               onPressed: () {},
               icon: Image.asset(
-                "assets/img/home/bell.png",
+                detail["notify_status"]
+                    ? "assets/img/home/notification_on.png"
+                    : "assets/img/home/notification_off.png",
                 width: 25,
                 height: 25,
               ),

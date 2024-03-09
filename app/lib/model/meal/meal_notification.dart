@@ -67,7 +67,7 @@ class MealScheduleDetail {
     required this.scheduleId,
     required this.requiredTime,
     required this.notifyStatus,
-  }){
+  }) {
     this.image = UrlUtil.getImageUrl(image);
   }
 
@@ -115,6 +115,53 @@ class DailyMealScheduleNutritions {
       targetFat: json['target_fat'],
       totalCarbohydrate: json['total_carbo'],
       targetCarbohydrate: json['target_carbo'],
+    );
+  }
+}
+
+class TodayMeal {
+  String mealName;
+  List<TodayMealDetail> details;
+
+  TodayMeal({
+    required this.mealName,
+    required this.details,
+  });
+
+  factory TodayMeal.fromJson(Map<String, dynamic> json) {
+    return TodayMeal(
+      mealName: json['meal_name'],
+      details: (json['details'] as List)
+          .map((today_meal) => TodayMealDetail.fromJson(today_meal))
+          .toList(),
+    );
+  }
+}
+
+class TodayMealDetail {
+  String name;
+  String image;
+  String date;
+  String time;
+  bool notifyStatus;
+
+  TodayMealDetail({
+    required this.name,
+    required this.image,
+    required this.date,
+    required this.time,
+    required this.notifyStatus,
+  }) {
+    this.image = UrlUtil.getImageUrl(image);
+  }
+
+  factory TodayMealDetail.fromJson(Map<String, dynamic> json) {
+    return TodayMealDetail(
+      name: json['name'],
+      image: json['image'],
+      date: json['date'],
+      time: json['time'],
+      notifyStatus: json['notify_status'],
     );
   }
 }

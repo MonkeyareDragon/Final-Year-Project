@@ -164,3 +164,35 @@ Future<void> deleteMealScheduler(int scheduleid) async {
     throw Exception('Failed to deleting meal schedule status: $e');
   }
 }
+
+// API call to fetch all the data of meal details which are schedule today
+Future<List<TodayMeal>> fetchTodayScheduleMeals(
+    int id, String requiredDate, String requestTime) async {
+  try {
+    final response = await http.get(
+      Uri.parse(
+          '$baseUrl/meal/users/meals/up-comming-bar/$id/$requiredDate/$requestTime/'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> responseData = json.decode(response.body);
+
+      List<TodayMeal> todayScheduleMeal = [];
+      for (var data in responseData) {
+        if (data['details'] != null && data['details'] is List) {
+          todayScheduleMeal.add(TodayMeal.fromJson(data));
+        }
+      }
+
+      return todayScheduleMeal;
+    } else {
+      throw Exception('Failed to load meal details which are schedule today');
+    }
+  } catch (e) {
+    print('Error fetching meal details which are schedule today: $e');
+    throw Exception('Failed to fetch meal details which are schedule today: $e');
+  }
+}
