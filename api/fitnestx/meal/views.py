@@ -1,4 +1,7 @@
+from django.http import JsonResponse
+from django.views import View
 from rest_framework import generics, status, viewsets
+from fitnestx.users.models import User
 from fitnestx.meal.models import Food, FoodMakingSteps, FoodSchedule, Meal, Nutrition
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,6 +10,7 @@ from django.utils import timezone
 from django.db.models import Sum
 from django.db import models
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from datetime import datetime, timedelta
 from django.db.models import Q
 from fitnestx.meal.serializers import CategorySerializer, DailyNutritionDataSerializer, DisplayFoodScheduleNotificationSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodScheduleStatusUpdateSerializer, FoodSerializer, IngredientSerializer, MealDetailScheduleScreenSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
@@ -251,3 +255,30 @@ class MealUpComingBarListView(APIView):
                 })
 
         return Response(data)
+
+class WeeklyProgressView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        user = User.objects.get(id=user_id)
+        today = timezone.now().date()
+        start_date = today - timedelta(days=today.weekday()) 
+        progress_data = []
+
+        for i in range(7):
+            current_date = start_date + timedelta(days=i)
+
+            schedules = FoodSchedule.objects.filter(user=user, date=current_date)
+            completed_count = schedules.filter(status='Completed').count()
+            total_count = schedules.count()
+            if total_count == 0:
+                progress = 0
+            else:
+                progress = (completed_count / total_count) * 100
+
+            progress_data.append({
+                "weekly_day": current_date.strftime("%a"),
+                "progress": round(progress, 2)  
+            })
+
+        return JsonResponse(progress_data, safe=False)

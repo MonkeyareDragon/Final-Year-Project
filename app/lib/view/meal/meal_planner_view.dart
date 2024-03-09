@@ -6,8 +6,10 @@ import 'package:loginsignup/common_widget/find_eat_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/todays_meal_row.dart';
 import 'package:loginsignup/controller/meal/meal_apis.dart';
+import 'package:loginsignup/controller/meal/meal_graphs_api.dart';
 import 'package:loginsignup/controller/meal/meal_notification_apis.dart';
 import 'package:loginsignup/model/meal/meal.dart';
+import 'package:loginsignup/model/meal/meal_line_graph.dart';
 import 'package:loginsignup/model/meal/meal_notification.dart';
 import 'package:loginsignup/view/meal/find_meal_view.dart';
 import 'package:loginsignup/view/meal/meal_schedule_view.dart';
@@ -23,12 +25,26 @@ class _MealPlannerViewState extends State<MealPlannerView> {
   List findEatArr = [];
   List<Map<String, dynamic>> todayMealArr = [];
   String selectedMealName = "Breakfast";
+  List<WeeklyMealProgress> weeklyProgressData = [];
 
   @override
   void initState() {
     super.initState();
     fetchWorkoutDataList();
     fetchTodayMealSchedule();
+    fetchWeeklyProgressData();
+  }
+
+  Future<void> fetchWeeklyProgressData() async {
+    try {
+      int userid = 2;
+      final response = await fetchWeeklyProgressMealPlan(userid);
+      setState(() {
+        weeklyProgressData = response;
+      });
+    } catch (e) {
+      print('Error fetching weekly progress of meal plan: $e');
+    }
   }
 
   Future<void> fetchTodayMealSchedule() async {
@@ -453,16 +469,18 @@ class _MealPlannerViewState extends State<MealPlannerView> {
     );
   }
 
-  List<LineChartBarData> get lineBarsData1 => [
-        lineChartBarData1_1,
-      ];
+  List<LineChartBarData> get lineBarsData1 {
+    List<FlSpot> spots = [];
 
-  LineChartBarData get lineChartBarData1_1 => LineChartBarData(
+    for (int i = 0; i < weeklyProgressData.length; i++) {
+      spots.add(FlSpot(
+          (i + 1).toDouble(), weeklyProgressData[i].progress.toDouble()));
+    }
+
+    return [
+      LineChartBarData(
         isCurved: true,
-        gradient: LinearGradient(colors: [
-          AppColor.primaryColor2,
-          AppColor.primaryColor1,
-        ]),
+        gradient: LinearGradient(colors: [Colors.blue, Colors.green]),
         barWidth: 2,
         isStrokeCapRound: true,
         dotData: FlDotData(
@@ -471,20 +489,14 @@ class _MealPlannerViewState extends State<MealPlannerView> {
             radius: 3,
             color: Colors.white,
             strokeWidth: 1,
-            strokeColor: AppColor.primaryColor2,
+            strokeColor: Colors.blue,
           ),
         ),
         belowBarData: BarAreaData(show: false),
-        spots: const [
-          FlSpot(1, 35),
-          FlSpot(2, 70),
-          FlSpot(3, 40),
-          FlSpot(4, 80),
-          FlSpot(5, 25),
-          FlSpot(6, 70),
-          FlSpot(7, 100),
-        ],
-      );
+        spots: spots,
+      ),
+    ];
+  }
 
   SideTitles get rightTitles => SideTitles(
         getTitlesWidget: rightTitleWidgets,
@@ -530,40 +542,24 @@ class _MealPlannerViewState extends State<MealPlannerView> {
         showTitles: true,
         reservedSize: 32,
         interval: 1,
-        getTitlesWidget: bottomTitleWidgets,
+        getTitlesWidget: (value, meta) =>
+            bottomTitleWidgets(value, meta, weeklyProgressData),
       );
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+  Widget bottomTitleWidgets(double value, TitleMeta meta,
+      List<WeeklyMealProgress> weeklyProgressData) {
     var style = TextStyle(
       color: AppColor.gray,
       fontSize: 12,
     );
     Widget text;
-    switch (value.toInt()) {
-      case 1:
-        text = Text('Sun', style: style);
-        break;
-      case 2:
-        text = Text('Mon', style: style);
-        break;
-      case 3:
-        text = Text('Tue', style: style);
-        break;
-      case 4:
-        text = Text('Wed', style: style);
-        break;
-      case 5:
-        text = Text('Thu', style: style);
-        break;
-      case 6:
-        text = Text('Fri', style: style);
-        break;
-      case 7:
-        text = Text('Sat', style: style);
-        break;
-      default:
-        text = const Text('');
-        break;
+    int index = value.toInt() - 1;
+
+    if (index >= 0 && index < weeklyProgressData.length) {
+      var weeklyDay = weeklyProgressData[index].weeklyDay;
+      text = Text(weeklyDay, style: style);
+    } else {
+      text = const Text('');
     }
 
     return SideTitleWidget(
