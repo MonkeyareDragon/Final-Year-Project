@@ -1,14 +1,14 @@
-import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/food_schedule_row.dart';
 import 'package:loginsignup/common_widget/nutrition_row.dart';
 import 'package:loginsignup/controller/meal/meal_notification_apis.dart';
 import 'package:loginsignup/model/meal/meal_notification.dart';
-import 'package:intl/intl.dart';
+import 'package:calendar_agenda/calendar_agenda.dart';
 
 class MealScheduleView extends StatefulWidget {
-  const MealScheduleView({super.key});
+  const MealScheduleView({Key? key}) : super(key: key);
 
   @override
   State<MealScheduleView> createState() => _MealScheduleViewState();
@@ -121,202 +121,172 @@ class _MealScheduleViewState extends State<MealScheduleView> {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColor.white,
-        centerTitle: true,
-        elevation: 0,
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            height: 40,
-            width: 40,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-                color: AppColor.lightGray,
-                borderRadius: BorderRadius.circular(10)),
-            child: Image.asset(
-              "assets/img/home/black_btn.png",
-              width: 15,
-              height: 15,
-              fit: BoxFit.contain,
+      body: NestedScrollView(
+        headerSliverBuilder: (context, _) {
+          return [
+            SliverAppBar(
+              title: Text("Meal Schedule"),
+              actions: [
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.more_vert),
+                ),
+              ],
+              floating: true,
+              snap: true,
+              backgroundColor: Colors.white,
+              elevation: 0,
             ),
-          ),
-        ),
-        title: Text(
-          "Meal  Schedule",
-          style: TextStyle(
-              color: AppColor.black, fontSize: 16, fontWeight: FontWeight.w700),
-        ),
-        actions: [
-          InkWell(
-            onTap: () {},
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              height: 40,
-              width: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: AppColor.lightGray,
-                  borderRadius: BorderRadius.circular(10)),
-              child: Image.asset(
-                "assets/img/home/more_btn.png",
-                width: 15,
-                height: 15,
-                fit: BoxFit.contain,
+          ];
+        },
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CalendarAgenda(
+                controller: _calendarAgendaControllerAppBar,
+                appbar: false,
+                selectedDayPosition: SelectedDayPosition.center,
+                leading: IconButton(
+                  onPressed: () {},
+                  icon: Image.asset(
+                    "assets/img/home/ArrowLeft.png",
+                    width: 15,
+                    height: 15,
+                  ),
+                ),
+                training: IconButton(
+                  onPressed: () {},
+                  icon: Image.asset(
+                    "assets/img/home/ArrowRight.png",
+                    width: 15,
+                    height: 15,
+                  ),
+                ),
+                weekDay: WeekDay.short,
+                dayNameFontSize: 12,
+                dayNumberFontSize: 16,
+                dayBGColor: Colors.grey.withOpacity(0.15),
+                titleSpaceBetween: 15,
+                backgroundColor: Colors.transparent,
+                fullCalendarScroll: FullCalendarScroll.horizontal,
+                fullCalendarDay: WeekDay.short,
+                selectedDateColor: Colors.white,
+                dateColor: Colors.black,
+                locale: 'en',
+                initialDate: DateTime.now(),
+                calendarEventColor: AppColor.primaryColor2,
+                firstDate: DateTime.now().subtract(const Duration(days: 140)),
+                lastDate: DateTime.now().add(const Duration(days: 60)),
+                onDateSelected: (date) {
+                  fetchMealScheduleData(date);
+                  fetchNutritionData(date);
+                },
+                selectedDayLogo: Container(
+                  width: double.maxFinite,
+                  height: double.maxFinite,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: AppColor.primaryG,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
               ),
-            ),
-          )
-        ],
-      ),
-      backgroundColor: AppColor.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CalendarAgenda(
-            controller: _calendarAgendaControllerAppBar,
-            appbar: false,
-            selectedDayPosition: SelectedDayPosition.center,
-            leading: IconButton(
-                onPressed: () {},
-                icon: Image.asset(
-                  "assets/img/home/ArrowLeft.png",
-                  width: 15,
-                  height: 15,
-                )),
-            training: IconButton(
-                onPressed: () {},
-                icon: Image.asset(
-                  "assets/img/home/ArrowRight.png",
-                  width: 15,
-                  height: 15,
-                )),
-            weekDay: WeekDay.short,
-            dayNameFontSize: 12,
-            dayNumberFontSize: 16,
-            dayBGColor: Colors.grey.withOpacity(0.15),
-            titleSpaceBetween: 15,
-            backgroundColor: Colors.transparent,
-            fullCalendarScroll: FullCalendarScroll.horizontal,
-            fullCalendarDay: WeekDay.short,
-            selectedDateColor: Colors.white,
-            dateColor: Colors.black,
-            locale: 'en',
-            initialDate: DateTime.now(),
-            calendarEventColor: AppColor.primaryColor2,
-            firstDate: DateTime.now().subtract(const Duration(days: 140)),
-            lastDate: DateTime.now().add(const Duration(days: 60)),
-            onDateSelected: (date) {
-              fetchMealScheduleData(date);
-              fetchNutritionData(date);
-            },
-            selectedDayLogo: Container(
-              width: double.maxFinite,
-              height: double.maxFinite,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: AppColor.primaryG,
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: mealDetailsList.length,
-              itemBuilder: (context, index) {
-                final mealDetails = mealDetailsList[index];
-                final mealName = mealDetails['meal_name'];
-                final mealTotalCalories = mealDetails['total_calories'];
-                final details = mealDetails['details'];
+              ListView.builder(
+                itemCount: mealDetailsList.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final mealDetails = mealDetailsList[index];
+                  final mealName = mealDetails['meal_name'];
+                  final mealTotalCalories = mealDetails['total_calories'];
+                  final details = mealDetails['details'];
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            mealName,
-                            style: TextStyle(
-                              color: AppColor.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              "${details.length} Items | $mealTotalCalories calories",
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              mealName,
                               style: TextStyle(
-                                color: AppColor.gray,
-                                fontSize: 12,
+                                color: AppColor.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: details.length,
-                      itemBuilder: (context, index) {
-                        final detail = details[index];
-                        return FoodScheduleRow(
-                          mObj: detail,
-                          index: index,
-                          onReload: _reloadPage,
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: media.width * 0.05,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Today Meal Nutritions",
-                            style: TextStyle(
-                              color: AppColor.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                            TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                "${details.length} Items | $mealTotalCalories calories",
+                                style: TextStyle(
+                                  color: AppColor.gray,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: nutritionArr.length,
-                      itemBuilder: (context, index) {
-                        var nObj = nutritionArr[index];
-
-                        return NutritionRow(
-                          nObj: nObj,
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: media.width * 0.05,
+                      ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: details.length,
+                        itemBuilder: (context, index) {
+                          final detail = details[index];
+                          return FoodScheduleRow(
+                            mObj: detail,
+                            index: index,
+                            onReload: _reloadPage,
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Today Meal Nutritions",
+                      style: TextStyle(
+                        color: AppColor.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
-                );
-              },
-            ),
+                ),
+              ),
+              ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: nutritionArr.length,
+                itemBuilder: (context, index) {
+                  var nObj = nutritionArr[index];
+
+                  return NutritionRow(
+                    nObj: nObj,
+                  );
+                },
+              ),
+              SizedBox(
+                height: media.width * 0.05,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

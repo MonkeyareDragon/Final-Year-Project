@@ -8,7 +8,6 @@ String token =
 
 Future<void> createFoodSchedule(Map<String, dynamic> requestData) async {
   final String apiUrl = '$baseUrl/meal/users/food-schedule/create/';
-  print(requestData);
   try {
     final http.Response response = await http.post(
       Uri.parse(apiUrl),

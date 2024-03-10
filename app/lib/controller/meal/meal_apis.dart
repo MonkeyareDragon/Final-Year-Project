@@ -60,7 +60,6 @@ Future<List<Category>> fetchCategoryDetailsOnMealID(int id) async {
 // API call to fetch all the data of food base on meal id
 Future<List<Food>> fetchFoodDetailsOnMealID(int id) async {
   try {
-    print(id);
     final response = await http.get(
       Uri.parse('$baseUrl/meal/users/foods/$id/'),
       headers: {
@@ -130,7 +129,6 @@ Future<List<Ingredient>> fetchIngredientBaseOnFood(int id) async {
 // API call to fetch all the data of Food Making Steps on food id
 Future<List<FoodMakingSteps>> fetchFoodMakingStepsBaseOnFood(int id) async {
   try {
-    print(id);
     final response = await http.get(
       Uri.parse('$baseUrl/meal/users/food-making-steps/$id/'),
       headers: {

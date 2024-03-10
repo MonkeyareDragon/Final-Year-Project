@@ -109,6 +109,8 @@ class WorkoutSchedule(models.Model):
     notification_note = models.TextField(blank=True)
     notify_status = models.BooleanField(default=False)
     status = models.CharField(max_length=15, choices=SCHEDULE_STATUS, default="Pending")
+    check_notification = models.BooleanField(default=False)
+    send_notification = models.BooleanField(default=True)
 
     class Meta:
         unique_together = ('date', 'time', 'user')

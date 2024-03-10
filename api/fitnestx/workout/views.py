@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.generics import ListAPIView
-from .models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise
-from .serializers import EquipmentSerializer, ExercisePerformSerializer, ExerciseSerializer, WorkoutExerciseSetSerializer, WorkoutSerializer
+from .models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise, WorkoutSchedule
+from .serializers import EquipmentSerializer, ExercisePerformSerializer, ExerciseSerializer, WorkoutExerciseSetSerializer, WorkoutScheduleSerializer, WorkoutSerializer
 
 class EquipmentList(generics.ListAPIView):
     queryset = Equipment.objects.all()
@@ -74,3 +74,7 @@ class WorkoutExerciseDetail(ListAPIView):
     def get_queryset(self):
         workout_id = self.kwargs.get('workout_id')
         return WorkoutExercise.objects.filter(workout_id=workout_id).distinct('set_count')
+
+class WorkoutScheduleCreateAPIView(generics.CreateAPIView):
+    queryset = WorkoutSchedule.objects.all()
+    serializer_class = WorkoutScheduleSerializer

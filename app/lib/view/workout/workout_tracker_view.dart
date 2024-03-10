@@ -4,9 +4,10 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/up_comming_workot.dart';
 import 'package:loginsignup/common_widget/what_train_row.dart';
-import 'package:loginsignup/controller/workout_api.dart';
+import 'package:loginsignup/controller/workout/workout_api.dart';
 import 'package:loginsignup/model/workout/workout.dart';
 import 'package:loginsignup/view/workout/workout_detail_view.dart';
+import 'package:loginsignup/view/workout/workout_schedule.dart';
 
 class WorkOutTrackerView extends StatefulWidget {
   const WorkOutTrackerView({super.key});
@@ -273,7 +274,13 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
                               type: RoundButtonType.bgGradient,
                               fontSize: 10,
                               fontWeight: FontWeight.w400,
-                              onPressed: () {}),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const WorkoutScheduleView()));
+                              }),
                         ),
                       ],
                     ),

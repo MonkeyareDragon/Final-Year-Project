@@ -186,7 +186,6 @@ Future<List<ExerciseSet>> fetchWorkoutExercisesSetById(int id) async {
     );
 
     if (response.statusCode == 200) {
-      print('response.body: ${response.body}');
       List<dynamic> responseData = json.decode(response.body);
 
       List<ExerciseSet> exerciseSets = [];

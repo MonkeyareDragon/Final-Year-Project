@@ -3,7 +3,7 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/exercise_set_sction.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
-import 'package:loginsignup/controller/workout_api.dart';
+import 'package:loginsignup/controller/workout/workout_api.dart';
 import 'package:loginsignup/model/workout/equipment.dart';
 import 'package:loginsignup/model/workout/exercise.dart';
 import 'package:loginsignup/view/workout/workout_schedule.dart';
@@ -152,8 +152,8 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
               expandedHeight: media.width * 0.5,
               flexibleSpace: Align(
                 alignment: Alignment.center,
-                child: Image.asset(
-                  "assets/img/home/detail_top.png",
+                child: Image.network(
+                  "${widget.dObj["image"].toString()}",
                   width: media.width * 0.75,
                   height: media.width * 0.8,
                   fit: BoxFit.contain,
@@ -368,7 +368,13 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      RoundButton(title: "Start Workout", onPressed: () {})
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: RoundButton(title: "Start Workout", onPressed: () {})
+                        ),
+                      ),
                     ],
                   ),
                 )
