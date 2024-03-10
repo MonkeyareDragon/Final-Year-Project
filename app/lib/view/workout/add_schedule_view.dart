@@ -4,6 +4,8 @@ import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common/date_function.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:intl/intl.dart';
+import 'package:loginsignup/controller/workout/workout_notification_apis.dart';
 
 class AddScheduleView extends StatefulWidget {
   final DateTime date;
@@ -14,6 +16,34 @@ class AddScheduleView extends StatefulWidget {
 }
 
 class _AddScheduleViewState extends State<AddScheduleView> {
+  late DateTime _selectedDate;
+  late DateTime _selectedTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = widget.date;
+    _selectedTime = DateTime.now();
+  }
+
+  Future<void> WorkoutSchedule(Map<String, dynamic> requestData) async {
+    await createWorkoutSchedule(requestData);
+  }
+
+  Future<void> _showDatePicker(BuildContext context) async {
+    final newDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+    if (newDate != null) {
+      setState(() {
+        _selectedDate = newDate;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
@@ -44,7 +74,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
           ),
         ),
         title: Text(
-          "Add Schedule",
+          "Add Workout Schedule",
           style: TextStyle(
               color: AppColor.black, fontSize: 16, fontWeight: FontWeight.w700),
         ),
@@ -85,9 +115,14 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                 const SizedBox(
                   width: 8,
                 ),
-                Text(
-                  dateToString(widget.date, formatStr: "E, dd MMMM yyyy"),
-                  style: TextStyle(color: AppColor.gray, fontSize: 14),
+                TextButton(
+                  onPressed: () {
+                    _showDatePicker(context);
+                  },
+                  child: Text(
+                    dateToString(_selectedDate, formatStr: "E, dd MMMM yyyy"),
+                    style: TextStyle(color: AppColor.gray, fontSize: 14),
+                  ),
                 ),
               ],
             ),
@@ -104,7 +139,9 @@ class _AddScheduleViewState extends State<AddScheduleView> {
             SizedBox(
               height: media.width * 0.35,
               child: CupertinoDatePicker(
-                onDateTimeChanged: (newDate) {},
+                onDateTimeChanged: (newTime) {
+                  _selectedTime = newTime;
+                },
                 initialDateTime: DateTime.now(),
                 use24hFormat: false,
                 minuteInterval: 1,
@@ -122,7 +159,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
                   fontWeight: FontWeight.w500),
             ),
             const SizedBox(
-              height: 8,
+              height: 10,
             ),
             IconTitleNextRow(
                 icon: "assets/img/home/choose_workout.png",
@@ -133,35 +170,52 @@ class _AddScheduleViewState extends State<AddScheduleView> {
             const SizedBox(
               height: 10,
             ),
-             IconTitleNextRow(
-              icon: "assets/img/home/difficulity.png",
-              title: "Difficulity",
-              time: "Beginner",
-              color: AppColor.lightGray,
-              onPressed: () {}),
-          const SizedBox(
-            height: 10,
-          ),
-          IconTitleNextRow(
-              icon: "assets/img/home/repetitions.png",
-              title: "Custom Repetitions",
-              time: "",
-              color: AppColor.lightGray,
-              onPressed: () {}),
-          const SizedBox(
-            height: 10,
-          ),
-          IconTitleNextRow(
-              icon: "assets/img/home/repetitions.png",
-              title: "Custom Weights",
-              time: "",
-              color: AppColor.lightGray,
-              onPressed: () {}),
-          Spacer(),
-          RoundButton(title: "Save", onPressed: () {}),
-          const SizedBox(
-            height: 20,
-          ),
+            IconTitleNextRow(
+                icon: "assets/img/home/difficulity.png",
+                title: "Difficulity",
+                time: "Beginner",
+                color: AppColor.lightGray,
+                onPressed: () {}),
+            const SizedBox(
+              height: 10,
+            ),
+            IconTitleNextRow(
+                icon: "assets/img/home/repetitions.png",
+                title: "Custom Repetitions",
+                time: "",
+                color: AppColor.lightGray,
+                onPressed: () {}),
+            const SizedBox(
+              height: 10,
+            ),
+            IconTitleNextRow(
+                icon: "assets/img/home/repetitions.png",
+                title: "Custom Weights",
+                time: "",
+                color: AppColor.lightGray,
+                onPressed: () {}),
+            Spacer(),
+            RoundButton(
+                title: "Save",
+                onPressed: () {
+                  String formattedDate =
+                      DateFormat('yyyy-MM-dd').format(_selectedDate);
+
+                  String formateTime =
+                      DateFormat('hh:mm:ss').format(_selectedTime);
+
+                  Map<String, dynamic> requestData = {
+                    'date': formattedDate.toString(),
+                    'time': formateTime.toString(),
+                    'workout': 1,
+                    'user': 2
+                  };
+
+                  WorkoutSchedule(requestData);
+                }),
+            const SizedBox(
+              height: 10,
+            ),
           ],
         ),
       ),
