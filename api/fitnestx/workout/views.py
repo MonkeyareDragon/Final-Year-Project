@@ -1,8 +1,9 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
+from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListAPIView
+from django.http import JsonResponse
 from .models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise, WorkoutSchedule
 from .serializers import EquipmentSerializer, ExercisePerformSerializer, ExerciseSerializer, WorkoutExerciseSetSerializer, WorkoutScheduleSerializer, WorkoutSerializer
 
@@ -78,3 +79,23 @@ class WorkoutExerciseDetail(ListAPIView):
 class WorkoutScheduleCreateAPIView(generics.CreateAPIView):
     queryset = WorkoutSchedule.objects.all()
     serializer_class = WorkoutScheduleSerializer
+
+class WorkoutScheduleDetailView(APIView):
+    def get(self, request, user_id, date):
+        workout_schedules = WorkoutSchedule.objects.filter(user__id=user_id, date=date)
+        
+        data = []
+        for workout_schedule in workout_schedules:
+            data.append({
+                'date': workout_schedule.date,
+                'time': workout_schedule.time,
+                'workout_name': workout_schedule.workout.name,
+                'user_username': workout_schedule.user.username,
+                'notification_note': workout_schedule.notification_note,
+                'notify_status': workout_schedule.notify_status,
+                'status': workout_schedule.status,
+                'check_notification': workout_schedule.check_notification,
+                'send_notification': workout_schedule.send_notification,
+            })
+        
+        return JsonResponse(data, safe=False)

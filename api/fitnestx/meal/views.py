@@ -76,6 +76,7 @@ class UpdateFoodScheduleNotificationView(viewsets.ModelViewSet):
     
     def get_queryset(self):
         data = FoodSchedule.objects.filter(notify_status__lte=False)
+        print(data)
         return data
 
     def update_notification(self):
@@ -83,7 +84,7 @@ class UpdateFoodScheduleNotificationView(viewsets.ModelViewSet):
         current_datetime = timezone.localtime(timezone.now())
         current_time = current_datetime.time()
         current_date = current_datetime.date()
-        
+        print(current_date, current_time)
         try:
             for schedule in schedule_data:
                 if schedule.date <= current_date and schedule.time <= current_time:

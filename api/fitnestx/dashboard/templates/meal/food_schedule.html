@@ -1,0 +1,45 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<h1>All Food Schedules</h1>
+<br>
+<table class="table table-striped table-hover table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Food Schedule ID</th>
+            <th scope="col">Date</th>
+            <th scope="col">Time</th>
+            <th scope="col">Food</th>
+            <th scope="col">User</th>
+            <th scope="col">Notification Note</th>
+            <th scope="col">Notify Status</th>
+            <th scope="col">Status</th>
+            <th scope="col">Check Notification</th>
+            <th scope="col">Send Notification</th>
+        </tr>
+    </thead>
+    <tbody>       
+        {% if schedules_data %}
+        {% for schedule in schedules_data %}
+            <tr>
+                <td>{{ schedule.id }}</td>
+                <td>{{ schedule.date }}</td>
+                <td>{{ schedule.time }}</td>
+                <td>{{ schedule.food.name }}</td>
+                <td>{{ schedule.user.username }}</td>
+                <td>{{ schedule.notification_note }}</td>
+                <td>{{ schedule.get_notify_status_display }}</td>
+                <td>{{ schedule.get_status_display }}</td>
+                <td>{{ schedule.check_notification }}</td>
+                <td>{{ schedule.send_notification }}</td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="9">No food schedules found</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+
+{% endblock %}

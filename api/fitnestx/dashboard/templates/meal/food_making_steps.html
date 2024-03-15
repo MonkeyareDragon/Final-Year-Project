@@ -1,0 +1,33 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<h1>All Food Making Steps</h1>
+<br>
+<table class="table table-striped table-hover table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Step No</th>
+            <th scope="col">Description</th>
+            <th scope="col">Food Name</th>
+        </tr>
+    </thead>
+    <tbody>       
+        {% if steps_data %}
+        {% for step in steps_data %}
+            <tr>
+                <td>{{ step.id }}</td>
+                <td>{{ step.step_no }}</td>
+                <td>{{ step.description }}</td>
+                <td>{{ step.food.name }}</td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="3">No food making steps found</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+
+{% endblock %}
