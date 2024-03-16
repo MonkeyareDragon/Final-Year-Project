@@ -11,7 +11,6 @@ from fitnestx.users.models import User, UserProfile
 def home(request):
     users = User.objects.all()
     
-    #Check to see if logging in
     if request.method == "POST":
         email = request.POST['email']
         password = request.POST['password']
@@ -24,7 +23,8 @@ def home(request):
             messages.success(request, f"Welcome, {username}!")
             return redirect('api_v1:dashboard:home')
         else:
-            messages.warning(request, "Invalid username or password! Please try again.")
+            messages.error(request, "Invalid email or password! Please try again.")
+
     return render(request, 'dashboard/home.html', {'users': users, 'title': 'Home'})
 
 def login_user(request):
