@@ -29,4 +29,5 @@ urlpatterns = [
     path('workout/workout/', views.redirect_to_workout, name='workout_workout'),
     path('workout/workout_exercise/', views.redirect_to_workout_exercise, name='workout_workout_exercise'),
     path('workout/workout_schedule/', views.redirect_to_workout_schedule, name='workout_workout_schedule'),
+    path('charts/user_stats/', views.redirect_to_chart_user, name='chart_user_stats'),
 ]

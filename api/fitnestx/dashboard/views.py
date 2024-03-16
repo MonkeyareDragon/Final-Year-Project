@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
+from fitnestx.dashboard.utilis import get_icon_class, get_total_exercises, get_total_foods, get_total_sensor_data, get_total_users, handle_login
 from fitnestx.workout.models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise, WorkoutSchedule
 from fitnestx.meal.models import Category, Food, FoodMakingSteps, FoodSchedule, Ingredient, Meal, Nutrition
 from fitnestx.activity.models import ActivityGoal, SensorData, SleepTracking, WaterIntake
@@ -9,23 +9,32 @@ from .forms import UserCreateForm
 from fitnestx.users.models import User, UserProfile
 
 def home(request):
-    users = User.objects.all()
+    total_users = get_total_users()
+    total_exercises = get_total_exercises()
+    total_foods = get_total_foods()
+    total_sensor_data = get_total_sensor_data()
     
+    prev_total_users = request.session.get('prev_total_users', None)
+    prev_total_exercises = request.session.get('prev_total_exercises', None)
+    prev_total_foods = request.session.get('prev_total_foods', None)
+    prev_total_sensor_data = request.session.get('prev_total_sensor_data', None)
+    
+    icon_user_class = get_icon_class(prev_total_users, total_users)
+    icon_exercise_class = get_icon_class(prev_total_exercises, total_exercises)
+    icon_food_class = get_icon_class(prev_total_foods, total_foods)
+    icon_sensor_data_class = get_icon_class(prev_total_sensor_data, total_sensor_data)
+
     if request.method == "POST":
-        email = request.POST['email']
-        password = request.POST['password']
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        handle_login(request, email, password)
 
-        user = authenticate(request, email=email, password=password)
+    request.session['prev_total_users'] = total_users
+    request.session['prev_total_exercises'] = total_exercises
+    request.session['prev_total_foods'] = total_foods
 
-        if user is not None:
-            login(request, user)
-            username = user.username
-            messages.success(request, f"Welcome, {username}!")
-            return redirect('api_v1:dashboard:home')
-        else:
-            messages.error(request, "Invalid email or password! Please try again.")
-
-    return render(request, 'dashboard/home.html', {'users': users, 'title': 'Home'})
+    return render(request, 'dashboard/home.html', {'total_users': total_users, 'icon_user_class': icon_user_class, 'total_exercises': total_exercises, 'icon_exercise_class': icon_exercise_class, 
+                                                  'total_foods': total_foods, 'icon_food_class': icon_food_class, 'total_sensor_data': total_sensor_data, 'icon_sensor_data_class': icon_sensor_data_class,'title': 'Home'})
 
 def login_user(request):
     pass
@@ -161,3 +170,7 @@ def redirect_to_workout_exercise(request):
 def redirect_to_workout_schedule(request):
     workout_schedule_data = WorkoutSchedule.objects.all()
     return render(request, 'workout/workout_schedule.html', {'workout_schedule_data': workout_schedule_data, 'title': 'Workout Schedules'})
+
+def redirect_to_chart_user(request):
+    workout_schedule_data = WorkoutSchedule.objects.all()
+    return render(request, 'charts/user_stats.html', {'workout_schedule_data': workout_schedule_data, 'title': 'User Stats'})
