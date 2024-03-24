@@ -1,0 +1,35 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<h1>All Nutrition Data</h1>
+<br>
+<table class="table table-striped table-hover table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Nutrition ID</th>
+            <th scope="col">Image</th>
+            <th scope="col">Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Property</th>
+        </tr>
+    </thead>
+    <tbody>       
+        {% if nutrition_data %}
+        {% for nutr in nutrition_data %}
+            <tr>
+                <td>{{ nutr.id }}</td>
+                <td><img src="{{ nutr.nutrition_image.url }}" alt="{{ nutr.name }}" width="132" height="106"></td>
+                <td>{{ nutr.name }}</td>
+                <td>{{ nutr.quantity }}</td>
+                <td>{{ nutr.property }}</td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="4">No nutrition data found</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+
+{% endblock %}

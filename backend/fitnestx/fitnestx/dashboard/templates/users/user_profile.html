@@ -1,0 +1,41 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<h1>All Users Profile</h1>
+<br>
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Profile ID</th>
+            <th scope="col">User ID</th>
+            <th scope="col">User Name</th>
+            <th scope="col">Gender</th>
+            <th scope="col">DOB</th>
+            <th scope="col">Weight</th>
+            <th scope="col">Height</th>
+            <th scope="col">Goal</th>
+          </tr>
+        </thead>
+        <tbody>       
+            {% if user_profile %}
+                {% for profile in user_profile %}
+                    <tr>
+                        <td>{{ profile.id }}</td>
+                        <td>{{ profile.user.id }}</td>
+                        <td>{{ profile.user.username }}</td>
+                        <td>{{ profile.gender }}</td>
+                        <td>{{ profile.dob }}</td>
+                        <td>{{ profile.weight }}</td>
+                        <td>{{ profile.height }}</td>
+                        <td>{{ profile.goal }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="6">No user profiles found</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}

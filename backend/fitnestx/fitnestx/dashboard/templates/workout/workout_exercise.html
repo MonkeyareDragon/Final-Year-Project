@@ -1,0 +1,33 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<h1>All Workout Exercises</h1>
+<br>
+<table class="table table-striped table-hover table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Workout</th>
+            <th scope="col">Exercise</th>
+            <th scope="col">Set Count</th>
+        </tr>
+    </thead>
+    <tbody>       
+        {% if workout_exercise_data %}
+        {% for workout_exercise in workout_exercise_data %}
+            <tr>
+                <td>{{ workout_exercise.id }}</td>
+                <td>{{ workout_exercise.workout.name }}</td>
+                <td>{{ workout_exercise.exercise.name }}</td>
+                <td>{{ workout_exercise.set_count }}</td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="3">No workout exercises found</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+
+{% endblock %}

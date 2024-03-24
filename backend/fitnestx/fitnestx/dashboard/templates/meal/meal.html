@@ -1,0 +1,41 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<h1>All Meals</h1>
+<br>
+<table class="table table-striped table-hover table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Meal ID</th>
+            <th scope="col">Image</th>
+            <th scope="col">Name</th>
+            <th scope="col">Food Count</th>
+            <th scope="col">Categories</th>
+        </tr>
+    </thead>
+    <tbody>       
+        {% if meal_data %}
+        {% for meal in meal_data %}
+            <tr>
+                <td>{{ meal.id }}</td>
+                <td><img src="{{ meal.meal_image.url }}" alt="{{ meal.name }}" width="236" height="148"></td>
+                <td>{{ meal.name }}</td>
+                <td>{{ meal.food_count }}</td>
+                <td>
+                    <ul>
+                    {% for category in meal.categorys.all %}
+                        <li>{{ category.name }}</li>
+                    {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="4">No meals found</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+
+{% endblock %}

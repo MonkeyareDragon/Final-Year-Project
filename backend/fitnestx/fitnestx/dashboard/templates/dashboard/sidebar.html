@@ -1,0 +1,59 @@
+<!-- SIDEBAR -->
+<section id="sidebar">
+    <a href="#" class="brand"><i class='bx bxs-smile icon'></i>FitnestX</a>
+    <ul class="side-menu">
+        <li><a href="{% url 'api_v1:dashboard:home' %}"><i class='bx bxs-dashboard icon' ></i> Dashboard</a></li>
+        <li class="divider" data-text="main">Main</li>
+        <li>
+            <a href=""><i class='bx bxs-inbox icon' ></i> Charts <i class='bx bx-chevron-right icon-right' ></i></a>
+            <ul class="side-dropdown">
+                <li><a href="{% url 'api_v1:dashboard:chart_user_stats' %}">User</a></li>
+                <li><a href="#">Badges</a></li>
+                <li><a href="#">Breadcrumbs</a></li>
+                <li><a href="#">Button</a></li>
+            </ul>
+        </li>
+        <li><a href="#"><i class='bx bxs-widget icon' ></i> Widgets</a></li>
+        <li class="divider" data-text="table">Tables</li>
+        <li>
+            <a href=""><i class='bx bxs-notepad icon' ></i> Users <i class='bx bx-chevron-right icon-right' ></i></a>
+            <ul class="side-dropdown">
+                <li><a href="{% url 'api_v1:dashboard:users_user' %}">Users</a></li>
+                <li><a href="{% url 'api_v1:dashboard:users_user_profile' %}">User Profiles</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href=""><i class='bx bx-table icon' ></i> Activity <i class='bx bx-chevron-right icon-right' ></i></a>
+            <ul class="side-dropdown">
+                <li><a href="{% url 'api_v1:dashboard:activity_activity_goal' %}">Activity Goals</a></li>
+                <li><a href="{% url 'api_v1:dashboard:activity_sensor_data' %}">Sensor Data</a></li>
+                <li><a href="{% url 'api_v1:dashboard:activity_sleep_tracking' %}">Sleep Tracking</a></li>
+                <li><a href="{% url 'api_v1:dashboard:activity_water_intake' %}">Water Intake</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href=""><i class='bx bx-table icon' ></i> Meal <i class='bx bx-chevron-right icon-right' ></i></a>
+            <ul class="side-dropdown">
+                <li><a href="{% url 'api_v1:dashboard:meal_nutrition' %}">Nutirition</a></li>
+                <li><a href="{% url 'api_v1:dashboard:meal_ingredient' %}">Ingredient</a></li>
+                <li><a href="{% url 'api_v1:dashboard:meal_food' %}">Food</a></li>
+                <li><a href="{% url 'api_v1:dashboard:meal_category' %}">Category</a></li>
+                <li><a href="{% url 'api_v1:dashboard:meal_meal' %}">Meal</a></li>
+                <li><a href="{% url 'api_v1:dashboard:meal_food_making_steps' %}">Food Making Steps</a></li>
+                <li><a href="{% url 'api_v1:dashboard:meal_food_schedule' %}">Food Schedule</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href=""><i class='bx bx-table icon' ></i> Workout <i class='bx bx-chevron-right icon-right' ></i></a>
+            <ul class="side-dropdown">
+                <li><a href="{% url 'api_v1:dashboard:workout_equipment' %}">Equipment</a></li>
+                <li><a href="{% url 'api_v1:dashboard:workout_exercise' %}">Exercise</a></li>
+                <li><a href="{% url 'api_v1:dashboard:workout_exercise_perform' %}">Exercise Perform</a></li>
+                <li><a href="{% url 'api_v1:dashboard:workout_workout' %}">Workout</a></li>
+                <li><a href="{% url 'api_v1:dashboard:workout_workout_exercise' %}">Workout Exercise Details</a></li>
+                <li><a href="{% url 'api_v1:dashboard:workout_workout_schedule' %}">Workout Schedule</a></li>
+            </ul>
+        </li>
+    </ul>
+</section>
+<!-- SIDEBAR -->

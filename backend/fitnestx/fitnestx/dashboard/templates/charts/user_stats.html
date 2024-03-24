@@ -1,0 +1,159 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}   
+    <!-- MAIN -->
+    <main>
+        <h1 class="title"></h1>
+        <ul class="breadcrumbs">
+            <li><a href="{% url 'api_v1:dashboard:chart_user_stats' %}">Charts</a></li>
+            <li class="divider">/</li>
+            <li><a href="#" class="active">User</a></li>
+        </ul>
+        <div class="data">
+            <div class="content-data">
+                <div class="head">
+                    <h3>Histogram for user heights.</h3>
+                    <div class="menu">
+                        <i class='bx bx-dots-horizontal-rounded icon'></i>
+                        <ul class="menu-link">
+                            <li><a href="#">Edit</a></li>
+                            <li><a href="#">Save</a></li>
+                            <li><a href="#">Remove</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="chart">
+                    <canvas id="heightHistogram"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="data">
+            <div class="content-data">
+                <div class="head">
+                    <h3>Histogram for user weights.</h3>
+                    <div class="menu">
+                        <i class='bx bx-dots-horizontal-rounded icon'></i>
+                        <ul class="menu-link">
+                            <li><a href="#">Edit</a></li>
+                            <li><a href="#">Save</a></li>
+                            <li><a href="#">Remove</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="chart">
+                    <canvas id="weightHistogram"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="data">
+            <div class="content-data">
+                <div class="head">
+                    <h3>Pie chart for gender distribution among users.</h3>
+                    <div class="menu">
+                        <i class='bx bx-dots-horizontal-rounded icon'></i>
+                        <ul class="menu-link">
+                            <li><a href="#">Edit</a></li>
+                            <li><a href="#">Save</a></li>
+                            <li><a href="#">Remove</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="chart">
+                    <canvas id="genderPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+	<script>
+		var heights = "{{ heights|safe }}";
+		var weights = "{{ weights|safe }}";
+        var genders = "{{ genders|safe }}";
+		
+		for (var i = 0; i < heights.length; i++) {
+			heights[i] = parseFloat(heights[i].toString());
+		}
+	
+		for (var i = 0; i < weights.length; i++) {
+			weights[i] = parseFloat(weights[i].toString());
+		}
+	
+		console.log(heights);
+		console.log(weights);
+		console.log(genders);
+	
+		var heightHistogramCtx = document.getElementById('heightHistogram').getContext('2d');
+		var heightHistogram = new Chart(heightHistogramCtx, {
+			type: 'bar',
+			data: {
+				labels: Array.from({ length: heights.length }, (_, i) => i + 1),
+				datasets: [{
+					label: 'User Heights',
+					data: heights,
+					backgroundColor: 'rgba(54, 162, 235, 0.5)',
+					borderColor: 'rgba(54, 162, 235, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				}
+			}
+		});
+
+		var weightHistogramCtx = document.getElementById('weightHistogram').getContext('2d');
+		var weightHistogram = new Chart(weightHistogramCtx, {
+			type: 'bar',
+			data: {
+				labels: Array.from({ length: weights.length }, (_, i) => i + 1),
+				datasets: [{
+					label: 'User Weights',
+					data: weights,
+					backgroundColor: 'rgba(255, 99, 132, 0.5)',
+					borderColor: 'rgba(255, 99, 132, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				}
+			}
+		});
+
+		var genderPieChartCtx = document.getElementById('genderPieChart').getContext('2d');
+		var genderPieChart = new Chart(genderPieChartCtx, {
+			type: 'pie',
+			data: {
+				labels: ['Male', 'Female', 'Other'],
+				datasets: [{
+					label: 'Gender Distribution',
+					data: genders,
+					backgroundColor: [
+						'rgba(255, 99, 132, 0.5)',
+						'rgba(54, 162, 235, 0.5)',
+						'rgba(255, 206, 86, 0.5)'
+					],
+					borderColor: [
+						'rgba(255, 99, 132, 1)',
+						'rgba(54, 162, 235, 1)',
+						'rgba(255, 206, 86, 1)'
+					],
+					borderWidth: 1
+				}]
+			}
+		});
+	</script>	
+
+{% endblock %}
