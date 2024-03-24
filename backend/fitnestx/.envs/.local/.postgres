@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=fitnestx
+POSTGRES_USER=zwizTYwlhluTJBTYwXwfPAEgkTlOgyuv
+POSTGRES_PASSWORD=FTYosP1hO49Nz9ruASgkliyZrB8V2WhKEIvu4FN5cCSGy9iAG9UApt3IgYhwGIzn

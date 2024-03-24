@@ -165,3 +165,48 @@ class TodayMealDetail {
     );
   }
 }
+
+class ScheduleDetails {
+  List<Schedule> schedules;
+
+  ScheduleDetails({
+    required this.schedules,
+  });
+  factory ScheduleDetails.fromJson(Map<String, dynamic> json) {
+    return ScheduleDetails(
+      schedules: (json['schedules'] as List)
+          .map((schedule) => Schedule(
+              id: schedule['id'],
+              date: DateTime.parse(schedule['date']),
+              time: schedule['time'],
+              food: schedule['food'],
+              notificationNote: schedule['notification_note'],
+              status: schedule['status'],
+              checkNotification: schedule['check_notification'],
+              sendNotification: schedule['send_notification']))
+          .toList(),
+    );
+  }
+}
+
+class Schedule {
+  int id;
+  DateTime date;
+  String time;
+  String food;
+  String notificationNote;
+  String status;
+  bool checkNotification;
+  bool sendNotification;
+
+  Schedule({
+    required this.id,
+    required this.date,
+    required this.time,
+    required this.food,
+    required this.notificationNote,
+    required this.status,
+    required this.checkNotification,
+    required this.sendNotification,
+  });
+}

@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:flutter/services.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/view/nav_bar/main_nav_bar_view.dart';
 import 'package:page_transition/page_transition.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+    [
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ],
+  );
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
 // This widget is the root of your application.

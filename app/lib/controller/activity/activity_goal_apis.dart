@@ -3,10 +3,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 
-
 const String baseUrl = 'http://10.0.2.2:8000/api/v1';
+// const String baseUrl = 'http://192.168.1.79:8000/api/v1';
 String token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExNTI2MDQzLCJqdGkiOiIxYTBmNDdmYzQzNjY0NjYwYmIxNWJmMWI1YjljYmI0YSIsInVzZXJfaWQiOjJ9.Bn7VD-KbEJKJUluxoaS1DoGzMMhlJIiR7-twjhXr1Y0';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEzNzIwNjc0LCJqdGkiOiIzZWVkMWRkZTcwYmI0OGU1YTUzOWRkMDFiYmFiN2MyYiIsInVzZXJfaWQiOjR9.uulxgW1hiaVGoZGJeLLaPorSAEsneO8I6a-DoUukHQo';
 
 
 // API call to fetch all the data of user activity goal

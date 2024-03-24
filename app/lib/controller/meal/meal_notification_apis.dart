@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:loginsignup/model/meal/meal_notification.dart';
+import 'package:flutter/material.dart';
 
 const String baseUrl = 'http://10.0.2.2:8000/api/v1';
 String token =
@@ -195,3 +196,75 @@ Future<List<TodayMeal>> fetchTodayScheduleMeals(
     throw Exception('Failed to fetch meal details which are schedule today: $e');
   }
 }
+
+ Future<void> checkMealNotification(int userId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/meal/users/user/$userId/schedules/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = json.decode(response.body);
+
+        for (var data in responseData) {
+          if (data['schedules'] != null && data['schedules'] is List) {
+            for (var schedule in data['schedules']) {
+
+              DateTime currentDate = DateTime.now();
+              DateTime scheduleDate = DateTime.parse(schedule['date']);
+              TimeOfDay scheduleTime = TimeOfDay.fromDateTime(
+                  DateTime.parse(schedule['time']));
+              TimeOfDay currentTime = TimeOfDay.fromDateTime(currentDate);
+
+              if (scheduleDate.isBefore(currentDate) ||
+                  (scheduleDate.isAtSameMomentAs(currentDate) &&
+                      currentTime.hour > scheduleTime.hour) ||
+                  (scheduleDate.isAtSameMomentAs(currentDate) &&
+                      currentTime.hour == scheduleTime.hour &&
+                      currentTime.minute > scheduleTime.minute)) {
+               
+                String notificationMessage =
+                    "Hello ${schedule['user']['username']}, it's time for your scheduled meal: ${schedule['food']['name']}.";
+                await updateNotificationAPI(
+                    schedule['id'], notificationMessage);
+              }
+            }
+          }
+        }
+      } else {
+        throw Exception(
+            'Failed to load meal details which are scheduled: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error updating notification: $e');
+      throw Exception('Failed to update notification: $e');
+    }
+  }
+
+  Future<void> updateNotificationAPI(
+      int scheduleId, String notificationMessage) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/meal/schedules/$scheduleId/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'notification_note': notificationMessage,
+          'notify_status': true,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(
+            'Failed to update notification status: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error updating notification status: $e');
+      throw Exception('Failed to update notification status: $e');
+    }
+  }
