@@ -1,12 +1,15 @@
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from fitnestx.dashboard.utilis import get_icon_class, get_total_exercises, get_total_foods, get_total_sensor_data, get_total_users, handle_login
 from fitnestx.workout.models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise, WorkoutSchedule
-from fitnestx.meal.models import Category, Food, FoodMakingSteps, FoodSchedule, Ingredient, Meal, Nutrition
+from fitnestx.meal.models import Category, Food, FoodIngredient, FoodMakingSteps, FoodNutrition, FoodSchedule, Ingredient, Meal, Nutrition
 from fitnestx.activity.models import ActivityGoal, SensorData, SleepTracking, WaterIntake
 from .forms import UserCreateForm
 from fitnestx.users.models import User, UserProfile
+import csv
+from django.db.models import Prefetch
 
 def home(request):
     total_users = get_total_users()
@@ -185,3 +188,47 @@ def chart_user_stats(request):
     print(context)
 
     return render(request, 'charts/user_stats.html', context)
+
+def export_to_csv_food_details(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="raw_food_data.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow([
+        'ID', 'Name', 'Cooking Difficulty', 'Time Required', 'Calories', 
+        'Author', 'Description', 'Nutrition', 'Ingredient', 'Making Steps'
+    ])
+
+    # Prefetch related data to avoid multiple database queries
+    foods = Food.objects.prefetch_related(
+        Prefetch('foodnutrition_set', queryset=FoodNutrition.objects.select_related('nutrition').all()),
+        Prefetch('foodingredient_set', queryset=FoodIngredient.objects.select_related('ingredient').all()),
+        Prefetch('foodmakingsteps_set')
+    ).all()
+
+    for food in foods:
+        nutrition_data = []
+        for food_nutrition in food.foodnutrition_set.all():
+            nutrition_data.append(f"{food_nutrition.nutrition.name}-{food_nutrition.quantity}{food_nutrition.property}")
+
+        ingredient_data = []
+        for food_ingredient in food.foodingredient_set.all():
+            ingredient_data.append(f"{food_ingredient.ingredient.name} {food_ingredient.quantity_required}")
+
+        steps_data = []
+        for step in food.foodmakingsteps_set.all():
+            steps_data.append(f"Step {step.step_no}: {step.description}")
+        
+        time_required_mins = f"{food.time_required}mins"
+
+        calories_kcal = f"{food.calories}kcal"
+
+        writer.writerow([
+            food.id, food.name, food.cooking_difficulty, time_required_mins, calories_kcal,
+            food.author, food.description,
+            ', '.join(nutrition_data), 
+            ', '.join(ingredient_data), 
+            ', '.join(steps_data)
+        ])
+
+    return response
