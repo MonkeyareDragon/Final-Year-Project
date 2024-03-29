@@ -318,3 +318,9 @@ MODEL_FILEPATH = "fitnestx/static/model/HAR_model.keras"
 
 #Default Profile Image Url
 AVATAR_URI_PREFIX = "fitnestx/static/images/avator"
+
+# Raw Data from meal
+RAW_DATA_FILEPATH = "fitnestx/static/csv_data/raw_food_data.csv"
+
+#Formated Meal Data
+FORMATED_DATA_FILEPATH = "fitnestx/static/csv_data/formated_food_data.csv"

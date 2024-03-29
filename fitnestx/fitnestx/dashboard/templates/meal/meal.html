@@ -4,10 +4,6 @@
 <h1>All Meals</h1>
 <br>
 
-<div class="mb-3">
-    <a href="{% url 'api_v1:dashboard:export_to_csv_food_details' %}" class="btn btn-custom">Export to CSV</a>
-</div>
-
 <table class="table table-striped table-hover table-bordered">
     <thead class="table-dark">
         <tr>
@@ -42,18 +38,4 @@
     {% endif %}
     </tbody>
 </table>
-
-<style>
-    .btn-custom {
-        background-color: black;
-        color: white;
-        border-color: black;
-        transition: background-color 0.3s ease;
-    }
-    
-    .btn-custom:hover {
-        background-color: #ffffff;
-        text-decoration-color: rgb(0, 0, 0);
-    }
-</style>
 {% endblock %}

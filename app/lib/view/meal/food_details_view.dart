@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/food_making_steps_row.dart';
+import 'package:loginsignup/common_widget/meal_recommendation_cell.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/controller/meal/meal_apis.dart';
+import 'package:loginsignup/controller/meal/meal_recommendation.dart';
 import 'package:loginsignup/model/meal/food_make_steps.dart';
 import 'package:loginsignup/model/meal/ingredient.dart';
+import 'package:loginsignup/model/meal/meal_rec.dart';
 import 'package:loginsignup/model/meal/nutrition.dart';
 import 'package:loginsignup/view/meal/add_food_view.dart';
 import 'package:readmore/readmore.dart';
@@ -28,14 +31,20 @@ class _FoodDetailsView extends State<FoodDetailsView> {
   List nutritionArr = [];
   List ingredientsArr = [];
   List stepArr = [];
+  List similarMealArr = [];
 
   @override
   void initState() {
     super.initState();
     _selectedDateAppBBar = DateTime.now();
-    nutritionListDisplay();
-    ingredientListDisplay();
-    foodMakingStepsListDisplay();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    await nutritionListDisplay();
+    await ingredientListDisplay();
+    await foodMakingStepsListDisplay();
+    await fetchSimilarMeal();
   }
 
   Future<void> nutritionListDisplay() async {
@@ -87,6 +96,26 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                   "id": steps.id,
                   "description": steps.description,
                   "step_no": steps.stepNumber,
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
+
+  Future<void> fetchSimilarMeal() async {
+    try {
+      List<SimilarMeal> similarMela =
+          await fetchSimilarMealsBaseOnFood(widget.foodid);
+      setState(() {
+        similarMealArr = similarMela
+            .map((similarMela) => {
+                  "name": similarMela.name,
+                  "image": similarMela.foodImage,
+                  "difficulty": similarMela.cookingDifficulty,
+                  "time": "${similarMela.timeRequired}mins",
+                  "kcal": "${similarMela.calories}kCal",
                 })
             .toList();
       });
@@ -365,7 +394,7 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                             TextButton(
                               onPressed: () {},
                               child: Text(
-                                "${stepArr.length} Items",
+                                "${ingredientsArr.length} Items",
                                 style: TextStyle(
                                     color: AppColor.gray, fontSize: 12),
                               ),
@@ -410,7 +439,7 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                                   Text(
                                     nObj["name"].toString(),
                                     style: TextStyle(
-                                        color: AppColor.black, fontSize: 12),
+                                        color: AppColor.black, fontSize: 10),
                                   ),
                                   Text(
                                     nObj["quantity_required"].toString(),
@@ -459,6 +488,37 @@ class _FoodDetailsView extends State<FoodDetailsView> {
                             isLast: stepArr.last == sObj,
                           );
                         }),
+                      ),
+                      SizedBox(
+                        height: media.width * 0.05,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Text(
+                          "Similar Meals you make like:",
+                          style: TextStyle(
+                              color: AppColor.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      SizedBox(
+                        height: media.width * 0.02,
+                      ),
+                      SizedBox(
+                        height: media.width * 0.6,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: similarMealArr.length,
+                          itemBuilder: (context, index) {
+                            var fObj = similarMealArr[index] as Map? ?? {};
+                            return MealRecommendCell(
+                              fObj: fObj,
+                              index: index,
+                            );
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: media.width * 0.15,

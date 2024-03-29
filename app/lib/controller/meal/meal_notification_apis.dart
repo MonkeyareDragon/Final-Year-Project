@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 const String baseUrl = 'http://10.0.2.2:8000/api/v1';
 String token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExNTI2MDQzLCJqdGkiOiIxYTBmNDdmYzQzNjY0NjYwYmIxNWJmMWI1YjljYmI0YSIsInVzZXJfaWQiOjJ9.Bn7VD-KbEJKJUluxoaS1DoGzMMhlJIiR7-twjhXr1Y0';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE0MzIxNDM5LCJqdGkiOiI1YTQ3YWNjN2YzYWE0Yzg3OTUwYzkwMjJhMWQ0MmU3MyIsInVzZXJfaWQiOjJ9.t1W9mdG9QD5WlNiDM5Ujy4LLRfoGHayuV6RECYdSq-E';
 
 Future<void> createFoodSchedule(Map<String, dynamic> requestData) async {
   final String apiUrl = '$baseUrl/meal/users/food-schedule/create/';

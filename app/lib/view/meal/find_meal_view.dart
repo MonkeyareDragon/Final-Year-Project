@@ -44,8 +44,12 @@ class _FindMealView extends State<FindMealView> {
   @override
   void initState() {
     super.initState();
-    categoryListDisplay();
-    foodListDisplay();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    await categoryListDisplay();
+    await foodListDisplay();
   }
 
   Future<void> categoryListDisplay() async {
@@ -65,11 +69,9 @@ class _FindMealView extends State<FindMealView> {
     }
   }
 
-
   Future<void> foodListDisplay() async {
     try {
-      List<Food> foods =
-          await fetchFoodDetailsOnMealID(widget.mealid);
+      List<Food> foods = await fetchFoodDetailsOnMealID(widget.mealid);
       setState(() {
         popularArr = foods
             .map((foods) => {

@@ -1,5 +1,5 @@
 from django.urls import path
-from fitnestx.meal.views import DailyNutritionDataView, DisplayFoodScheduleNotificationView, FoodMakingStepsListView, FoodScheduleCreateAPIView, FoodScheduleDeleteAPIView, FoodScheduleStatusUpdateAPIView, MealScheduleScreenDetailView, MealUpComingBarListView, UpdateFoodScheduleNotificationView, IngredientOnFoodDetails, MealFoodDetails, MealList, CategoryList, NutritionOnFoodDetails, UpdateNotificationAPI, UserNotificationScheduleView, WeeklyProgressView
+from fitnestx.meal.views import DailyNutritionDataView, DisplayFoodScheduleNotificationView, FoodIngredientDetails, FoodMakingStepsListView, FoodScheduleCreateAPIView, FoodScheduleDeleteAPIView, FoodScheduleStatusUpdateAPIView, MealScheduleScreenDetailView, MealUpComingBarListView, SimilarFoodRecommendationView, UpdateFoodScheduleNotificationView, MealFoodDetails, MealList, CategoryList, NutritionOnFoodDetails, UpdateNotificationAPI, UserNotificationScheduleView, WeeklyProgressView
 
 app_name = "meal.users"
 
@@ -8,7 +8,7 @@ urlpatterns = [
     path('categories/<int:meal_id>/', CategoryList.as_view(), name='category-list-filtered'),
     path('foods/<int:meal_id>/', MealFoodDetails.as_view(), name='food-list-filtered'),
     path('nutrition/<int:food_id>/', NutritionOnFoodDetails.as_view(), name='nutrition-list-filtered'),
-    path('ingredient/<int:food_id>/', IngredientOnFoodDetails.as_view(), name='Ingredient-list-filtered'),
+    path('ingredient/<int:food_id>/', FoodIngredientDetails.as_view(), name='Ingredient-list-filtered'),
     path('food-making-steps/<int:food_id>/', FoodMakingStepsListView.as_view(), name='food-making-steps-list'),
     path('food-schedule/create/', FoodScheduleCreateAPIView.as_view(), name='food-schedule-create'),
     path('foodschedules/', UpdateFoodScheduleNotificationView.as_view({'get': 'list'}), name='foodschedules-update'),
@@ -21,4 +21,5 @@ urlpatterns = [
     path('weekly-progress/<int:user_id>/', WeeklyProgressView.as_view(), name='weekly_progress'),
     path('user/<int:user_id>/schedules/', UserNotificationScheduleView.as_view(), name='user_schedules'),
     path('meal/schedules/<int:schedule_id>/', UpdateNotificationAPI.as_view(), name='update_notification'),
+    path('recommend/<int:food_id>/', SimilarFoodRecommendationView.as_view(), name='food_recommendation'),
 ]

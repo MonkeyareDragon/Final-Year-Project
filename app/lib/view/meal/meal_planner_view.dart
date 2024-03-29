@@ -30,9 +30,13 @@ class _MealPlannerViewState extends State<MealPlannerView> {
   @override
   void initState() {
     super.initState();
-    fetchWorkoutDataList();
-    fetchTodayMealSchedule();
-    fetchWeeklyProgressData();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    await fetchMealDataList();
+    await fetchTodayMealSchedule();
+    await fetchWeeklyProgressData();
   }
 
   Future<void> fetchWeeklyProgressData() async {
@@ -81,7 +85,7 @@ class _MealPlannerViewState extends State<MealPlannerView> {
     }
   }
 
-  Future<void> fetchWorkoutDataList() async {
+  Future<void> fetchMealDataList() async {
     try {
       List<Meal> meals = await fetchMealDetails();
       setState(() {

@@ -1,8 +1,9 @@
 from django.http import JsonResponse
 from django.views import View
 from rest_framework import generics, status, viewsets
+from fitnestx.meal.meal_rec.rec_utilis import format_data, new_data, read_csv_data, save_df_to_csv
 from fitnestx.users.models import User
-from fitnestx.meal.models import Food, FoodMakingSteps, FoodSchedule, Meal, Nutrition
+from fitnestx.meal.models import Food, FoodIngredient, FoodMakingSteps, FoodNutrition, FoodSchedule, Ingredient, Meal, Nutrition
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
@@ -13,7 +14,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from datetime import datetime, timedelta
 from django.db.models import Q
-from fitnestx.meal.serializers import CategorySerializer, DailyNutritionDataSerializer, DisplayFoodScheduleNotificationSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodScheduleStatusUpdateSerializer, FoodSerializer, IngredientSerializer, MealDetailScheduleScreenSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
+import config.settings.base as settings
+import os
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from django.core.exceptions import ObjectDoesNotExist
+from fitnestx.meal.serializers import CategorySerializer, DailyNutritionDataSerializer, DisplayFoodScheduleNotificationSerializer, FoodIngredientSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodScheduleStatusUpdateSerializer, FoodSerializer, IngredientSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
 
 class MealList(generics.ListAPIView):
     queryset = Meal.objects.all()
@@ -43,22 +49,49 @@ class MealFoodDetails(APIView):
 class NutritionOnFoodDetails(APIView):
     def get(self, request, food_id, *args, **kwargs):
         try:
-            food = Food.objects.get(pk=food_id)
-            nutrition = food.nutritions.all()
-            serializer = NutritionSerializer(nutrition, many=True)
-            return Response(serializer.data)
-        except Food.DoesNotExist:
-            return Response({"message": "Food not found"}, status=status.HTTP_404_NOT_FOUND)
+            food_nutritions = FoodNutrition.objects.filter(food_id=food_id)
+            
+            details = []
+            for fn in food_nutritions:
+                nutrition = Nutrition.objects.get(pk=fn.nutrition_id)
+                nutrition_serializer = NutritionSerializer(nutrition)
+                
+                detail = {
+                    'id': fn.id,
+                    'nutrition_image': nutrition_serializer.data['nutritionImage'],
+                    'name': nutrition_serializer.data['name'],
+                    'quantity': fn.quantity,
+                    'property': fn.property
+                }
+                details.append(detail)
+            
+            return Response(details)
+        
+        except FoodNutrition.DoesNotExist:
+            return Response({"message": "No nutrition details found for this food"}, status=status.HTTP_404_NOT_FOUND)
 
-class IngredientOnFoodDetails(APIView):
+class FoodIngredientDetails(APIView):
     def get(self, request, food_id, *args, **kwargs):
         try:
-            food = Food.objects.get(pk=food_id)
-            ingredients = food.ingredients.all()
-            serializer = IngredientSerializer(ingredients, many=True)
-            return Response(serializer.data)
-        except Food.DoesNotExist:
-            return Response({"message": "Food not found"}, status=status.HTTP_404_NOT_FOUND)
+            food_ingredients = FoodIngredient.objects.filter(food_id=food_id)
+            
+            details = []
+            for fi in food_ingredients:
+                ingredient = Ingredient.objects.get(pk=fi.ingredient_id)
+                ingredient_serializer = IngredientSerializer(ingredient)
+                
+                detail = {
+                    'id': fi.id,
+                    'ingredient_image': ingredient_serializer.data['ingredient_image'],
+                    'name': ingredient_serializer.data['name'],
+                    'quantity_required': fi.quantity_required
+                }
+                details.append(detail)
+            
+            return Response(details)
+        
+        except FoodIngredient.DoesNotExist:
+            return Response({"message": "No ingredient details found for this food"}, status=status.HTTP_404_NOT_FOUND)
 
 class FoodMakingStepsListView(ListAPIView):
     serializer_class = FoodMakingStepsSerializer
@@ -219,7 +252,6 @@ class MealUpComingBarListView(APIView):
 
         start_datetime = datetime_obj
         end_datetime = start_datetime + timedelta(days=1)
-        print(start_datetime, end_datetime)
 
         food_schedules = FoodSchedule.objects.filter(
             Q(date__gte=start_datetime, date__lt=end_datetime) |
@@ -318,3 +350,48 @@ class UpdateNotificationAPI(APIView):
             return Response({'message': 'Schedule not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'message': f'Failed to update notification status: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class SimilarFoodRecommendationView(View):
+
+    @staticmethod
+    def recommend(food, final_df, similarity):
+        index = final_df[final_df['ID'] == food].index[0]
+        distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x: x[1])
+        recommended_food_names = [final_df.iloc[i[0]].ID for i in distances[1:5]]
+        return recommended_food_names
+
+    @staticmethod
+    def rec_process():
+        formatted_file_path = settings.FORMATED_DATA_FILEPATH
+        final_df = read_csv_data(formatted_file_path)
+
+        cv = CountVectorizer(max_features=5000, stop_words='english')
+        vector = cv.fit_transform(final_df['tags']).toarray()
+        similarity = cosine_similarity(vector)
+        return similarity, final_df
+
+    def get(self, request, food_id, *args, **kwargs):
+        try:
+            similarity, final_df = self.rec_process()
+            recommended_food_ids = self.recommend(food_id, final_df, similarity)
+
+            recommended_foods = Food.objects.filter(id__in=recommended_food_ids).values(
+                'name', 'cooking_difficulty', 'time_required', 'calories', 'food_image'
+            )
+
+            media_url = settings.MEDIA_URL
+            transformed_recommended_foods = []
+            for food in recommended_foods:
+                transformed_food = {
+                    "name": food['name'],
+                    "cooking_difficulty": food['cooking_difficulty'],
+                    "time_required": food['time_required'],
+                    "calories": food['calories'],
+                    "food_image": f"{media_url}{food['food_image']}"
+                }
+                transformed_recommended_foods.append(transformed_food)
+
+            return JsonResponse(transformed_recommended_foods, safe=False)
+
+        except Food.DoesNotExist:
+            return JsonResponse({'error': 'Food not found'}, status=404)

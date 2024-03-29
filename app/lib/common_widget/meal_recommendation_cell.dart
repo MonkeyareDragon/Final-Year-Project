@@ -31,7 +31,7 @@ class MealRecommendCell extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(
+          Image.network(
                 fObj["image"].toString(),
                 width: media.width * 0.3,
                 height: media.width * 0.25,
@@ -50,7 +50,7 @@ class MealRecommendCell extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
-              "${fObj["size"]} | ${fObj["time"]} | ${fObj["kcal"]}",
+              "${fObj["difficulty"]} | ${fObj["time"]} | ${fObj["kcal"]}",
               style: TextStyle(color: AppColor.gray, fontSize: 12),
             ),
           ),

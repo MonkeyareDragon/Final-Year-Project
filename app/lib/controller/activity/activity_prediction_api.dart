@@ -8,7 +8,7 @@ const String baseUrl = 'http://10.0.2.2:8000/api/v1';
 
 Future<String?> sendSensorDataToAPI(List<List<double>> sensorData) async {
   final String token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEzNzIwNjc0LCJqdGkiOiIzZWVkMWRkZTcwYmI0OGU1YTUzOWRkMDFiYmFiN2MyYiIsInVzZXJfaWQiOjR9.uulxgW1hiaVGoZGJeLLaPorSAEsneO8I6a-DoUukHQo';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE0MDMwNDQwLCJqdGkiOiI4MWQzYWExYzkzMmM0NWIyOTVjYWYxOGRkNWNiNjcyNiIsInVzZXJfaWQiOjR9.xOiputdX31IUXoSz8qQTgx885dwF3n5-5NglSkIDq7M';
   final jsonData = jsonEncode({
     "user": 4,
     "data": sensorData,

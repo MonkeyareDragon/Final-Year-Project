@@ -4,7 +4,7 @@ from PIL import Image
 from rest_framework import serializers
 from django.utils import timezone
 from config.settings import base as settings
-from fitnestx.meal.models import Food, FoodMakingSteps, FoodSchedule, Ingredient, Meal, Category, Nutrition
+from fitnestx.meal.models import Food, FoodIngredient, FoodMakingSteps, FoodNutrition, FoodSchedule, Ingredient, Meal, Category, Nutrition
 
 class MealSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,15 +22,27 @@ class FoodSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class NutritionSerializer(serializers.ModelSerializer):
+    nutritionImage = serializers.ImageField(source='nutrition_image')
+    
     class Meta:
         model = Nutrition
+        fields = ['id', 'nutritionImage', 'name']
+        
+class FoodNutritionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodNutrition
         fields = '__all__'
-
+        
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
         fields = '__all__'
 
+class FoodIngredientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodIngredient
+        fields = '__all__'
+        
 class FoodMakingStepsSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodMakingSteps

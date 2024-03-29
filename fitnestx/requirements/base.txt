@@ -20,12 +20,23 @@ django-cors-headers==4.3.1  # https://github.com/adamchainz/django-cors-headers
 # DRF-spectacular for api documentation
 drf-spectacular==0.27.1  # https://github.com/tfranzel/drf-spectacular
 
+#Authentication token
 djangorestframework-simplejwt==4.6.0
+#Generate OTP code
 pyotp==2.6.0
+#Image processing
 django-versatileimagefield==2.0
+#Phone Number
 django-phonenumber-field==6.4.0
 django-phonenumbers==1.0.1
+#Model Running
 tensorflow==2.16.1
+#NLP
 nltk==3.8.1
 scikit-learn==1.4.1.post1
 pandas==2.2.1
+#Hybrid REC
+LibRecommender==1.4.0
+#Notification
+django-push-notifications==1.2.1
+APScheduler==3.10.0

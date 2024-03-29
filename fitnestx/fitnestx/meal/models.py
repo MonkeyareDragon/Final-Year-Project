@@ -27,7 +27,7 @@ class Food(models.Model):
 
 class Nutrition(models.Model):
     nutrition_image = models.ImageField(upload_to='nutrition_img/', null=True, blank=True)
-    name = models.CharField(max_length=25)
+    name = models.CharField(max_length=50, unique=True)
     
     def __str__(self):
         return self.name
@@ -57,7 +57,7 @@ class FoodNutrition(models.Model):
 
 class Ingredient(models.Model):
     ingredient_image = models.ImageField(upload_to='ingredient_img/', null=True, blank=True)
-    name = models.CharField(max_length=25)
+    name = models.CharField(max_length=50, unique=True)
     
     def __str__(self):
         return self.name
