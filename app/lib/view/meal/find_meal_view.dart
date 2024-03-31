@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/meal_category_cell.dart';
 import 'package:loginsignup/common_widget/meal_recommendation_cell.dart';
 import 'package:loginsignup/common_widget/popular_meal_row.dart';
 import 'package:loginsignup/controller/meal/meal_apis.dart';
+import 'package:loginsignup/controller/meal/meal_recommendation.dart';
 import 'package:loginsignup/model/meal/category.dart';
 import 'package:loginsignup/model/meal/food.dart';
+import 'package:loginsignup/model/meal/meal_rec.dart';
 import 'package:loginsignup/view/meal/food_details_view.dart';
 
 class FindMealView extends StatefulWidget {
@@ -24,22 +27,7 @@ class _FindMealView extends State<FindMealView> {
 
   List popularArr = [];
 
-  List recommendArr = [
-    {
-      "name": "Honey Pancake",
-      "image": "assets/img/home/rd_1.png",
-      "size": "Easy",
-      "time": "30mins",
-      "kcal": "180kCal"
-    },
-    {
-      "name": "Canai Bread",
-      "image": "assets/img/home/m_4.png",
-      "size": "Easy",
-      "time": "20mins",
-      "kcal": "230kCal"
-    },
-  ];
+  List dietMealArr = [];
 
   @override
   void initState() {
@@ -48,8 +36,9 @@ class _FindMealView extends State<FindMealView> {
   }
 
   Future<void> fetchData() async {
-    await categoryListDisplay();
-    await foodListDisplay();
+    categoryListDisplay();
+    foodListDisplay();
+    fetchDietMeal();
   }
 
   Future<void> categoryListDisplay() async {
@@ -83,6 +72,29 @@ class _FindMealView extends State<FindMealView> {
                   "calories": foods.calories,
                   "author": foods.author,
                   "description": foods.description
+                })
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching equipments: $e');
+    }
+  }
+
+   Future<void> fetchDietMeal() async {
+    try {
+      int userId = 2;
+      String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      print(formattedDate);
+      List<SimilarMeal> dietMeal =
+          await fetchDietMealsBaseOnUserActivity(userId, formattedDate);
+      setState(() {
+        dietMealArr = dietMeal
+            .map((dietMeal) => {
+                  "name": dietMeal.name,
+                  "image": dietMeal.foodImage,
+                  "difficulty": dietMeal.cookingDifficulty,
+                  "time": "${dietMeal.timeRequired}mins",
+                  "kcal": "${dietMeal.calories}kCal",
                 })
             .toList();
       });
@@ -257,9 +269,9 @@ class _FindMealView extends State<FindMealView> {
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 scrollDirection: Axis.horizontal,
-                itemCount: recommendArr.length,
+                itemCount: dietMealArr.length,
                 itemBuilder: (context, index) {
-                  var fObj = recommendArr[index] as Map? ?? {};
+                  var fObj = dietMealArr[index] as Map? ?? {};
                   return MealRecommendCell(
                     fObj: fObj,
                     index: index,

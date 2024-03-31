@@ -1,8 +1,9 @@
 from django.http import JsonResponse
 from django.views import View
 from rest_framework import generics, status, viewsets
+from fitnestx.activity.models import ActivityGoal
 from fitnestx.meal.meal_rec.rec_utilis import format_data, new_data, read_csv_data, save_df_to_csv
-from fitnestx.users.models import User
+from fitnestx.users.models import User, UserProfile
 from fitnestx.meal.models import Food, FoodIngredient, FoodMakingSteps, FoodNutrition, FoodSchedule, Ingredient, Meal, Nutrition
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,6 +20,10 @@ import os
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from django.core.exceptions import ObjectDoesNotExist
+from libreco.data import DataInfo
+from libreco.algorithms import WideDeep
+import tensorflow as tf
+import numpy as np
 from fitnestx.meal.serializers import CategorySerializer, DailyNutritionDataSerializer, DisplayFoodScheduleNotificationSerializer, FoodIngredientSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodScheduleStatusUpdateSerializer, FoodSerializer, IngredientSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
 
 class MealList(generics.ListAPIView):
@@ -395,3 +400,82 @@ class SimilarFoodRecommendationView(View):
 
         except Food.DoesNotExist:
             return JsonResponse({'error': 'Food not found'}, status=404)
+
+class MealRecBasedOnUserActivity(View):
+    
+    _loaded_model = None
+    
+    @classmethod
+    def load_model(cls, path):
+        if cls._loaded_model is not None:
+            return cls._loaded_model
+        
+        try:
+            tf.compat.v1.reset_default_graph()
+            loaded_data_info = DataInfo.load(path, model_name="meal_rec_deep")
+            cls._loaded_model = WideDeep.load(path, model_name="meal_rec_deep", data_info=loaded_data_info, manual=True)
+            return cls._loaded_model
+        except Exception as e:
+            raise Exception(f"Failed to load model: {str(e)}")
+    
+    def get_user_data(self, user_id, date):
+        try:
+            user = User.objects.get(id=user_id)
+            profile = UserProfile.objects.get(user=user)
+            
+            try:
+                activity_goal = ActivityGoal.objects.filter(user=user, date=date).latest('date')
+            except ActivityGoal.DoesNotExist:
+                activity_goal = None
+
+            user_feats = {
+                "Gender": profile.gender,
+                "Goal": profile.goal,
+                "Height": float(profile.height) if profile.height else 0,
+                "Weight": float(profile.weight) if profile.weight else 0,
+                "Calories Burn": activity_goal.calories_burn if activity_goal and activity_goal.calories_burn else 0,
+                "Steps": activity_goal.steps if activity_goal and activity_goal.steps else 0,
+                "Running Distance": float(activity_goal.running_distance) if activity_goal and activity_goal.running_distance else 0,
+                "Flights Climbed": activity_goal.flights_climbed if activity_goal and activity_goal.flights_climbed else 0
+            }
+
+            return user_feats
+
+        except Exception as e:
+            raise Exception(f"Failed to fetch user data: {str(e)}")
+    
+    @staticmethod
+    def get_recommendation(user_id, number_of_recommendations, user_feats):
+        model_path = settings.LIBRECOMMENDER_MODEL_FILEPATH
+        model = MealRecBasedOnUserActivity.load_model(model_path)
+
+        recommendations = model.recommend_user(user=user_id, n_rec=number_of_recommendations, user_feats=user_feats)
+
+        food_details_list = []
+        
+        for food_id in recommendations[user_id]:
+            try:
+                food = Food.objects.get(id=food_id)
+                food_details = {
+                    "name": food.name,
+                    "cooking_difficulty": food.cooking_difficulty,
+                    "time_required": food.time_required,
+                    "calories": food.calories,
+                    "food_image": food.food_image.url if food.food_image else None
+                }
+                food_details_list.append(food_details)
+            except Food.DoesNotExist:
+                continue
+
+        return food_details_list
+        
+    def get(self, request, user_id, date, *args, **kwargs):
+        try:
+            number_of_recommendations = 5
+            user_feats = self.get_user_data(user_id, date)
+            recommendations = self.get_recommendation(user_id, number_of_recommendations, user_feats)
+            
+            return JsonResponse(recommendations, safe=False)
+        
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)

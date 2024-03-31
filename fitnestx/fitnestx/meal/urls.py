@@ -1,5 +1,5 @@
 from django.urls import path
-from fitnestx.meal.views import DailyNutritionDataView, DisplayFoodScheduleNotificationView, FoodIngredientDetails, FoodMakingStepsListView, FoodScheduleCreateAPIView, FoodScheduleDeleteAPIView, FoodScheduleStatusUpdateAPIView, MealScheduleScreenDetailView, MealUpComingBarListView, SimilarFoodRecommendationView, UpdateFoodScheduleNotificationView, MealFoodDetails, MealList, CategoryList, NutritionOnFoodDetails, UpdateNotificationAPI, UserNotificationScheduleView, WeeklyProgressView
+from fitnestx.meal.views import DailyNutritionDataView, DisplayFoodScheduleNotificationView, FoodIngredientDetails, FoodMakingStepsListView, FoodScheduleCreateAPIView, FoodScheduleDeleteAPIView, FoodScheduleStatusUpdateAPIView, MealRecBasedOnUserActivity, MealScheduleScreenDetailView, MealUpComingBarListView, SimilarFoodRecommendationView, UpdateFoodScheduleNotificationView, MealFoodDetails, MealList, CategoryList, NutritionOnFoodDetails, UpdateNotificationAPI, UserNotificationScheduleView, WeeklyProgressView
 
 app_name = "meal.users"
 
@@ -22,4 +22,5 @@ urlpatterns = [
     path('user/<int:user_id>/schedules/', UserNotificationScheduleView.as_view(), name='user_schedules'),
     path('meal/schedules/<int:schedule_id>/', UpdateNotificationAPI.as_view(), name='update_notification'),
     path('recommend/<int:food_id>/', SimilarFoodRecommendationView.as_view(), name='food_recommendation'),
+    path('recommend-based-activity/<int:user_id>/<str:date>/', MealRecBasedOnUserActivity.as_view(), name='food_recommendation'),
 ]

@@ -4,15 +4,23 @@ from datetime import datetime
 from datetime import date
 import config.settings.base as settings
 
+loaded_model = None
+
+def load_or_get_model():
+    global loaded_model
+    if loaded_model is None:
+        tf.compat.v1.enable_eager_execution()
+        loaded_model = tf.keras.models.load_model(settings.MODEL_FILEPATH)
+        print(f"Model loaded from {settings.MODEL_FILEPATH}")
+    return loaded_model
 
 def predict_sensor_data(sensor_data):
-    model = tf.keras.models.load_model(settings.MODEL_FILEPATH)
-    print(settings.MODEL_FILEPATH)
+    model = load_or_get_model()
+
     data = np.array(sensor_data['data'])  # Convert to NumPy array
     data = np.expand_dims(data, axis=0)   # Add batch dimension
 
-    #Make predictions
-    print(data)
+    # Make predictions
     predictions = model.predict(data)
 
     class_labels = {0: 'Walking', 1: 'Jogging', 2: 'Stairs', 3: 'Sitting', 4: 'Standing'}

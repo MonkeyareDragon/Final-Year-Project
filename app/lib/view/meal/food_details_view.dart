@@ -41,10 +41,10 @@ class _FoodDetailsView extends State<FoodDetailsView> {
   }
 
   Future<void> fetchData() async {
-    await nutritionListDisplay();
-    await ingredientListDisplay();
-    await foodMakingStepsListDisplay();
-    await fetchSimilarMeal();
+    nutritionListDisplay();
+    ingredientListDisplay();
+    foodMakingStepsListDisplay();
+    fetchSimilarMeal();
   }
 
   Future<void> nutritionListDisplay() async {

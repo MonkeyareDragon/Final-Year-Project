@@ -34,9 +34,9 @@ class _MealPlannerViewState extends State<MealPlannerView> {
   }
 
   Future<void> fetchData() async {
-    await fetchMealDataList();
-    await fetchTodayMealSchedule();
-    await fetchWeeklyProgressData();
+    fetchMealDataList();
+    fetchTodayMealSchedule();
+    fetchWeeklyProgressData();
   }
 
   Future<void> fetchWeeklyProgressData() async {
