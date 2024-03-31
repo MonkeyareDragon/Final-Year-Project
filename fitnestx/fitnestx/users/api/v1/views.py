@@ -197,3 +197,60 @@ class UserProfileCreateAPIView(CreateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"error": "User ID is missing in the request data."}, status=status.HTTP_400_BAD_REQUEST)
+                
+class UserProfileView(RetrieveAPIView):
+    """
+    Retrieve the user profile of a given user_id.
+    """
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'user_id'
+
+    def retrieve(self, request, *args, **kwargs):
+        user_id = self.kwargs.get('user_id')
+        try:
+            user_profile = UserProfile.objects.get(user_id=user_id)
+            user_data = {
+                'avatar': user_profile.avatar,
+                'gender': user_profile.gender,
+                'dob': user_profile.dob,
+                'weight': user_profile.weight,
+                'height': user_profile.height,
+                'goal': user_profile.goal,
+                'user': {
+                    'username': user_profile.user.username,
+                    'first_name': user_profile.user.first_name,
+                    'last_name': user_profile.user.last_name
+                }
+            }
+            return Response(user_data, status=status.HTTP_200_OK)
+        except UserProfile.DoesNotExist:
+            return Response({'error': 'User profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+class UserProfileUpdateView(UpdateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'user_id'
+
+    def update(self, request, *args, **kwargs):
+        user_id = self.kwargs.get('user_id')
+        try:
+            user_profile = UserProfile.objects.get(user_id=user_id)
+            user_data = request.data.pop('user', None)
+            
+            if user_data:
+                user_instance = user_profile.user
+                user_instance.username = user_data.get('username', user_instance.username)
+                user_instance.first_name = user_data.get('first_name', user_instance.first_name)
+                user_instance.last_name = user_data.get('last_name', user_instance.last_name)
+                user_instance.save()
+
+            serializer = self.get_serializer(user_profile, data=request.data, partial=True)
+            
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except UserProfile.DoesNotExist:
+            return Response({'error': 'User profile not found'}, status=status.HTTP_404_NOT_FOUND)

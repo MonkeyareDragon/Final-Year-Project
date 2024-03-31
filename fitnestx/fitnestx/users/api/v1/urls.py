@@ -9,6 +9,8 @@ from .views import (
     ResendVerificaitonEmailView,
     TokenObtainPairView,
     UserProfileCreateAPIView,
+    UserProfileUpdateView,
+    UserProfileView,
     UserRegistrationView,
 )
 
@@ -28,4 +30,6 @@ urlpatterns = [
     ),
     path("change-password/", PasswordChangeView.as_view(), name="change_password"),
     path("profile/", UserProfileCreateAPIView.as_view(), name='profile-create'),
+    path('get-profile/<int:user_id>/', UserProfileView.as_view(), name='user-profile'),
+    path('profile/update/<int:user_id>/', UserProfileUpdateView.as_view(), name='user_profile_update'),
 ]

@@ -250,16 +250,7 @@ class PasswordChangeSerializer(serializers.Serializer):
 
             update_session_auth_hash(self.request, self.user)
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    real_name = serializers.SerializerMethodField()
-    
+class UserProfileSerializer(serializers.ModelSerializer):    
     class Meta:
         model = UserProfile
         fields = '__all__'
-    
-    def __init__(self, *args, **kwargs):
-        self.show_real_name = kwargs.pop('show_real_name', False)
-        super(UserProfileSerializer, self).__init__(*args, **kwargs)
-
-    def get_real_name(self, obj):
-        return obj.real_name if self.show_real_name else None
