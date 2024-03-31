@@ -1,6 +1,7 @@
 from django.db import models
 from fitnestx.users.models import User
 from PIL import Image
+from django.core.validators import MinValueValidator, MaxValueValidator
         
 class Food(models.Model):
     food_image = models.ImageField(upload_to='food_img/', null=True, blank=True)
@@ -140,6 +141,13 @@ class FoodSchedule(models.Model):
     time = models.TimeField()
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='food_schedule_user', on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(
+        default=0,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(5)
+        ]
+    )
     notification_note = models.TextField(blank=True)
     notify_status = models.BooleanField(default=False)
     status = models.CharField(max_length=15, choices=SCHEDULE_STATUS, default="Pending")

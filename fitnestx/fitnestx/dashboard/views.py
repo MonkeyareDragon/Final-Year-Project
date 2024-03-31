@@ -232,3 +232,42 @@ def export_to_csv_food_details(request):
         ])
 
     return response
+
+def export_food_schedule_to_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="food_schedule.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow([
+        'User ID', 'Food ID', 'Rating', 'Meal', 'Date', 'Time', 'Gender', 
+        'DOB', 'Weight', 'Height', 'Goal', 'Calories Burn', 'Steps', 
+        'Running Distance', 'Flights Climbed'
+    ])
+
+    # Fetching required data from models
+    food_schedules = FoodSchedule.objects.all()
+
+    for schedule in food_schedules:
+        user_profile = UserProfile.objects.get(user=schedule.user)
+        activity_goal = ActivityGoal.objects.get(user=schedule.user, date=schedule.date)
+        meal_name = Meal.objects.filter(categorys__foods=schedule.food).first().name
+
+        writer.writerow([
+            schedule.user.id,
+            schedule.food.id,
+            schedule.rating,
+            meal_name,
+            schedule.date,
+            schedule.time,
+            user_profile.gender,
+            user_profile.dob,
+            user_profile.weight,
+            user_profile.height,
+            user_profile.goal,
+            activity_goal.calories_burn,
+            activity_goal.steps,
+            activity_goal.running_distance,
+            activity_goal.flights_climbed
+        ])
+
+    return response

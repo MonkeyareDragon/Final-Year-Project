@@ -31,4 +31,5 @@ urlpatterns = [
     path('workout/workout_schedule/', views.redirect_to_workout_schedule, name='workout_workout_schedule'),
     path('charts/user_stats/', views.chart_user_stats, name='chart_user_stats'),
     path('export-csv/', views.export_to_csv_food_details, name='export_to_csv_food_details'),
+    path('export-food-schedule/', views.export_food_schedule_to_csv, name='export_food_schedule_to_csv'),
 ]
