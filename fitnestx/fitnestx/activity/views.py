@@ -1,6 +1,6 @@
 from rest_framework import generics, status
 from fitnestx.activity.models import ActivityGoal, SensorData
-from fitnestx.activity.utils import predict_sensor_data
+from fitnestx.activity.utils import get_bmi_condition, predict_sensor_data
 from fitnestx.users.models import UserProfile
 from .serializers import ActivityGoalSerializer, SensorDataSerializer
 from rest_framework.response import Response
@@ -90,6 +90,11 @@ class CalculateBMIView(APIView):
             bmi = weight_in_kg / (height_in_m ** 2)
             bmi = round(bmi, 2)
             
-            return Response({"bmi": bmi}, status=status.HTTP_200_OK)
+            condition = get_bmi_condition(bmi)
+            
+            return Response({
+                "bmi": bmi,
+                "condition": condition
+            }, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Weight or height not provided in user profile"}, status=status.HTTP_400_BAD_REQUEST)

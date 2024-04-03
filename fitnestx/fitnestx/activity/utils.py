@@ -126,3 +126,13 @@ def calculate_flights_climbed(stairs_steps):
     flights_climbed = stairs_steps / steps_per_flight
 
     return flights_climbed
+
+def get_bmi_condition(bmi):
+    if bmi < 18.5:
+        return "Underweight"
+    elif 18.5 <= bmi <= 24.9:
+        return "Normal"
+    elif 25 <= bmi <= 29.9:
+        return "Overweight"
+    else:
+        return "Obese"

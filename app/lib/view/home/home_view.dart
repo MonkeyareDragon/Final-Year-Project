@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/workout_display_row.dart';
+import 'package:loginsignup/controller/activity/activity_others_apis.dart';
 import 'package:loginsignup/controller/meal/meal_notification_apis.dart';
 import 'package:loginsignup/model/meal/meal_notification.dart';
 import 'package:loginsignup/view/home/activity_track_view.dart';
@@ -88,11 +89,18 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
     mealNotificationListDisplay();
+    fetchBMI();
   }
 
   int userid = 2;
   List notificationArr = [];
+  String bmiConditionText = '';
+  double bmiValue = 0.0;
 
   Future<void> mealNotificationListDisplay() async {
     try {
@@ -111,6 +119,21 @@ class _HomePageState extends State<HomePage> {
       });
     } catch (e) {
       print('Error fetching notifications: $e');
+    }
+  }
+
+  void fetchBMI() async {
+    try {
+      Map<String, dynamic> result = await calculateBMI();
+      double bmi = result['bmi'];
+      String condition = result['condition'];
+      String conditionText = getBMIConditionText(condition);
+      setState(() {
+        bmiConditionText = conditionText;
+        bmiValue = bmi;
+      });
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -222,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                                     fontWeight: FontWeight.w700),
                               ),
                               Text(
-                                "You have a normal weight",
+                                bmiConditionText.isNotEmpty ? bmiConditionText : 'Loading...',
                                 style: TextStyle(
                                     color: AppColor.white.withOpacity(0.7),
                                     fontSize: 12),
@@ -255,7 +278,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 sectionsSpace: 1,
                                 centerSpaceRadius: 0,
-                                sections: showingSections(),
+                                sections: showingSections(bmiValue),
                               ),
                             ),
                           ),
@@ -994,7 +1017,11 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-List<PieChartSectionData> showingSections() {
+List<PieChartSectionData> showingSections(double bmiValue) {
+  double minValue = 18.5;
+  double maxValue = 30.0;
+
+  double percentage = ((bmiValue - minValue) / (maxValue - minValue)) * 100;
   return List.generate(
     2,
     (i) {
@@ -1003,22 +1030,23 @@ List<PieChartSectionData> showingSections() {
       switch (i) {
         case 0:
           return PieChartSectionData(
-              color: color0,
-              value: 33,
-              title: '',
-              radius: 55,
-              titlePositionPercentageOffset: 0.55,
-              badgeWidget: const Text(
-                "20,1",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700),
-              ));
+            color: color0,
+            value: percentage,
+            title: '',
+            radius: 55,
+            titlePositionPercentageOffset: 0.55,
+            badgeWidget: bmiValue > 0 ? Text(
+              bmiValue.toStringAsFixed(1), 
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w700),
+            ) : null,
+          );
         case 1:
           return PieChartSectionData(
             color: Colors.white,
-            value: 75,
+            value: 100 - percentage,
             title: '',
             radius: 45,
             titlePositionPercentageOffset: 0.55,
@@ -1172,4 +1200,19 @@ Widget bottomTitleWidgets(double value, TitleMeta meta) {
     space: 10,
     child: text,
   );
+}
+
+String getBMIConditionText(String condition) {
+  switch (condition) {
+    case 'Underweight':
+      return 'Your weight is under the range.';
+    case 'Normal':
+      return 'Your weight is in normal range.';
+    case 'Overweight':
+      return 'Your weight is above the range.';
+    case 'Obese':
+      return 'Your weight is in the obese range.';
+    default:
+      return 'BMI condition not available.';
+  }
 }
