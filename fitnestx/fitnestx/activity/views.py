@@ -1,10 +1,14 @@
 from rest_framework import generics, status
 from fitnestx.activity.models import ActivityGoal, SensorData
 from fitnestx.activity.utils import predict_sensor_data
+from fitnestx.users.models import UserProfile
 from .serializers import ActivityGoalSerializer, SensorDataSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 class SensorDataListCreateView(generics.ListCreateAPIView):
     queryset = SensorData.objects.all()
@@ -68,3 +72,24 @@ class TodaysActivityGoalListView(generics.RetrieveUpdateAPIView):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+class CalculateBMIView(APIView):
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            profile = UserProfile.objects.get(user=request.user)
+        except UserProfile.DoesNotExist:
+            return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        if profile.weight and profile.height:
+            weight_in_kg = float(profile.weight)
+            height_in_cm = float(profile.height)
+            
+            # Metric System
+            height_in_m = height_in_cm / 100.0
+            bmi = weight_in_kg / (height_in_m ** 2)
+            bmi = round(bmi, 2)
+            
+            return Response({"bmi": bmi}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Weight or height not provided in user profile"}, status=status.HTTP_400_BAD_REQUEST)

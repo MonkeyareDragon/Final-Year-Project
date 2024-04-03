@@ -1,9 +1,13 @@
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
+import 'package:loginsignup/common/date_helper.dart';
 import 'package:loginsignup/common_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/profile_icon_box.dart';
 import 'package:loginsignup/common_widget/setting_row.dart';
+import 'package:loginsignup/controller/profile/profile_api.dart';
+import 'package:loginsignup/model/profile/profile.dart';
+import 'package:loginsignup/view/profile/edit_profile_screen.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -14,6 +18,7 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   bool positive = false;
+  UserProfile? _userProfile;
 
   List accountArr = [
     {
@@ -46,10 +51,56 @@ class _ProfileViewState extends State<ProfileView> {
       "tag": "6"
     },
     {"image": "assets/img/home/p_setting.png", "name": "Setting", "tag": "7"},
+    {"image": "assets/img/home/p_setting.png", "name": "Logout", "tag": "8"},
   ];
+
+  void getUserProfile() async {
+    int id = 2;
+    try {
+      UserProfile userProfile = await fetchUserProfileDetails(id);
+      setState(() {
+        _userProfile = userProfile;
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void _navigateToEditProfile() async {
+    final updatedProfile = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditProfilePage(profileData: {
+          "avatar": _userProfile?.avatar,
+          "gender": _userProfile?.gender,
+          "dob": _userProfile?.dob,
+          "weight": _userProfile?.weight,
+          "height": _userProfile?.height,
+          "goal": _userProfile?.goal,
+          "username": _userProfile?.user.username,
+          "first_name": _userProfile?.user.firstName,
+          "last_name": _userProfile?.user.lastName,
+        }),
+      ),
+    );
+
+    if (updatedProfile != null) {
+      setState(() {
+        _userProfile = updatedProfile;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
+    int age =
+        _userProfile != null ? DateHelper.calculateAge(_userProfile!.dob) : 0;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColor.white,
@@ -108,7 +159,7 @@ class _ProfileViewState extends State<ProfileView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Kabin Chongbang Limbu",
+                          "${_userProfile?.user.firstName} ${_userProfile?.user.lastName}",
                           style: TextStyle(
                             color: AppColor.black,
                             fontSize: 14,
@@ -116,7 +167,7 @@ class _ProfileViewState extends State<ProfileView> {
                           ),
                         ),
                         Text(
-                          "Lose a Fat Program",
+                          "${_userProfile?.goal}",
                           style: TextStyle(
                             color: AppColor.gray,
                             fontSize: 12,
@@ -133,7 +184,7 @@ class _ProfileViewState extends State<ProfileView> {
                       type: RoundButtonType.bgGradient,
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      onPressed: () {},
+                      onPressed: _navigateToEditProfile,
                     ),
                   )
                 ],
@@ -141,10 +192,12 @@ class _ProfileViewState extends State<ProfileView> {
               const SizedBox(
                 height: 15,
               ),
-              const Row(children: [
+              Row(children: [
                 Expanded(
                   child: ProfileIconBox(
-                    title: "180cm",
+                    title: _userProfile?.height != null
+                        ? _userProfile!.height.toString() + "cm"
+                        : "",
                     subtitle: "Height",
                   ),
                 ),
@@ -153,7 +206,9 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
                 Expanded(
                   child: ProfileIconBox(
-                    title: "65kg",
+                    title: _userProfile?.weight != null
+                        ? _userProfile!.weight.toString() + "kg"
+                        : "",
                     subtitle: "Weight",
                   ),
                 ),
@@ -162,7 +217,7 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
                 Expanded(
                   child: ProfileIconBox(
-                    title: "22yo",
+                    title: "${age}yrs",
                     subtitle: "Age",
                   ),
                 ),
