@@ -9,6 +9,8 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.db.models import Count
+from datetime import timedelta
 
 class SensorDataListCreateView(generics.ListCreateAPIView):
     queryset = SensorData.objects.all()
@@ -98,3 +100,44 @@ class CalculateBMIView(APIView):
             }, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Weight or height not provided in user profile"}, status=status.HTTP_400_BAD_REQUEST)
+
+class StepCountDataView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        current_datetime = timezone.localtime(timezone.now())
+        start_time = current_datetime - timedelta(hours=24)
+        step_count_data = {}
+
+        for hour in range(24):
+            hour_start = start_time + timedelta(hours=hour)
+            hour_end = hour_start + timedelta(hours=1)
+
+            step_count = SensorData.objects.filter(
+                user=user,
+                predicted_activity='Walking',
+                date_and_time__gte=hour_start,
+                date_and_time__lt=hour_end
+            ).count()
+
+            step_count_data[hour] = step_count
+
+        return Response(step_count_data, status=status.HTTP_200_OK)
+    
+class CalorieDataView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        current_date = timezone.localtime(timezone.now()).date()
+
+        try:
+            activity_goal = ActivityGoal.objects.get(user=user, date=current_date)
+            response_data = {
+                "calories_burn": activity_goal.calories_burn,
+                "target_calories_burn": activity_goal.target_calories_burn
+            }
+
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except ActivityGoal.DoesNotExist:
+            return Response({"error": "No data found for the current date"}, status=status.HTTP_404_NOT_FOUND)
