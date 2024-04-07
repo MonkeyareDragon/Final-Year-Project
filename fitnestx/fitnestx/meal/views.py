@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views import View
 from rest_framework import generics, status, viewsets
 from fitnestx.activity.models import ActivityGoal
-from fitnestx.meal.meal_rec.rec_utilis import format_data, new_data, read_csv_data, save_df_to_csv
+from fitnestx.meal.meal_rec.rec_utilis import read_csv_data
 from fitnestx.users.models import User, UserProfile
 from fitnestx.meal.models import Food, FoodIngredient, FoodMakingSteps, FoodNutrition, FoodSchedule, Ingredient, Meal, Nutrition
 from rest_framework.response import Response
@@ -16,15 +16,12 @@ from rest_framework.authentication import TokenAuthentication
 from datetime import datetime, timedelta
 from django.db.models import Q
 import config.settings.base as settings
-import os
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from django.core.exceptions import ObjectDoesNotExist
-from libreco.data import DataInfo
-from libreco.algorithms import WideDeep
-import tensorflow as tf
-import numpy as np
-from fitnestx.meal.serializers import CategorySerializer, DailyNutritionDataSerializer, DisplayFoodScheduleNotificationSerializer, FoodIngredientSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodScheduleStatusUpdateSerializer, FoodSerializer, IngredientSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
+from sklearn.feature_extraction.text import CountVectorizer # type: ignore
+from sklearn.metrics.pairwise import cosine_similarity # type: ignore
+from libreco.data import DataInfo # type: ignore
+from libreco.algorithms import WideDeep # type: ignore
+import tensorflow as tf # type: ignore
+from fitnestx.meal.serializers import CategorySerializer, DailyNutritionDataSerializer, DisplayFoodScheduleNotificationSerializer, FoodMakingStepsSerializer, FoodScheduleSerializer, FoodScheduleStatusUpdateSerializer, FoodSerializer, IngredientSerializer, MealSerializer, NutritionSerializer, UpdateFoodScheduleNotificationSerializer
 
 class MealList(generics.ListAPIView):
     queryset = Meal.objects.all()

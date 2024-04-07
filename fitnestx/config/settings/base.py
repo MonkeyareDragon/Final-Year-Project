@@ -310,7 +310,17 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Fitnest x API",
     "DESCRIPTION": "Documentation of API endpoints of Fitnest x",
     "VERSION": "1.0.0",
-    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+    # "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+    "SERVERS": [
+        {"url": "http://localhost:8000", "description": "Local Development server"},
+        {"url": "https://example.com", "description": "Production server"},
+    ],
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,
+        "displayOperationId": True,
+    },
+    "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
 }
 # ------------------------------------------------------------------------------
 # Keras Model Url
