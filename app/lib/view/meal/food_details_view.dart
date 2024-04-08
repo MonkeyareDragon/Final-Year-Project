@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/food_making_steps_row.dart';
 import 'package:loginsignup/common_widget/meal_recommendation_cell.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/controller/meal/meal_apis.dart';
 import 'package:loginsignup/controller/meal/meal_recommendation.dart';
 import 'package:loginsignup/model/meal/food_make_steps.dart';

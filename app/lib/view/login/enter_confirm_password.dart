@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
-import 'package:loginsignup/common_widget/textfield.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/textfield.dart';
 import 'package:loginsignup/controller/api.dart';
 import 'package:loginsignup/view/login/link_send_confirm.dart';
 

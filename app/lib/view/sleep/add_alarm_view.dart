@@ -2,7 +2,7 @@ import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 
 class AddAlarmView extends StatefulWidget {
   final DateTime date;

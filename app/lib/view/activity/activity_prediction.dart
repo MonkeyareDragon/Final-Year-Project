@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/nutrition_row.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/controller/activity/activity_goal_apis.dart';
 import 'package:loginsignup/controller/activity/activity_prediction_api.dart';
 import 'package:loginsignup/model/activity/activity_goal.dart';

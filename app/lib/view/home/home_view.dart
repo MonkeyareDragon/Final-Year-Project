@@ -2,7 +2,7 @@ import 'package:dotted_dashed_line/dotted_dashed_line.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/workout_display_row.dart';
 import 'package:loginsignup/controller/activity/activity_others_apis.dart';
 import 'package:loginsignup/controller/meal/meal_notification_apis.dart';

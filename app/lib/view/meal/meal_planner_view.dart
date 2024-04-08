@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/find_eat_row.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/todays_meal_row.dart';
 import 'package:loginsignup/controller/meal/meal_apis.dart';
 import 'package:loginsignup/controller/meal/meal_graphs_api.dart';

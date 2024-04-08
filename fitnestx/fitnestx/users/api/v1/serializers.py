@@ -1,10 +1,6 @@
-from io import BytesIO
-
-import jwt
-import requests
 from django.conf import settings
 from django.contrib.auth import authenticate
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.tokens import default_token_generator
@@ -13,9 +9,8 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
-from rest_framework.exceptions import AuthenticationFailed, ValidationError
-from rest_framework_simplejwt.tokens import RefreshToken
-
+from rest_framework.exceptions import ValidationError
+from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
 from fitnestx.core.otp import send_email_verification_code, validate_otp, send_password_reset_email
 from fitnestx.users.models import User, UserProfile
 

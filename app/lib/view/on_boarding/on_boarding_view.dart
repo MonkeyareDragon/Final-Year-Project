@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../common/color_extension.dart';
-import '../../common_widget/on_boarding_page.dart';
+import '../../common_widget/authentication/on_boarding_page.dart';
 import '../login/signup_view.dart';
 
 class OnBoardingView extends StatefulWidget {
@@ -35,13 +35,13 @@ class _OnBoardingViewState extends State<OnBoardingView> {
     {
       "title": "Achieve Excellence",
       "subtitle":
-          "Persist through challenges to achieve your aspirations. Temporary discomfort is a small price for everlasting success. Let's strive for excellence.",
+          "Persist through challenges to achieve your aspirations. Temporary discomfort is a small price for everlasting success.",
       "image": "assets/img/onboarding/2.png"
     },
     {
       "title": "Nutritional Guidance",
       "subtitle":
-          "Embark on a journey towards a healthier lifestyle with our personalized dietary plans. Discover the joy of maintaining well-balanced and nutritious meals.",
+          "Explore tailored dietary plans for a healthier lifestyle and embrace well-balanced, nutritious meals.",
       "image": "assets/img/onboarding/3.png"
     },
     {

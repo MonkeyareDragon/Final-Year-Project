@@ -2,7 +2,7 @@ import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common/date_function.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/view/workout/add_schedule_view.dart';
 
 class WorkoutScheduleView extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/view/sleep/add_alarm_view.dart';
 import 'package:simple_animation_progress_bar/simple_animation_progress_bar.dart';
 import '../../common_widget/today_sleep_schedule_row.dart';

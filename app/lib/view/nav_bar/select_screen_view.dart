@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/view/sleep/sleep_tracker_view.dart';
 import 'package:loginsignup/view/workout/workout_tracker_view.dart';
 

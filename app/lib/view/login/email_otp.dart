@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/controller/api.dart';
 
 import '../../common/color_extension.dart';
-import '../../common_widget/primary_button.dart';
-import '../../common_widget/textfield.dart';
+import '../../common_widget/base_widget/primary_button.dart';
+import '../../common_widget/base_widget/textfield.dart';
 import 'login_profile.dart';
 
 class EmailOtpPage extends StatefulWidget {
   final String email;
 
-  EmailOtpPage({super.key, required this.email});
+  EmailOtpPage({required this.email});
 
   @override
   _EmailOtpPageState createState() => _EmailOtpPageState();
@@ -24,7 +24,6 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
   int countdownTime = 180; // 3 minutes in seconds
   bool isResending = false;
   Timer? _timer;
-
 
   @override
   void initState() {
@@ -47,28 +46,36 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
   }
 
   void updateCountdownTime(int newTime) {
-    setState(() {
-      countdownTime = newTime;
-      if (newTime == 0) {
-        isResending = false;
-      }
-    });
+    if (mounted) {
+      setState(() {
+        countdownTime = newTime;
+        if (newTime == 0) {
+          isResending = false;
+        }
+      });
+    }
   }
 
   void startCountdownTimer() {
     const oneSec = const Duration(seconds: 1);
     var threeMinutes = 3 * 60; // 3 minutes in seconds
 
-    new Timer.periodic(
+    _timer = new Timer.periodic(
       oneSec,
-      (Timer timer) => setState(() {
+      (Timer timer) {
+        if (!mounted) {
+          timer.cancel();
+          return;
+        }
         if (threeMinutes < 1) {
           timer.cancel();
         } else {
-          threeMinutes = threeMinutes - 1;
-          updateCountdownTime(threeMinutes);
+          setState(() {
+            threeMinutes = threeMinutes - 1;
+            updateCountdownTime(threeMinutes);
+          });
         }
-      }),
+      },
     );
   }
 
@@ -91,9 +98,8 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
     }
   }
 
-   @override
+  @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     otpController.dispose();
     _timer?.cancel();
     super.dispose();
@@ -146,14 +152,13 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
                 ),
               ),
               SizedBox(height: 20),
-              if (isResending)  
+              if (isResending)
                 Text(
                   'Time remaining: $countdownTime seconds',
                   style: TextStyle(
                     color: AppColor.black,
                     fontSize: 16,
                   ),
-                  
                 ),
               SizedBox(height: 15),
               RoundButton(title: "Login", onPressed: _submitOTP),

@@ -2,9 +2,8 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.debug import sensitive_post_parameters
 from fitnestx.users.models import UserProfile
-from drf_spectacular.utils import extend_schema
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema # type: ignore
+from rest_framework import status
 from rest_framework.generics import (
     CreateAPIView,
     GenericAPIView,
@@ -14,9 +13,6 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from fitnestx.core.mixins import CustomPageNumberPagination
-
 from .serializers import (
     PasswordChangeSerializer,
     PasswordResetConfirmSerializer,
@@ -25,10 +21,8 @@ from .serializers import (
     TokenObtainPairSerializer,
     UserProfileSerializer,
     UserRegisterationSerializer,
-    UserSerializer,
     VerirfyOtpSerializer,
 )
-
 # from rest_framework.throttling import ScopedRateThrottle
 
 sensitive_post_parameters_m = method_decorator(

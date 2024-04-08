@@ -3,8 +3,8 @@ import 'package:loginsignup/view/login/password_recovery.dart';
 import 'package:loginsignup/view/login/signup_view.dart';
 import 'package:loginsignup/view/login/welcome_view.dart';
 import '../../common/color_extension.dart';
-import '../../common_widget/primary_button.dart';
-import '../../common_widget/textfield.dart';
+import '../../common_widget/base_widget/primary_button.dart';
+import '../../common_widget/base_widget/textfield.dart';
 import '../../controller/api.dart';
 
 class LoginView extends StatefulWidget {

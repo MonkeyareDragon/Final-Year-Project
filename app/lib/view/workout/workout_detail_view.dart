@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/exercise_set_sction.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/controller/workout/workout_api.dart';
 import 'package:loginsignup/model/workout/equipment.dart';
 import 'package:loginsignup/model/workout/exercise.dart';

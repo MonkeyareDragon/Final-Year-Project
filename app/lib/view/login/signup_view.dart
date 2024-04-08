@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/view/login/login_view.dart';
 import '../../common/color_extension.dart';
-import '../../common_widget/primary_button.dart';
-import '../../common_widget/textfield.dart';
+import '../../common_widget/base_widget/primary_button.dart';
+import '../../common_widget/base_widget/textfield.dart';
 import '../../controller/api.dart';
 import 'email_otp.dart';
 
@@ -24,9 +25,10 @@ class _SignUpViewState extends State<SignUpView> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     emailController.dispose();
     passwordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
     super.dispose();
   }
 
@@ -36,6 +38,21 @@ class _SignUpViewState extends State<SignUpView> {
     final String firstName = firstNameController.text.trim();
     final String lastName = lastNameController.text.trim();
 
+    if (email.isEmpty ||
+        password.isEmpty ||
+        firstName.isEmpty ||
+        lastName.isEmpty) {
+      _showErrorDialog('Missing Information',
+          'All fields are required to filled up to proceed.');
+      return;
+    }
+
+    if (!isCheck) {
+      _showErrorDialog('Acceptance Required',
+          'Please accept our Privacy Policy and Terms of Use.');
+      return;
+    }
+
     final Map<String, dynamic> result =
         await apiService.register(email, password, firstName, lastName);
 
@@ -44,26 +61,37 @@ class _SignUpViewState extends State<SignUpView> {
           context,
           MaterialPageRoute(
               builder: (context) => EmailOtpPage(
-                    key: null,
                     email: email,
                   )));
     } else {
-      // Create an alert dialog to display some errors
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text(result['error']),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-      print('Register failed. Error: ${result['error']}');
+      String errorMessage = 'Invalid credentials';
+      final errorBody = jsonDecode(result['error']);
+
+      errorBody.forEach((key, value) {
+        if (value is List && value.isNotEmpty) {
+          errorMessage = value[0];
+          return;
+        }
+      });
+
+      _showErrorDialog('Registration Failed', errorMessage);
     }
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget build(BuildContext context) {
@@ -76,9 +104,12 @@ class _SignUpViewState extends State<SignUpView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                "Hey there,",
-                style: TextStyle(color: AppColor.gray, fontSize: 16),
+              Padding(
+                padding: EdgeInsets.only(top: media.width * 0.05),
+                child: Text(
+                  "Hey there,",
+                  style: TextStyle(color: AppColor.gray, fontSize: 16),
+                ),
               ),
               Text(
                 "Create an Account",
@@ -191,35 +222,6 @@ class _SignUpViewState extends State<SignUpView> {
                     height: 1,
                     color: AppColor.gray.withOpacity(0.5),
                   )),
-                ],
-              ),
-              SizedBox(
-                height: media.width * 0.04,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: AppColor.white,
-                        border: Border.all(
-                          width: 1,
-                          color: AppColor.gray.withOpacity(0.4),
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Image.asset(
-                        "assets/img/signup/Google.png",
-                        width: 20,
-                        height: 20,
-                      ),
-                    ),
-                  ),
                 ],
               ),
               SizedBox(

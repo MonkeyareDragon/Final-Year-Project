@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/view/login/profile_goal.dart';
 import '../../common/color_extension.dart';
-import '../../common_widget/primary_button.dart';
-import '../../common_widget/textfield.dart';
+import '../../common_widget/base_widget/primary_button.dart';
+import '../../common_widget/base_widget/textfield.dart';
 
 class LoginProfileView extends StatefulWidget {
   const LoginProfileView({super.key});

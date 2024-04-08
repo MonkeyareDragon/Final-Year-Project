@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/stpes_details_row.dart';
 import 'package:loginsignup/controller/workout/workout_api.dart';
 import 'package:loginsignup/model/workout/exercise.dart';

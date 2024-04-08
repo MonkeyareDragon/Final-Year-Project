@@ -48,7 +48,7 @@ class ApiService {
       return {'success': true, "detail":"Verification email sent."};
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
-      return {'success': false, 'error': 'Invalid credentials'};
+      return {'success': false, 'error': '${response.body}'};
     }
   }
 
@@ -77,7 +77,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> resendOTP(String email) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/api/v1/users/resend/verification-code/'),
+      Uri.parse('$baseUrl/api/v1/users/resend-otp/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },

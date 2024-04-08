@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../common/color_extension.dart';
-import '../../common_widget/primary_button.dart';
-import '../../common_widget/textfield.dart';
+import '../../common_widget/base_widget/primary_button.dart';
+import '../../common_widget/base_widget/textfield.dart';
 import '../../controller/api.dart';
 
 class EditProfilePage extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
-import 'package:loginsignup/common_widget/primary_button.dart';
+import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/view/login/enter_confirm_password.dart';
 
 class PasswordRecoveryScreen extends StatelessWidget {

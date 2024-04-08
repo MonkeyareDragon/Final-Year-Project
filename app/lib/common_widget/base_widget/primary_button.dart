@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../common/color_extension.dart';
+import '../../common/color_extension.dart';
 
 enum RoundButtonType { bgGradient, bgSGradient, textGradient }
 

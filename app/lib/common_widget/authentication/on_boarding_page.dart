@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../common/color_extension.dart';
+import '../../common/color_extension.dart';
 
 class OnBoardingPage extends StatelessWidget {
   final Map pageObj;
@@ -21,7 +21,7 @@ class OnBoardingPage extends StatelessWidget {
             fit: BoxFit.fitWidth,
           ),
           SizedBox(
-            height: media.width * 0.1,
+            height: media.width * 0.04,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -34,7 +34,7 @@ class OnBoardingPage extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: media.width * 0.03,
+            height: media.width * 0.025,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
