@@ -29,6 +29,21 @@ class RoundTextField extends StatelessWidget {
         controller: controller,
         keyboardType: keywordtype,
         obscureText: obscureText,
+        readOnly: keywordtype == TextInputType.datetime,
+        onTap: () async {
+          if (keywordtype == TextInputType.datetime) {
+            final DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(1800),
+              lastDate: DateTime.now(),
+            );
+
+            if (pickedDate != null && pickedDate != controller?.text) {
+              controller?.text = pickedDate.toString().split(' ')[0];
+            }
+          }
+        },
         decoration: InputDecoration(
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 15, horizontal: 15),

@@ -1,11 +1,24 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:loginsignup/controller/auth/profile_api.dart';
 import 'package:loginsignup/view/login/welcome_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/base_widget/primary_button.dart';
 
 class ProfileGoalView extends StatefulWidget {
-  const ProfileGoalView({super.key});
+  final int userId;
+  final String gender;
+  final String dob;
+  final String weight;
+  final String height;
+  const ProfileGoalView({
+    super.key,
+    required this.userId,
+    required this.gender,
+    required this.dob,
+    required this.weight,
+    required this.height,
+  });
 
   @override
   State<ProfileGoalView> createState() => _ProfileGoalViewState();
@@ -13,6 +26,8 @@ class ProfileGoalView extends StatefulWidget {
 
 class _ProfileGoalViewState extends State<ProfileGoalView> {
   CarouselController buttonCarouselController = CarouselController();
+  int currentPage = 0;
+  String selectedGoal = 'Improve Shape';
 
   List goalArray = [
     {
@@ -34,6 +49,42 @@ class _ProfileGoalViewState extends State<ProfileGoalView> {
           "I have over 20 lbs to lose. I want to\ndrop all this fat and gain muscle\nmass"
     },
   ];
+
+  void _confirmProfile() async {
+    try {
+      print(widget.userId);
+      print(widget.gender);
+      print(widget.dob);
+      print(widget.weight);
+      print(widget.height);
+      print(selectedGoal);
+      Map<String, dynamic> result = await setUserProfile(
+        userId: widget.userId,
+        gender: widget.gender,
+        dob: widget.dob,
+        weight: widget.weight,
+        height: widget.height,
+        goal: selectedGoal,
+      );
+
+      if (result['success'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WelcomeView(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error setting profile: ${result['error']}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error setting profile: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +154,12 @@ class _ProfileGoalViewState extends State<ProfileGoalView> {
                 viewportFraction: 0.7,
                 aspectRatio: 0.88,
                 initialPage: 0,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    currentPage = index;
+                    selectedGoal = goalArray[currentPage]['title'];
+                  });
+                },
               ),
             ),
           ),
@@ -130,14 +187,24 @@ class _ProfileGoalViewState extends State<ProfileGoalView> {
                 SizedBox(
                   height: media.width * 0.05,
                 ),
-                RoundButton(
-                    title: "Confirm",
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WelcomeView()));
-                    }),
+                SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: RoundButton(
+                            title: "Confirm",
+                            onPressed: _confirmProfile,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
               ],
             ),
           )

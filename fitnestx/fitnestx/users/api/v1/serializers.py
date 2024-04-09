@@ -70,6 +70,7 @@ class VerirfyOtpSerializer(serializers.Serializer):
         user.save()
         refresh = self.get_token(user)
         response = {
+            "user_id": user.id,
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         }

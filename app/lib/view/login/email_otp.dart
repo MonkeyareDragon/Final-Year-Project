@@ -1,8 +1,7 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:loginsignup/controller/api.dart';
-
+import 'package:loginsignup/controller/auth/auth_apis.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/base_widget/primary_button.dart';
 import '../../common_widget/base_widget/textfield.dart';
@@ -33,16 +32,65 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
 
   Future<void> _submitOTP() async {
     final String otp = otpController.text.trim();
-
     final Map<String, dynamic> result = await apiService.verifyOTP(email, otp);
 
     if (result['success']) {
-      print('Login successful! Token: ${result['token']}');
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginProfileView()));
+      _showSuccessDialog('Success', 'Your Email is successfully verified!', result['user_id']);
     } else {
-      print('Login failed. Error: ${result['error']}');
+      String errorMessage = 'Invalid code! Please try again.';
+      final errorBody = jsonDecode(result['error']);
+
+      errorBody.forEach((key, value) {
+        if (value is List && value.isNotEmpty) {
+          errorMessage = value[0];
+          return;
+        }
+      });
+
+      _showErrorDialog('OTP Failed', errorMessage);
     }
+  }
+
+  void _navigateToProfile(int userId) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => LoginProfileView(userId: userId)),
+  );
+}
+
+  void _showSuccessDialog(String title, String message, int userId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _navigateToProfile(userId);
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   void updateCountdownTime(int newTime) {
@@ -80,11 +128,6 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
   }
 
   void _resendOtp() async {
-    if (isResending) {
-      print('Cannot resend OTP during countdown');
-      return;
-    }
-
     isResending = true;
     // Call the API to resend the OTP
     final Map<String, dynamic> result = await apiService.resendOTP(email);
@@ -141,7 +184,7 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
                 keywordtype: TextInputType.numberWithOptions(),
                 controller: otpController,
                 rigtIcon: TextButton(
-                  onPressed: _resendOtp,
+                  onPressed: isResending ? null : _resendOtp,
                   child: Text(
                     "Resend",
                     style: TextStyle(
@@ -154,14 +197,14 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
               SizedBox(height: 20),
               if (isResending)
                 Text(
-                  'Time remaining: $countdownTime seconds',
+                  'Resend Cooldown: $countdownTime seconds',
                   style: TextStyle(
                     color: AppColor.black,
                     fontSize: 16,
                   ),
                 ),
               SizedBox(height: 15),
-              RoundButton(title: "Login", onPressed: _submitOTP),
+              RoundButton(title: "Verify", onPressed: _submitOTP),
             ],
           ),
         ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/base_widget/primary_button.dart';
 import '../../common_widget/base_widget/textfield.dart';
-import '../../controller/api.dart';
+import '../../controller/auth/auth_apis.dart';
 
 class EditProfilePage extends StatefulWidget {
   final Map<String, dynamic> profileData;

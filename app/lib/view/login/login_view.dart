@@ -5,7 +5,7 @@ import 'package:loginsignup/view/login/welcome_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/base_widget/primary_button.dart';
 import '../../common_widget/base_widget/textfield.dart';
-import '../../controller/api.dart';
+import '../../controller/auth/auth_apis.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

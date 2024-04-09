@@ -5,14 +5,28 @@ import '../../common_widget/base_widget/primary_button.dart';
 import '../../common_widget/base_widget/textfield.dart';
 
 class LoginProfileView extends StatefulWidget {
-  const LoginProfileView({super.key});
+  final int userId;
+  const LoginProfileView({super.key, required this.userId});
 
   @override
   State<LoginProfileView> createState() => _LoginProfileViewState();
 }
 
 class _LoginProfileViewState extends State<LoginProfileView> {
-  TextEditingController txtDate = TextEditingController();
+  final dobController = TextEditingController();
+  final weightNameController = TextEditingController();
+  final heightController = TextEditingController();
+  String? selectedGender;
+
+  bool validateFields() {
+    if (selectedGender == null ||
+        dobController.text.isEmpty ||
+        weightNameController.text.isEmpty ||
+        heightController.text.isEmpty) {
+      return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +41,7 @@ class _LoginProfileViewState extends State<LoginProfileView> {
               children: [
                 Image.asset(
                   "assets/img/profile/Profile.png",
-                  width: media.width / 1.25,
+                  width: media.width / 1.55,
                   fit: BoxFit.fitWidth,
                 ),
                 SizedBox(
@@ -72,9 +86,9 @@ class _LoginProfileViewState extends State<LoginProfileView> {
                                 )),
                             Expanded(
                               child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
+                                child: DropdownButton<String>(
                                   items: ["Male", "Female"]
-                                      .map((name) => DropdownMenuItem(
+                                      .map((name) => DropdownMenuItem<String>(
                                             value: name,
                                             child: Text(
                                               name,
@@ -84,13 +98,18 @@ class _LoginProfileViewState extends State<LoginProfileView> {
                                             ),
                                           ))
                                       .toList(),
-                                  onChanged: (value) {},
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedGender = value;
+                                    });
+                                  },
                                   isExpanded: true,
                                   hint: Text(
                                     "Choose Gender",
                                     style: TextStyle(
                                         color: AppColor.gray, fontSize: 12),
                                   ),
+                                  value: selectedGender,
                                 ),
                               ),
                             ),
@@ -104,7 +123,8 @@ class _LoginProfileViewState extends State<LoginProfileView> {
                         height: media.width * 0.04,
                       ),
                       RoundTextField(
-                        controller: txtDate,
+                        controller: dobController,
+                        keywordtype: TextInputType.datetime,
                         hitText: "Date of Birth",
                         icon: "assets/img/profile/Date.png",
                       ),
@@ -115,7 +135,8 @@ class _LoginProfileViewState extends State<LoginProfileView> {
                         children: [
                           Expanded(
                             child: RoundTextField(
-                              controller: txtDate,
+                              controller: weightNameController,
+                              keywordtype: TextInputType.number,
                               hitText: "Your Weight",
                               icon: "assets/img/profile/Weight.png",
                             ),
@@ -148,7 +169,8 @@ class _LoginProfileViewState extends State<LoginProfileView> {
                         children: [
                           Expanded(
                             child: RoundTextField(
-                              controller: txtDate,
+                              controller: heightController,
+                              keywordtype: TextInputType.number,
                               hitText: "Your Height",
                               icon: "assets/img/profile/Height.png",
                             ),
@@ -178,14 +200,30 @@ class _LoginProfileViewState extends State<LoginProfileView> {
                         height: media.width * 0.07,
                       ),
                       RoundButton(
-                          title: "Next >",
-                          onPressed: () {
+                        title: "Next >",
+                        onPressed: () {
+                          if (validateFields()) {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ProfileGoalView()));
-                          }),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfileGoalView(
+                                  userId: widget.userId,
+                                  gender: selectedGender!,
+                                  dob: dobController.text,
+                                  weight: weightNameController.text,
+                                  height: heightController.text,
+                                ),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Please fill all the fields.'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ),

@@ -37,14 +37,17 @@ class _WelcomeViewState extends State<WelcomeView> {
                 height: media.width * 0.1,
               ),
               Text(
-                "Welcome, Kabin",
+                "Welcome to the Journey, Kabin",
                 style: TextStyle(
                     color: AppColor.black,
                     fontSize: 20,
                     fontWeight: FontWeight.w700),
               ),
+               SizedBox(
+                height: media.width * 0.04,
+              ),
               Text(
-                "You are all set now, let’s reach your\ngoals together with us",
+                "You are all set now, let’s reach your\ngoals together with us.",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppColor.gray, fontSize: 12),
               ),
