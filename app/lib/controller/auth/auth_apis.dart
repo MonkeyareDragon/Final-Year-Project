@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:loginsignup/controller/session_manager.dart';
+import 'package:loginsignup/model/session/user_session.dart';
 
 class ApiService {
   static const String baseUrl = 'http://10.0.2.2:8000';
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/api/v1/users/jwt/token/'),
+      Uri.parse('$baseUrl/api/v1/users/token/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -20,6 +22,18 @@ class ApiService {
       // Successful login
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       print(responseData); // Print the response data
+      int userId = responseData['user_id'];
+      String accessToken = responseData['access'];
+      String firstName = responseData['first_name'];
+      String lastName = responseData['last_name'];
+      
+       await SessionManager.saveSession(UserSession(
+        userId: userId,
+        accessToken: accessToken,
+        firstName: firstName,
+        lastName: lastName,
+      ));
+
       return {'success': true, 'token': responseData['access']};
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
@@ -53,7 +67,8 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> verifyOTP(String email, String otp) async {
+  Future<Map<String, dynamic>> verifyOTP(
+      String email, String otp, String firstName, String lastName) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/v1/users/verify-otp/'),
       headers: <String, String>{
@@ -70,6 +85,14 @@ class ApiService {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       print(responseData); // Print the response data
       int userId = responseData['user_id'];
+      String accessToken = responseData['access'];
+
+      await SessionManager.saveSession(UserSession(
+        userId: userId,
+        accessToken: accessToken,
+        firstName: firstName,
+        lastName: lastName,
+      ));
       return {
         'success': true,
         "detail": "Email verified.",

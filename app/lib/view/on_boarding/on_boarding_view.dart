@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loginsignup/controller/session_manager.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/authentication/on_boarding_page.dart';
 import '../login/signup_view.dart';
@@ -103,6 +104,7 @@ class _OnBoardingViewState extends State<OnBoardingView> {
                             curve: Curves.bounceInOut);
                         setState(() {});
                       } else {
+                        SessionManager.setIsNotFirstTime();
                         Navigator.push(
                             context,
                             MaterialPageRoute(

@@ -184,6 +184,9 @@ class TokenObtainPairSerializer(serializers.Serializer):
             "refresh": str(refresh),
             "access": str(refresh.access_token),
             "is_staff": user.is_staff,
+            "user_id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
         }
         request = self.context["request"]
         user_logged_in.send(sender=user.__class__, request=request, user=user)

@@ -9,8 +9,10 @@ import 'login_profile.dart';
 
 class EmailOtpPage extends StatefulWidget {
   final String email;
+  final String firstName;
+  final String lastName;
 
-  EmailOtpPage({required this.email});
+  EmailOtpPage({required this.email, required this.firstName, required this.lastName});
 
   @override
   _EmailOtpPageState createState() => _EmailOtpPageState();
@@ -32,7 +34,7 @@ class _EmailOtpPageState extends State<EmailOtpPage> {
 
   Future<void> _submitOTP() async {
     final String otp = otpController.text.trim();
-    final Map<String, dynamic> result = await apiService.verifyOTP(email, otp);
+    final Map<String, dynamic> result = await apiService.verifyOTP(email, otp, widget.firstName, widget.lastName);
 
     if (result['success']) {
       _showSuccessDialog('Success', 'Your Email is successfully verified!', result['user_id']);

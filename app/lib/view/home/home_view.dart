@@ -2,11 +2,13 @@ import 'package:dotted_dashed_line/dotted_dashed_line.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
+import 'package:loginsignup/common/sesson_helper.dart';
 import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/workout_display_row.dart';
 import 'package:loginsignup/controller/activity/activity_others_apis.dart';
 import 'package:loginsignup/controller/meal/meal_notification_apis.dart';
 import 'package:loginsignup/model/meal/meal_notification.dart';
+import 'package:loginsignup/model/session/user_session.dart';
 import 'package:loginsignup/view/home/activity_track_view.dart';
 import 'package:loginsignup/view/home/finished_workout_view.dart';
 import 'package:loginsignup/view/home/notification_view.dart';
@@ -19,6 +21,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  UserSession? session;
+
   List lastWorkoutArr = [
     {
       "name": "Full Body Workout",
@@ -89,7 +93,17 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _fetchSession();
     fetchData();
+  }
+
+  Future<void> _fetchSession() async {
+    try {
+      session = await getSessionOrThrow();
+      setState(() {});
+    } catch (e) {
+      print('Error fetching session: $e');
+    }
   }
 
   Future<void> fetchData() async {
@@ -141,6 +155,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
 
+    String firstName = session?.firstName ?? 'Loading';
+    String lastName = session?.lastName ?? '..';
+
     final lineBarsData = [
       LineChartBarData(
         showingIndicators: showingTooltipOnSpots,
@@ -183,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                           style: TextStyle(color: AppColor.gray, fontSize: 12),
                         ),
                         Text(
-                          "Kabin Limbu",
+                          "$firstName $lastName",
                           style: TextStyle(
                               color: AppColor.black,
                               fontSize: 20,

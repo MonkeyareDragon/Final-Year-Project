@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:loginsignup/view/home/home_view.dart';
-
+import 'package:loginsignup/common/sesson_helper.dart';
+import 'package:loginsignup/model/session/user_session.dart';
+import 'package:loginsignup/view/nav_bar/main_nav_bar_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/base_widget/primary_button.dart';
 
@@ -12,9 +13,29 @@ class WelcomeView extends StatefulWidget {
 }
 
 class _WelcomeViewState extends State<WelcomeView> {
+  UserSession? session;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSession();
+  }
+
+  Future<void> _fetchSession() async {
+    try {
+      session = await getSessionOrThrow();
+      setState(() {});
+    } catch (e) {
+      print('Error fetching session: $e');
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+
+    String firstName = session?.firstName ?? 'Loading..';
+
     return Scaffold(
       backgroundColor: AppColor.white,
       body: SafeArea(
@@ -37,7 +58,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                 height: media.width * 0.1,
               ),
               Text(
-                "Welcome to the Journey, Kabin",
+                "Welcome to the Journey, ${firstName}",
                 style: TextStyle(
                     color: AppColor.black,
                     fontSize: 20,
@@ -56,7 +77,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                 Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => HomePage()));
+                          builder: (context) => MainNavBarViewState()));
               }),
             ],
           ),

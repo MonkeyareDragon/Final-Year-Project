@@ -35,13 +35,13 @@ class _SignUpViewState extends State<SignUpView> {
   Future<void> _register() async {
     final String email = emailController.text.trim();
     final String password = passwordController.text.trim();
-    final String firstName = firstNameController.text.trim();
-    final String lastName = lastNameController.text.trim();
+    final String cfirstName = firstNameController.text.trim();
+    final String clastName = lastNameController.text.trim();
 
     if (email.isEmpty ||
         password.isEmpty ||
-        firstName.isEmpty ||
-        lastName.isEmpty) {
+        cfirstName.isEmpty ||
+        clastName.isEmpty) {
       _showErrorDialog('Missing Information',
           'All fields are required to filled up to proceed.');
       return;
@@ -54,7 +54,7 @@ class _SignUpViewState extends State<SignUpView> {
     }
 
     final Map<String, dynamic> result =
-        await apiService.register(email, password, firstName, lastName);
+        await apiService.register(email, password, cfirstName, clastName);
 
     if (result['success']) {
       Navigator.push(
@@ -62,6 +62,8 @@ class _SignUpViewState extends State<SignUpView> {
           MaterialPageRoute(
               builder: (context) => EmailOtpPage(
                     email: email,
+                    firstName: cfirstName,
+                    lastName: clastName,
                   )));
     } else {
       String errorMessage = 'Invalid credentials';

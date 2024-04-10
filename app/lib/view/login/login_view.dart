@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/view/login/password_recovery.dart';
 import 'package:loginsignup/view/login/signup_view.dart';
-import 'package:loginsignup/view/login/welcome_view.dart';
+import 'package:loginsignup/view/nav_bar/main_nav_bar_view.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/base_widget/primary_button.dart';
 import '../../common_widget/base_widget/textfield.dart';
@@ -23,7 +23,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -37,8 +36,8 @@ class _LoginViewState extends State<LoginView> {
 
     if (result['success']) {
       print('Login successful! Token: ${result['token']}');
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => WelcomeView()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => MainNavBarViewState()));
     } else {
       print('Login failed. Error: ${result['error']}');
     }
@@ -57,9 +56,12 @@ class _LoginViewState extends State<LoginView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  "Hey there,",
-                  style: TextStyle(color: AppColor.gray, fontSize: 16),
+                Padding(
+                  padding: EdgeInsets.only(top: media.width * 0.05),
+                  child: Text(
+                    "Hey there,",
+                    style: TextStyle(color: AppColor.gray, fontSize: 16),
+                  ),
                 ),
                 Text(
                   "Welcome Back",
@@ -157,41 +159,12 @@ class _LoginViewState extends State<LoginView> {
                 SizedBox(
                   height: media.width * 0.04,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: AppColor.white,
-                          border: Border.all(
-                            width: 1,
-                            color: AppColor.gray.withOpacity(0.4),
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Image.asset(
-                          "assets/img/signup/Google.png",
-                          width: 20,
-                          height: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: media.width * 0.04,
-                ),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignUpView()));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignUpView()));
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

@@ -2,11 +2,15 @@ import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common/date_helper.dart';
+import 'package:loginsignup/common/sesson_helper.dart';
 import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/common_widget/profile_icon_box.dart';
-import 'package:loginsignup/common_widget/setting_row.dart';
+import 'package:loginsignup/common_widget/profile/setting_row.dart';
 import 'package:loginsignup/controller/profile/profile_api.dart';
+import 'package:loginsignup/controller/session_manager.dart';
 import 'package:loginsignup/model/profile/profile.dart';
+import 'package:loginsignup/model/session/user_session.dart';
+import 'package:loginsignup/view/login/login_view.dart';
 import 'package:loginsignup/view/profile/edit_profile_screen.dart';
 
 class ProfileView extends StatefulWidget {
@@ -55,9 +59,9 @@ class _ProfileViewState extends State<ProfileView> {
   ];
 
   void getUserProfile() async {
-    int id = 2;
+    final UserSession session = await getSessionOrThrow();
     try {
-      UserProfile userProfile = await fetchUserProfileDetails(id);
+      UserProfile userProfile = await fetchUserProfileDetails(session.userId);
       setState(() {
         _userProfile = userProfile;
       });
@@ -89,6 +93,42 @@ class _ProfileViewState extends State<ProfileView> {
         _userProfile = updatedProfile;
       });
     }
+  }
+
+  Future<void> _showLogoutConfirmationDialog() async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Logout'),
+          content: Text('Are you sure you want to logout?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Logout'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _handleLogout();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _handleLogout() async {
+    await SessionManager.clearSession();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginView()),
+      (Route<dynamic> route) => false,
+    );
   }
 
   @override
@@ -408,6 +448,13 @@ class _ProfileViewState extends State<ProfileView> {
                           itemCount: otherArr.length,
                           itemBuilder: (context, index) {
                             var iObj = otherArr[index] as Map? ?? {};
+                            if (iObj["name"] == "Logout") {
+                              return SettingRow(
+                                icon: iObj["image"].toString(),
+                                title: iObj["name"].toString(),
+                                onPressed: _showLogoutConfirmationDialog,
+                              );
+                            }
                             return SettingRow(
                               icon: iObj["image"].toString(),
                               title: iObj["name"].toString(),
