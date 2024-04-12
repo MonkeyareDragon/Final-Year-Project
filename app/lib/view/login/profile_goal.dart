@@ -32,19 +32,19 @@ class _ProfileGoalViewState extends State<ProfileGoalView> {
   List goalArray = [
     {
       "image": "assets/img/profile/GoalImage1.png",
-      "title": "Improve Shape",
+      "title": "Gain Weight",
       "subtitle":
           "I have a low amount of body fat\nand need / want to build more\nmuscle"
     },
     {
       "image": "assets/img/profile/GoalImage2.png",
-      "title": "Lean & Tone",
+      "title": "Maintain Weight",
       "subtitle":
           "I’m “skinny fat”. look thin but have\nno shape. I want to add learn\nmuscle in the right way"
     },
     {
       "image": "assets/img/profile/GoalImage3.png",
-      "title": "Lose a Fat",
+      "title": "Lose Weight",
       "subtitle":
           "I have over 20 lbs to lose. I want to\ndrop all this fat and gain muscle\nmass"
     },

@@ -19,6 +19,7 @@
             <th scope="col">Status</th>
             <th scope="col">Check Notification</th>
             <th scope="col">Send Notification</th>
+            <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>       
@@ -33,13 +34,29 @@
                 <td>{{ schedule.notification_note }}</td>
                 <td>{{ schedule.get_notify_status_display }}</td>
                 <td>{{ schedule.get_status_display }}</td>
-                <td>{{ schedule.check_notification }}</td>
-                <td>{{ schedule.send_notification }}</td>
+                <td>
+                    {% if schedule.check_notification %}
+                        <i class='bx bx-check-circle text-success'></i>
+                    {% else %}
+                        <i class='bx bx-x-circle text-danger'></i>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if schedule.send_notification %}
+                        <i class='bx bx-check-circle text-success'></i>
+                    {% else %}
+                        <i class='bx bx-x-circle text-danger'></i>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'api_v1:dashboard:edit_food_schedule' schedule.id %}" class="btn btn-outline-dark"><i class="bx bx-edit"></i> Edit</a>
+                    <a href="{% url 'api_v1:dashboard:delete_food_schedule' schedule.id %}" class="btn btn-outline-danger"><i class="bx bx-trash"></i> Delete</a>
+                </td>
             </tr>
         {% endfor %}
     {% else %}
         <tr>
-            <td colspan="9">No food schedules found</td>
+            <td colspan="10">No food schedules found</td>
         </tr>
     {% endif %}
     </tbody>

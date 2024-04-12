@@ -9,11 +9,13 @@
             <th scope="col">Profile ID</th>
             <th scope="col">User ID</th>
             <th scope="col">User Name</th>
+            <!-- <th scope="col">Avator</th> -->
             <th scope="col">Gender</th>
             <th scope="col">DOB</th>
             <th scope="col">Weight</th>
             <th scope="col">Height</th>
             <th scope="col">Goal</th>
+            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>       
@@ -23,16 +25,25 @@
                         <td>{{ profile.id }}</td>
                         <td>{{ profile.user.id }}</td>
                         <td>{{ profile.user.username }}</td>
+                        <!-- <td>
+                            {% if profile.avatar %}
+                                <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar-img">
+                            {% endif %}
+                        </td> -->
                         <td>{{ profile.gender }}</td>
                         <td>{{ profile.dob }}</td>
                         <td>{{ profile.weight }}</td>
                         <td>{{ profile.height }}</td>
                         <td>{{ profile.goal }}</td>
+                        <td>
+                            <a href="{% url 'api_v1:dashboard:edit_user_profile' profile.id %}" class="btn btn-outline-dark"><i class="bx bx-edit"></i> Edit</a>
+                            <a href="{% url 'api_v1:dashboard:delete_user_profile' profile.id %}" class="btn btn-outline-danger"><i class="bx bx-trash"></i> Delete</a>
+                        </td>
                     </tr>
                 {% endfor %}
             {% else %}
             <tr>
-                <td colspan="6">No user profiles found</td>
+                <td colspan="9">No user profiles found</td>
             </tr>
             {% endif %}
         </tbody>

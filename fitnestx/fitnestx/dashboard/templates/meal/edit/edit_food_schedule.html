@@ -1,0 +1,89 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Edit Food Schedule</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Date -->
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            {{ form.date }}
+                        </div>
+
+                        <!-- Time -->
+                        <div class="mb-3">
+                            <label for="time" class="form-label">Time</label>
+                            {{ form.time }}
+                        </div>
+
+                        <!-- Food -->
+                        <div class="mb-3">
+                            <label for="food" class="form-label">Food</label>
+                            {{ form.food }}
+                        </div>
+
+                        <!-- User -->
+                        <div class="mb-3">
+                            <label for="user" class="form-label">User</label>
+                            {{ form.user }}
+                        </div>
+
+                        <!-- Rating -->
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Rating</label>
+                            {{ form.rating }}
+                        </div>
+
+                        <!-- Notification Note -->
+                        <div class="mb-3">
+                            <label for="notification_note" class="form-label">Notification Note</label>
+                            {{ form.notification_note }}
+                        </div>
+
+                        <!-- Notify Status -->
+                        <div class="mb-3">
+                            <label for="notify_status" class="form-label">Notify Status</label>
+                            {{ form.notify_status }}
+                        </div>
+
+                        <!-- Status -->
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            {{ form.status }}
+                        </div>
+
+                        <!-- Check Notification -->
+                        <div class="mb-3">
+                            <label for="check_notification" class="form-label">Check Notification</label>
+                            {{ form.check_notification }}
+                        </div>
+
+                        <!-- Send Notification -->
+                        <div class="mb-3">
+                            <label for="send_notification" class="form-label">Send Notification</label>
+                            {{ form.send_notification }}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-save"></i> Update Food Schedule</button>
+                            <a href="{% url 'api_v1:dashboard:meal_food_schedule' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

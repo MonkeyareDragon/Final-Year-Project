@@ -11,6 +11,9 @@
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
             <th scope="col">Email</th>
+            <th scope="col">Email Verify</th>
+            <th scope="col">Is Staff</th>
+            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>       
@@ -22,11 +25,29 @@
                     <td>{{ user.first_name }}</td>
                     <td>{{ user.last_name }}</td>
                     <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.email_verified %}
+                            <i class='bx bx-check-circle text-success'></i>
+                        {% else %}
+                            <i class='bx bx-x-circle text-danger'></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_staff %}
+                            <i class='bx bx-check-circle text-success'></i>
+                        {% else %}
+                            <i class='bx bx-x-circle text-danger'></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'api_v1:dashboard:edit_user' user.id %}" class="btn btn-outline-dark"><i class="bx bx-edit"></i> Edit</a>
+                        <a href="{% url 'api_v1:dashboard:delete_user' user.id %}" class="btn btn-outline-danger"><i class="bx bx-trash"></i> Delete</a>
+                    </td>
                 </tr>
             {% endfor %}
         {% else %}
             <tr>
-                <td colspan="11">No users found</td>
+                <td colspan="8">No users found</td>
             </tr>
         {% endif %}
         </tbody>

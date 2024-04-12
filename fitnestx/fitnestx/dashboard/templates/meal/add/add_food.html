@@ -1,0 +1,71 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Add Food</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Food Image -->
+                        <div class="mb-3">
+                            <label for="food_image" class="form-label">Food Image</label>
+                            {{ form.food_image }}
+                        </div>
+
+                        <!-- Food Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Food Name</label>
+                            {{ form.name }}
+                        </div>
+                        
+                        <!-- Cooking Difficulty -->
+                        <div class="mb-3">
+                            <label for="cooking_difficulty" class="form-label">Cooking Difficulty</label>
+                            {{ form.cooking_difficulty }}
+                        </div>
+
+                        <!-- Time Required -->
+                        <div class="mb-3">
+                            <label for="time_required" class="form-label">Time Required (minutes)</label>
+                            {{ form.time_required }}
+                        </div>
+
+                        <!-- Calories -->
+                        <div class="mb-3">
+                            <label for="calories" class="form-label">Calories</label>
+                            {{ form.calories }}
+                        </div>
+
+                        <!-- Author -->
+                        <div class="mb-3">
+                            <label for="author" class="form-label">Author</label>
+                            {{ form.author }}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-plus"></i> Add Food</button>
+                            <a href="{% url 'api_v1:dashboard:meal_food' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

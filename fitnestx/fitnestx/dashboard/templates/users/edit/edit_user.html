@@ -1,0 +1,40 @@
+<!-- edit_user.html -->
+
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<h1>Edit User</h1>
+<br>
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label for="username" class="form-label">User Name</label>
+        {{ form.username }}
+    </div>
+    
+    <div class="mb-3">
+        <label for="first_name" class="form-label">First Name</label>
+        {{ form.first_name }}
+    </div>
+    
+    <div class="mb-3">
+        <label for="last_name" class="form-label">Last Name</label>
+        {{ form.last_name }}
+    </div>
+
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="email_verified" name="email_verified" {% if form.email_verified.value %}checked{% endif %}>
+        <label class="form-check-label" for="email_verified">Email Verified</label>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="is_staff" name="is_staff" {% if form.is_staff.value %}checked{% endif %}>
+        <label class="form-check-label" for="is_staff">Is Staff</label>
+    </div>
+    
+    <button type="submit" class="btn btn-outline-dark"><i class="bx bx-save"></i> Save</button>
+    <a href="{% url 'api_v1:dashboard:users_user' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+</form>
+
+{% endblock %}

@@ -1,14 +1,15 @@
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.http import HttpResponse, HttpResponseNotAllowed
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from fitnestx.dashboard.utilis import get_icon_class, get_total_exercises, get_total_foods, get_total_sensor_data, get_total_users, handle_login
 from fitnestx.workout.models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise, WorkoutSchedule
 from fitnestx.meal.models import Category, Food, FoodIngredient, FoodMakingSteps, FoodNutrition, FoodSchedule, Ingredient, Meal, Nutrition
 from fitnestx.activity.models import ActivityGoal, SensorData, SleepTracking, WaterIntake
-from .forms import UserCreateForm
+from .forms import CategoryForm, FoodEditForm, FoodForm, FoodScheduleForm, UserCreateForm, UserEditForm, UserProfileEditForm
 from fitnestx.users.models import User, UserProfile
 import csv
+from django.http import JsonResponse
 from django.db.models import Prefetch
 
 def home(request):
@@ -70,33 +71,6 @@ def redirect_to_user(request):
     
     # Redirecting to the 'table:user' URL with namespace
     return render(request, 'users/user.html', {'users': users, 'title': 'User'})
-
-def user_record(request, pk):
-    if request.user.is_authenticated:
-        try:
-            user_profile = UserProfile.objects.select_related('user').get(user_id=pk)
-            return render(request, 'details/user_details.html', {'user_record': user_profile, 'title': 'Record'})
-        except UserProfile.DoesNotExist:
-            messages.warning(request, "User profile does not exist.")
-            return redirect('api_v1:dashboard:table_user')
-    else:   
-        messages.warning(request, "You must be logged in to view that page.")
-        return redirect('api_v1:dashboard:home')
-    
-from django.shortcuts import get_object_or_404
-
-def delete_user_record(request, pk):
-    if request.user.is_authenticated:
-        try:
-            user_profile = get_object_or_404(UserProfile.objects.select_related('user'), user_id=pk)
-            return render(request, 'details/user_details.html', {'user_record': user_profile, 'title': 'Record'})
-        except UserProfile.DoesNotExist:
-            messages.error(request, "User profile does not exist.")
-            return redirect('api_v1:dashboard:home')
-    else:   
-        messages.warning(request, "You must be logged in to view that page.")
-        return redirect('api_v1:dashboard:home')
-
 
 def redirect_to_user_profile(request):
     user_profile = UserProfile.objects.all()
@@ -271,3 +245,119 @@ def export_food_schedule_to_csv(request):
         ])
 
     return response
+
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:users_user'))
+
+def edit_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    form = UserEditForm(instance=user)
+
+    if request.method == "POST":
+        form = UserEditForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:users_user')
+    else:
+        form = UserEditForm(instance=user)
+        return render(request, 'users/edit_user.html', {'form': form, 'title': 'Edit User Data'})
+    
+    return render(request, 'users/edit/edit_user.html', {'form': form, 'title': 'Edit User Data'})
+
+def delete_user_profile(request, profile_id):
+    user_profile = get_object_or_404(UserProfile, id=profile_id)
+    user_profile.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:users_user_profile'))
+
+def edit_user_profile(request, profile_id):
+    user_profile = get_object_or_404(UserProfile, id=profile_id)
+    form = UserProfileEditForm(instance=user_profile)
+
+    if request.method == "POST":
+        form = UserProfileEditForm(request.POST, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:users_user_profile')
+    else:
+        form = UserProfileEditForm(instance=user_profile)
+        return render(request, 'users/edit_user_profile.html', {'form': form, 'title': 'Edit User Profile'})
+
+    return render(request, 'users/edit/edit_user_profile.html', {'form': form, 'title': 'Edit User Profile'})
+
+def delete_food(request, food_id):
+    food = get_object_or_404(Food, id=food_id)
+    food.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:meal_food'))
+
+def edit_food(request, food_id):
+    food = get_object_or_404(Food, id=food_id)
+    
+    if request.method == "POST":
+        form = FoodEditForm(request.POST, request.FILES, instance=food)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:meal_food') 
+    else:
+        form = FoodEditForm(instance=food)
+    
+    return render(request, 'meal/edit/edit_food.html', {'form': form, 'title': 'Edit Food'})
+
+def add_food(request):
+    if request.method == 'POST':
+        form = FoodForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:meal_food')
+    else:
+        form = FoodForm()
+    
+    return render(request, 'meal/add/add_food.html', {'form': form, 'title': 'Add Food'})
+
+def add_category(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:meal_category')
+    else:
+        form = CategoryForm()
+    
+    return render(request, 'meal/add/add_category.html', {'form': form, 'title': 'Add Category'})
+
+def delete_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    category.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:meal_category'))
+
+def edit_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES, instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:meal_category')
+    else:
+        form = CategoryForm(instance=category)
+    
+    return render(request, 'meal/edit/edit_category.html', {'form': form, 'title': 'Edit Category'})
+
+def delete_meal_schedule(request, meal_schedule_id):
+    meal_schedule = get_object_or_404(FoodSchedule, id=meal_schedule_id)
+    meal_schedule.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:meal_food_schedule'))
+
+def edit_food_schedule(request, meal_schedule_id):
+    schedule = get_object_or_404(FoodSchedule, id=meal_schedule_id)
+    
+    if request.method == 'POST':
+        form = FoodScheduleForm(request.POST, instance=schedule)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:meal_food_schedule')
+    else:
+        form = FoodScheduleForm(instance=schedule)
+    
+    return render(request, 'meal/edit/edit_food_schedule.html', {'form': form, 'title': 'Edit Food Schedule'})

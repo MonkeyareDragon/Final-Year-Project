@@ -1,0 +1,53 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Add Category</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Category Image -->
+                        <div class="mb-3">
+                            <label for="category_image" class="form-label">Category Image</label>
+                            {{ form.category_image }}
+                        </div>
+
+                        <!-- Category Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Category Name</label>
+                            {{ form.name }}
+                        </div>
+                        
+                        <!-- Category Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+
+                        <!-- Foods -->
+                        <div class="mb-3">
+                            <label for="foods" class="form-label">Foods</label>
+                            {{ form.foods }}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-plus"></i> Add Category</button>
+                            <a href="{% url 'api_v1:dashboard:meal_category' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

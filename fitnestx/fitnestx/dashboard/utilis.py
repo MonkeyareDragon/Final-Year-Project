@@ -32,10 +32,14 @@ def get_icon_class(prev_count, current_count):
 def handle_login(request, email, password):
     user = authenticate(request, email=email, password=password)
     if user is not None:
-        login(request, user)
-        username = user.username
-        messages.success(request, f"Welcome, {username}!")
-        return redirect('api_v1:dashboard:home')
+        if user.is_staff | user.is_superuser:
+            login(request, user)
+            username = user.username
+            messages.success(request, f"Welcome, {username}!")
+            return redirect('api_v1:dashboard:home')
+        else:
+            messages.error(request, "You are not authorized to access this page.")
+            return None
     else:
         messages.error(request, "Invalid email or password! Please try again.")
         return None

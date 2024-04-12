@@ -34,11 +34,11 @@
         <li>
             <a href=""><i class='bx bx-table icon' ></i> Meal <i class='bx bx-chevron-right icon-right' ></i></a>
             <ul class="side-dropdown">
+                <li><a href="{% url 'api_v1:dashboard:meal_meal' %}">Meal</a></li>
+                <li><a href="{% url 'api_v1:dashboard:meal_category' %}">Category</a></li>
+                <li><a href="{% url 'api_v1:dashboard:meal_food' %}">Food</a></li>
                 <li><a href="{% url 'api_v1:dashboard:meal_nutrition' %}">Nutirition</a></li>
                 <li><a href="{% url 'api_v1:dashboard:meal_ingredient' %}">Ingredient</a></li>
-                <li><a href="{% url 'api_v1:dashboard:meal_food' %}">Food</a></li>
-                <li><a href="{% url 'api_v1:dashboard:meal_category' %}">Category</a></li>
-                <li><a href="{% url 'api_v1:dashboard:meal_meal' %}">Meal</a></li>
                 <li><a href="{% url 'api_v1:dashboard:meal_food_making_steps' %}">Food Making Steps</a></li>
                 <li><a href="{% url 'api_v1:dashboard:meal_food_schedule' %}">Food Schedule</a></li>
             </ul>
