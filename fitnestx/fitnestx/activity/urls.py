@@ -1,5 +1,5 @@
 from django.urls import path
-from fitnestx.activity.views import CalculateBMIView, CalorieDataView, SensorDataListCreateView, StepCountDataView, TodaysActivityGoalListView
+from fitnestx.activity.views import ActivityGoalTargetUpdateAPIView, CalculateBMIView, CalorieDataView, SensorDataListCreateView, StepCountDataView, TodaysActivityGoalListView
 
 app_name = "activity.users"
 
@@ -9,4 +9,5 @@ urlpatterns = [
     path('calculate-bmi/', CalculateBMIView.as_view(), name='calculate_bmi'),
     path('step-data/', StepCountDataView.as_view(), name='step_data'),
     path('calorie-data/', CalorieDataView.as_view(), name='calorie_data'),
+    path('activity-goals/<int:pk>/update-target/', ActivityGoalTargetUpdateAPIView.as_view(), name='update_activity_goal_target'),
 ]

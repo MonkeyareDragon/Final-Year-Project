@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loginsignup/controller/profile/profile_api.dart';
 import '../../common/color_extension.dart';
 import '../../common_widget/base_widget/primary_button.dart';
 import '../../common_widget/base_widget/textfield.dart';
@@ -17,12 +18,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _usernameController;
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
-  late TextEditingController _genderController;
   late TextEditingController _dobController;
   late TextEditingController _weightController;
   late TextEditingController _heightController;
-  late TextEditingController _goalController;
   final ApiService apiService = ApiService();
+
+  String? selectedGender;
+  String? selectedGoalType;
+
+  void _showSnackBarOnPreviousScreen(BuildContext context, String message) {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColor.secondaryColor2,
+        elevation: 0,
+        margin: EdgeInsets.only(top: 0,),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -33,14 +49,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
         TextEditingController(text: widget.profileData['first_name']);
     _lastNameController =
         TextEditingController(text: widget.profileData['last_name']);
-    _genderController =
-        TextEditingController(text: widget.profileData['gender']);
+    selectedGender = widget.profileData['gender'];
     _dobController = TextEditingController(text: widget.profileData['dob']);
     _weightController =
         TextEditingController(text: widget.profileData['weight'].toString());
     _heightController =
         TextEditingController(text: widget.profileData['height'].toString());
-    _goalController = TextEditingController(text: widget.profileData['goal']);
+    selectedGoalType = widget.profileData['goal'];
   }
 
   @override
@@ -48,45 +63,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _usernameController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
-    _genderController.dispose();
     _dobController.dispose();
     _weightController.dispose();
     _heightController.dispose();
-    _goalController.dispose();
     super.dispose();
-  }
-
-  Future<void> _saveProfile() async {
-    final Map<String, dynamic> updatedProfile = {
-      'username': _usernameController.text,
-      'first_name': _firstNameController.text,
-      'last_name': _lastNameController.text,
-      'gender': _genderController.text,
-      'dob': _dobController.text,
-      'weight': double.parse(_weightController.text),
-      'height': double.parse(_heightController.text),
-      'goal': _goalController.text,
-    };
-
-    // final bool success = await apiService.updateProfile(updatedProfile);
-
-    // if (success) {
-    //   Navigator.pop(context, updatedProfile);
-    // } else {
-    //   showDialog(
-    //     context: context,
-    //     builder: (context) => AlertDialog(
-    //       title: Text('Error'),
-    //       content: Text('Failed to update profile.'),
-    //       actions: [
-    //         TextButton(
-    //           onPressed: () => Navigator.pop(context),
-    //           child: Text('OK'),
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    // }
   }
 
   @override
@@ -169,6 +149,51 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: Column(
                       children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: RoundTextField(
+                                controller: _usernameController,
+                                keywordtype: TextInputType.text,
+                                hitText: "User Name",
+                                icon: "assets/img/profile/UserProfile.png",
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: media.width * 0.04,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: RoundTextField(
+                                controller: _firstNameController,
+                                keywordtype: TextInputType.text,
+                                hitText: "First Name",
+                                icon: "assets/img/profile/SurnameUser.png",
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: media.width * 0.04,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: RoundTextField(
+                                controller: _lastNameController,
+                                keywordtype: TextInputType.text,
+                                hitText: "Last Name",
+                                icon: "assets/img/profile/SurnameUser.png",
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: media.width * 0.04,
+                        ),
                         Container(
                           decoration: BoxDecoration(
                               color: AppColor.lightGray,
@@ -190,9 +215,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   )),
                               Expanded(
                                 child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
+                                  child: DropdownButton<String>(
                                     items: ["Male", "Female"]
-                                        .map((name) => DropdownMenuItem(
+                                        .map((name) => DropdownMenuItem<String>(
                                               value: name,
                                               child: Text(
                                                 name,
@@ -202,13 +227,79 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                               ),
                                             ))
                                         .toList(),
-                                    onChanged: (value) {},
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedGender = value;
+                                      });
+                                    },
                                     isExpanded: true,
                                     hint: Text(
-                                      "Choose Gender",
+                                      "Choose Goal",
                                       style: TextStyle(
                                           color: AppColor.gray, fontSize: 12),
                                     ),
+                                    value: selectedGender,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: media.width * 0.04,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: AppColor.lightGray,
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Row(
+                            children: [
+                              Container(
+                                  alignment: Alignment.center,
+                                  width: 50,
+                                  height: 50,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: Image.asset(
+                                    "assets/img/profile/Gender.png",
+                                    width: 20,
+                                    height: 20,
+                                    fit: BoxFit.contain,
+                                    color: AppColor.gray,
+                                  )),
+                              Expanded(
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    items: [
+                                      "Gain Weight",
+                                      "Maintain Weight",
+                                      "Lose Weight"
+                                    ]
+                                        .map((name) => DropdownMenuItem<String>(
+                                              value: name,
+                                              child: Text(
+                                                name,
+                                                style: TextStyle(
+                                                    color: AppColor.gray,
+                                                    fontSize: 14),
+                                              ),
+                                            ))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedGoalType = value;
+                                      });
+                                    },
+                                    isExpanded: true,
+                                    hint: Text(
+                                      "Choose Goal",
+                                      style: TextStyle(
+                                          color: AppColor.gray, fontSize: 12),
+                                    ),
+                                    value: selectedGoalType,
                                   ),
                                 ),
                               ),
@@ -222,6 +313,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           height: media.width * 0.04,
                         ),
                         RoundTextField(
+                          controller: _dobController,
+                          keywordtype: TextInputType.datetime,
                           hitText: "Date of Birth",
                           icon: "assets/img/profile/Date.png",
                         ),
@@ -232,7 +325,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           children: [
                             Expanded(
                               child: RoundTextField(
-                                hitText: "Your Weight: " + _weightController.text +"kg",
+                                controller: _weightController,
+                                keywordtype: TextInputType.number,
+                                hitText: "Your Weight",
                                 icon: "assets/img/profile/Weight.png",
                               ),
                             ),
@@ -264,6 +359,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           children: [
                             Expanded(
                               child: RoundTextField(
+                                controller: _heightController,
+                                keywordtype: TextInputType.number,
                                 hitText: "Your Height",
                                 icon: "assets/img/profile/Height.png",
                               ),
@@ -292,7 +389,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         SizedBox(
                           height: media.width * 0.07,
                         ),
-                        RoundButton(title: "Save", onPressed: () {}),
+                        RoundButton(
+                            title: "Save",
+                            onPressed: () async {
+                              final body = {
+                                'gender': selectedGender,
+                                'dob': _dobController.text,
+                                'weight': double.parse(_weightController.text),
+                                'height': double.parse(_heightController.text),
+                                'goal': selectedGoalType,
+                                'user': {
+                                  'username': _usernameController.text,
+                                  'first_name': _firstNameController.text,
+                                  'last_name': _lastNameController.text,
+                                },
+                              };
+                              bool isSuccess = await updateUserProfile(body);
+
+                              if (isSuccess) {
+                                _showSnackBarOnPreviousScreen(
+                                    context, 'Profile updated successfully');
+                              } else {
+                                _showSnackBarOnPreviousScreen(
+                                    context, 'Failed to update the profile');
+                              }
+                            }),
                       ],
                     ),
                   ),

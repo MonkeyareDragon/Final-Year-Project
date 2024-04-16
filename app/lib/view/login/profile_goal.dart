@@ -52,12 +52,6 @@ class _ProfileGoalViewState extends State<ProfileGoalView> {
 
   void _confirmProfile() async {
     try {
-      print(widget.userId);
-      print(widget.gender);
-      print(widget.dob);
-      print(widget.weight);
-      print(widget.height);
-      print(selectedGoal);
       Map<String, dynamic> result = await setUserProfile(
         userId: widget.userId,
         gender: widget.gender,

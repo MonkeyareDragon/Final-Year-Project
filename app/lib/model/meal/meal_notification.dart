@@ -1,5 +1,5 @@
 // meal.model.FoodSchedule
-import 'package:loginsignup/common/url_helper.dart';
+import 'package:loginsignup/controller/helper/url_helper.dart';
 
 class MealNotification {
   String image;

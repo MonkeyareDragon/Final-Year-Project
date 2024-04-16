@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
+import 'package:loginsignup/common/sesson_helper.dart';
 import 'package:loginsignup/common_widget/nutrition_row.dart';
 import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/controller/activity/activity_goal_apis.dart';
 import 'package:loginsignup/controller/activity/activity_prediction_api.dart';
 import 'package:loginsignup/model/activity/activity_goal.dart';
+import 'package:loginsignup/model/session/user_session.dart';
+import 'package:loginsignup/view/activity/update_activity_goal.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'dart:async';
 
@@ -32,8 +35,13 @@ class _ActivityPredictionView extends State<ActivityPredictionView> {
   bool isActivityStarted = false;
   String? predictedClass;
 
+  Map<String, dynamic> activityData = {};
+
+  bool _isRefreshing = false;
+
   //Testing
-  final Stopwatch sensorStopwatch = Stopwatch(); // Stopwatch for sensor data collection
+  final Stopwatch sensorStopwatch =
+      Stopwatch(); // Stopwatch for sensor data collection
   final Stopwatch apiStopwatch = Stopwatch(); // Stopwatch for API response
 
   @override
@@ -44,143 +52,200 @@ class _ActivityPredictionView extends State<ActivityPredictionView> {
           gradient: LinearGradient(
         colors: isActivityStarted ? AppColor.secondaryG : AppColor.primaryG,
       )),
-      child: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-                backgroundColor: Colors.transparent,
-                centerTitle: true,
-                elevation: 0,
-                leadingWidth: 0,
-                leading: Container(),
-                expandedHeight: media.width * 0.8,
-                flexibleSpace: ClipRect(
-                    child: Stack(alignment: Alignment.bottomCenter, children: [
-                  Transform.scale(
-                    scale: 1.25,
-                    child: Container(
-                      width: media.width * 0.57,
-                      height: media.width * 0.57,
-                      decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius:
-                            BorderRadius.circular(media.width * 0.275),
-                      ),
-                      child: Center(
-                        child: Text(
-                          predictedClass ?? 'No prediction yet.',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: RefreshIndicator(
+          onRefresh: () async {
+            fetchActivityData(); // Fetch new activity data
+            return;
+          },
+          color: AppColor.white,
+          backgroundColor: AppColor.primaryColor1,
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                SliverAppBar(
+                    backgroundColor: Colors.transparent,
+                    centerTitle: true,
+                    elevation: 0,
+                    leadingWidth: 0,
+                    leading: Container(),
+                    expandedHeight: media.width * 0.8,
+                    flexibleSpace: ClipRect(
+                        child:
+                            Stack(alignment: Alignment.bottomCenter, children: [
+                      Transform.scale(
+                        scale: 1.25,
+                        child: Container(
+                          width: media.width * 0.57,
+                          height: media.width * 0.57,
+                          decoration: BoxDecoration(
+                            color: Colors.white24,
+                            borderRadius:
+                                BorderRadius.circular(media.width * 0.275),
+                          ),
+                          child: Center(
+                            child: Text(
+                              predictedClass ?? 'No prediction yet.',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  Transform.scale(
-                    scale: 1.25,
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                    ),
-                  ),
-                ])))
-          ];
-        },
-        body: Container(
-          decoration: BoxDecoration(
-            color: AppColor.white,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(
-              children: [
-                SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 10,
+                      Transform.scale(
+                        scale: 1.25,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                        ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    ])))
+              ];
+            },
+            body: Container(
+              decoration: BoxDecoration(
+                color: AppColor.white,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
+                ),
+              ),
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: 50,
-                            height: 4,
-                            decoration: BoxDecoration(
-                                color: AppColor.gray.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(3)),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                    color: AppColor.gray.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(3)),
+                              ),
+                            ],
+                          ),
+                          SafeArea(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: RoundButton(
+                                      title: isActivityStarted
+                                          ? "Stop Activity"
+                                          : "Start Activity",
+                                      type: isActivityStarted
+                                          ? RoundButtonType.bgSGradient
+                                          : RoundButtonType.bgGradient,
+                                      onPressed: () {
+                                        handleButtonPress();
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: media.width * 0.05,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Today Task",
+                                  style: TextStyle(
+                                    color: AppColor.black,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: _isRefreshing
+                                      ? CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  AppColor.black),
+                                        )
+                                      : Icon(Icons.refresh,
+                                          color: AppColor.black),
+                                  onPressed: () async {
+                                    setState(() {
+                                      _isRefreshing = true;
+                                    });
+                                    fetchActivityData();
+                                    setState(() {
+                                      _isRefreshing = false;
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                          ListView.builder(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: nutritionArr.length,
+                              itemBuilder: (context, index) {
+                                var nObj = nutritionArr[index];
+
+                                return NutritionRow(
+                                  nObj: nObj,
+                                );
+                              }),
+                          SafeArea(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 100),
+                                  child: RoundButton(
+                                    title: "Update Goal",
+                                    type: RoundButtonType.bgGradient,
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UpdateActivityGoal(
+                                                  activityData: activityData),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      SafeArea(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: RoundButton(
-                                  title: isActivityStarted
-                                      ? "Stop Activity"
-                                      : "Start Activity",
-                                  type: isActivityStarted
-                                      ? RoundButtonType.bgSGradient
-                                      : RoundButtonType.bgGradient,
-                                  onPressed: () {
-                                    handleButtonPress();
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: media.width * 0.05,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Today Task",
-                              style: TextStyle(
-                                  color: AppColor.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          ],
-                        ),
-                      ),
-                      ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: nutritionArr.length,
-                          itemBuilder: (context, index) {
-                            var nObj = nutritionArr[index];
-
-                            return NutritionRow(
-                              nObj: nObj,
-                            );
-                          }),
-                      SizedBox(
-                        height: media.width * 0.05,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -257,11 +322,19 @@ class _ActivityPredictionView extends State<ActivityPredictionView> {
 
   // Method to fetch activity data from API
   void fetchActivityData() async {
-    int userId = 4;
+    final UserSession session = await getSessionOrThrow();
     try {
-      ActivityGoal activityGoals = await fetchUserActiviytGoal(userId);
+      ActivityGoal activityGoals = await fetchUserActiviytGoal(session.userId);
 
       setState(() {
+        activityData = {
+          "id": activityGoals.id,
+          "targetCaloriesBurn": activityGoals.targetCaloriesBurn,
+          "targetSteps": activityGoals.targetSteps,
+          "targetRunningDistance": activityGoals.targetRunningDistance,
+          "targetFlightsClimbed": activityGoals.targetFlightsClimbed,
+        };
+
         nutritionArr = [
           {
             "title": "Calories",
@@ -301,8 +374,8 @@ class _ActivityPredictionView extends State<ActivityPredictionView> {
   // Function to handle stopping the activity
   void stopActivity() {
     if (isActivityStarted) {
-      sendBatchData(); 
-      batchData.clear(); 
+      sendBatchData();
+      batchData.clear();
       setState(() {
         isActivityStarted = false;
       });
@@ -346,7 +419,7 @@ class _ActivityPredictionView extends State<ActivityPredictionView> {
   // Function to handle the button press
   Future<void> handleButtonPress() async {
     if (isActivityStarted) {
-      stopActivity(); 
+      stopActivity();
     } else {
       setState(() {
         isActivityStarted = true;
@@ -360,18 +433,18 @@ class _ActivityPredictionView extends State<ActivityPredictionView> {
         sensorStopwatch.stop(); // Stop sensor stopwatch
 
         if (batchData.length == 60) {
-          
           apiStopwatch.start(); // Start API stopwatch
           await sendBatchData();
           apiStopwatch.stop(); // Stop API stopwatch
-          
-          print('Sensor data collection time: ${sensorStopwatch.elapsedMilliseconds}ms'); // Print sensor data collection time
-          print('API response time: ${apiStopwatch.elapsedMilliseconds}ms'); // Print API response time
+
+          print(
+              'Sensor data collection time: ${sensorStopwatch.elapsedMilliseconds}ms'); // Print sensor data collection time
+          print(
+              'API response time: ${apiStopwatch.elapsedMilliseconds}ms'); // Print API response time
 
           batchData.clear();
-
         }
-        await Future.delayed(Duration(milliseconds: 100)); 
+        await Future.delayed(Duration(milliseconds: 100));
       }
     }
   }

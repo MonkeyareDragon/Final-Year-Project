@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:loginsignup/common/color_extension.dart';
-import 'package:loginsignup/controller/session_manager.dart';
+import 'package:loginsignup/controller/helper/session_manager.dart';
 import 'package:loginsignup/model/session/user_session.dart';
 import 'package:loginsignup/view/login/login_view.dart';
 import 'package:loginsignup/view/nav_bar/main_nav_bar_view.dart';

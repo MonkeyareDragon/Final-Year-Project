@@ -9,6 +9,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import UpdateAPIView
 from django.db.models import Count
 from datetime import timedelta
 
@@ -141,3 +142,31 @@ class CalorieDataView(APIView):
 
         except ActivityGoal.DoesNotExist:
             return Response({"error": "No data found for the current date"}, status=status.HTTP_404_NOT_FOUND)
+
+class ActivityGoalTargetUpdateAPIView(UpdateAPIView):
+    queryset = ActivityGoal.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ActivityGoalSerializer
+    lookup_field = 'pk'
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        target_fields = [
+            'target_calories_burn',
+            'target_steps',
+            'target_running_distance',
+            'target_flights_climbed'
+        ]
+
+        for field in target_fields:
+            if field in request.data:
+                setattr(instance, field, request.data[field])
+
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)

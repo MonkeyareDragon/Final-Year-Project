@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:loginsignup/controller/session_manager.dart';
+import 'package:loginsignup/controller/helper/session_manager.dart';
 import 'package:loginsignup/model/session/user_session.dart';
 
 class ApiService {
