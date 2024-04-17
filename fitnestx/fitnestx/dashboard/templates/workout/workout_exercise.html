@@ -10,6 +10,7 @@
             <th scope="col">Workout</th>
             <th scope="col">Exercise</th>
             <th scope="col">Set Count</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>       
@@ -20,11 +21,17 @@
                 <td>{{ workout_exercise.workout.name }}</td>
                 <td>{{ workout_exercise.exercise.name }}</td>
                 <td>{{ workout_exercise.set_count }}</td>
+                <td>
+                    <div class="d-flex">
+                        <a href="{% url 'api_v1:dashboard:edit_workout_exercise' workout_exercise.id %}" class="btn btn-outline-dark flex-fill"><i class="bx bx-edit"></i> Edit</a>
+                        <a href="{% url 'api_v1:dashboard:delete_workout_exercise' workout_exercise.id %}" class="btn btn-outline-danger flex-fill"><i class="bx bx-trash"></i> Delete</a>
+                    </div>                    
+                </td>
             </tr>
         {% endfor %}
     {% else %}
         <tr>
-            <td colspan="3">No workout exercises found</td>
+            <td colspan="5">No workout exercises found</td>
         </tr>
     {% endif %}
     </tbody>

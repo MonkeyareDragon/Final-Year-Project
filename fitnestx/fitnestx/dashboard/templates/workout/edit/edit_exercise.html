@@ -1,0 +1,71 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Edit Exercise</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Exercise Image -->
+                        <div class="mb-3">
+                            <label for="exercise_image" class="form-label">Exercise Image</label>
+                            {{ form.exercise_image }}
+                        </div>
+
+                        <!-- Exercise Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Exercise Name</label>
+                            {{ form.name }}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+
+                        <!-- Difficulty -->
+                        <div class="mb-3">
+                            <label for="difficulty" class="form-label">Difficulty</label>
+                            {{ form.difficulty }}
+                        </div>
+
+                        <!-- Calories Burn -->
+                        <div class="mb-3">
+                            <label for="calories_burn" class="form-label">Calories Burn</label>
+                            {{ form.calories_burn }}
+                        </div>
+
+                        <!-- Custom Repeats -->
+                        <div class="mb-3">
+                            <label for="custom_repeats" class="form-label">Custom Repeats</label>
+                            {{ form.custom_repeats }}
+                        </div>
+
+                        <!-- Time Required -->
+                        <div class="mb-3">
+                            <label for="time_required" class="form-label">Time Required</label>
+                            {{ form.time_required }}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-edit"></i> Update Exercise</button>
+                            <a href="{% url 'api_v1:dashboard:workout_exercise' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

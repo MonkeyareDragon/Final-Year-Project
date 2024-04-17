@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
@@ -18,7 +19,6 @@ class _EmailConfirmScreen extends State<EmailConfirmScreen> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     emailController.dispose();
     super.dispose();
   }
@@ -29,25 +29,40 @@ class _EmailConfirmScreen extends State<EmailConfirmScreen> {
     final Map<String, dynamic> result = await apiService.passwordReset(email);
 
     if (result['success']) {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => LinkSendConfirmPage()));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LinkSendConfirmPage(
+                    linkSendEmail: emailController.text,
+                  )));
     } else {
-      // Create an alert dialog to display some errors
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text(result['error']),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-      print('Register failed. Error: ${result['error']}');
+      String errorMessage = 'Invalid credentials';
+      final errorBody = jsonDecode(result['error']);
+
+      errorBody.forEach((key, value) {
+        if (value is List && value.isNotEmpty) {
+          errorMessage = value[0];
+          return;
+        }
+      });
+      _showErrorDialog('Invalid Crendentials', errorMessage);
     }
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

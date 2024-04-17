@@ -1,3 +1,4 @@
+from django.forms import inlineformset_factory
 from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login, logout
@@ -6,7 +7,7 @@ from fitnestx.dashboard.utilis import get_icon_class, get_total_exercises, get_t
 from fitnestx.workout.models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise, WorkoutSchedule
 from fitnestx.meal.models import Category, Food, FoodIngredient, FoodMakingSteps, FoodNutrition, FoodSchedule, Ingredient, Meal, Nutrition
 from fitnestx.activity.models import ActivityGoal, SensorData, SleepTracking, WaterIntake
-from .forms import CategoryForm, FoodEditForm, FoodForm, FoodScheduleForm, UserCreateForm, UserEditForm, UserProfileEditForm
+from .forms import CategoryForm, EquipmentEditForm, EquipmentForm, ExerciseEditForm, ExerciseForm, ExercisePerformEditForm, ExercisePerformForm, FoodEditForm, FoodForm, FoodScheduleForm, UserCreateForm, UserEditForm, UserProfileEditForm, WorkoutEditForm, WorkoutExerciseEditForm, WorkoutExerciseInlineFormSet, WorkoutForm, WorkoutScheduleEditForm
 from fitnestx.users.models import User, UserProfile
 import csv
 from django.http import JsonResponse
@@ -361,3 +362,174 @@ def edit_food_schedule(request, meal_schedule_id):
         form = FoodScheduleForm(instance=schedule)
     
     return render(request, 'meal/edit/edit_food_schedule.html', {'form': form, 'title': 'Edit Food Schedule'})
+
+def add_equipment(request):
+    if request.method == 'POST':
+        form = EquipmentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:workout_equipment')
+    else:
+        form = EquipmentForm()
+    
+    return render(request, 'workout/add/add_equipment.html', {'form': form, 'title': 'Add Equipment'})
+
+def add_exercise(request):
+    if request.method == 'POST':
+        form = ExerciseForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:workout_exercise')
+    else:
+        form = ExerciseForm()
+    
+    return render(request, 'workout/add/add_exercise.html', {'form': form, 'title': 'Add Exercise'})
+
+def add_workout(request):
+    if request.method == 'POST':
+        form = WorkoutForm(request.POST, request.FILES)
+        WorkoutExerciseFormSet = inlineformset_factory(
+            Workout, 
+            WorkoutExercise, 
+            form=WorkoutExerciseInlineFormSet, 
+            extra=1, 
+            can_delete=True
+        )
+        formset = WorkoutExerciseFormSet(request.POST, request.FILES, instance=Workout())
+        
+        if form.is_valid() and formset.is_valid():
+            workout = form.save()
+            formset.instance = workout
+            formset.save()
+            return redirect('api_v1:dashboard:workout_workout')
+    else:
+        form = WorkoutForm()
+        WorkoutExerciseFormSet = inlineformset_factory(
+            Workout, 
+            WorkoutExercise, 
+            form=WorkoutExerciseInlineFormSet, 
+            extra=1, 
+            can_delete=True
+        )
+        formset = WorkoutExerciseFormSet(instance=Workout())
+    
+    return render(request, 'workout/add/add_workout.html', {'form': form, 'formset': formset, 'title': 'Add Workout'})
+
+def add_exercise_perform(request):
+    if request.method == 'POST':
+        form = ExercisePerformForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:workout_exercise_perform')
+    else:
+        form = ExercisePerformForm()
+    
+    return render(request, 'workout/add/add_exercise_perform.html', {'form': form, 'title': 'Add Exercise Perform'})
+
+def delete_equipment(request, equipment_id):
+    equipment = get_object_or_404(Equipment, id=equipment_id)
+    equipment.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:equipment_list'))
+
+def edit_equipment(request, equipment_id):
+    equipment = get_object_or_404(Equipment, id=equipment_id)
+    
+    if request.method == "POST":
+        form = EquipmentEditForm(request.POST, request.FILES, instance=equipment)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:workout_equipment')
+    else:
+        form = EquipmentEditForm(instance=equipment)
+    
+    return render(request, 'workout/edit/edit_equipment.html', {'form': form, 'title': 'Edit Equipment'})
+
+def delete_exercise(request, exercise_id):
+    exercise = get_object_or_404(Exercise, id=exercise_id)
+    exercise.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:exercise_list'))
+
+def edit_exercise(request, exercise_id):
+    exercise = get_object_or_404(Exercise, id=exercise_id)
+    
+    if request.method == "POST":
+        form = ExerciseEditForm(request.POST, request.FILES, instance=exercise)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:workout_exercise')
+    else:
+        form = ExerciseEditForm(instance=exercise)
+    
+    return render(request, 'workout/edit/edit_exercise.html', {'form': form, 'title': 'Edit Exercise'})
+
+def delete_exerciseperform(request, perform_id):
+    perform = get_object_or_404(ExercisePerform, id=perform_id)
+    perform.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:exerciseperform_list'))
+
+def edit_exerciseperform(request, perform_id):
+    perform = get_object_or_404(ExercisePerform, id=perform_id)
+    
+    if request.method == "POST":
+        form = ExercisePerformEditForm(request.POST, instance=perform)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:workout_exercise_perform') 
+    else:
+        form = ExercisePerformEditForm(instance=perform)
+    
+    return render(request, 'workout/edit/edit_exerciseperform.html', {'form': form, 'title': 'Edit ExercisePerform'})
+
+def delete_workout(request, workout_id):
+    workout = get_object_or_404(Workout, id=workout_id)
+    workout.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:workout_list'))
+
+def edit_workout(request, workout_id):
+    workout = get_object_or_404(Workout, id=workout_id)
+    
+    if request.method == "POST":
+        form = WorkoutEditForm(request.POST, request.FILES, instance=workout)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:workout_workout') 
+    else:
+        form = WorkoutEditForm(instance=workout)
+    
+    return render(request, 'workout/edit/edit_workout.html', {'form': form, 'title': 'Edit Workout'})
+
+def delete_workout_exercise(request, workout_exercise_id):
+    workout_exercise = get_object_or_404(WorkoutExercise, id=workout_exercise_id)
+    workout_exercise.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:workout_exercise_list'))
+
+def edit_workout_exercise(request, workout_exercise_id):
+    workout_exercise = get_object_or_404(WorkoutExercise, id=workout_exercise_id)
+    
+    if request.method == "POST":
+        form = WorkoutExerciseEditForm(request.POST, instance=workout_exercise)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:workout_workout_exercise') 
+    else:
+        form = WorkoutExerciseEditForm(instance=workout_exercise)
+    
+    return render(request, 'workout/edit/edit_workout_exercise.html', {'form': form, 'title': 'Edit Workout Exercise'})
+
+def delete_workout_schedule(request, workout_schedule_id):
+    workout_schedule = get_object_or_404(WorkoutSchedule, id=workout_schedule_id)
+    workout_schedule.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:workout_schedule_list'))
+
+def edit_workout_schedule(request, workout_schedule_id):
+    workout_schedule = get_object_or_404(WorkoutSchedule, id=workout_schedule_id)
+    
+    if request.method == "POST":
+        form = WorkoutScheduleEditForm(request.POST, instance=workout_schedule)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:workout_workout_schedule') 
+    else:
+        form = WorkoutScheduleEditForm(instance=workout_schedule)
+    
+    return render(request, 'workout/edit/edit_workout_schedule.html', {'form': form, 'title': 'Edit Workout Schedule'})

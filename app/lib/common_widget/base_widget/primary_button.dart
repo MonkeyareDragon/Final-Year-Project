@@ -25,10 +25,15 @@ class RoundButton extends StatelessWidget {
     return Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: type == RoundButtonType.bgSGradient ? AppColor.secondaryG :  AppColor.primaryG,
-                ),
+              colors: type == RoundButtonType.bgSGradient
+                  ? AppColor.secondaryG
+                  : isBlack
+                      ? [AppColor.black, AppColor.black]
+                      : AppColor.primaryG,
+            ),
             borderRadius: BorderRadius.circular(25),
-            boxShadow: type ==  RoundButtonType.bgGradient ||  type == RoundButtonType.bgSGradient 
+            boxShadow: type == RoundButtonType.bgGradient ||
+                    type == RoundButtonType.bgSGradient
                 ? const [
                     BoxShadow(
                         color: Colors.black26,
@@ -43,11 +48,16 @@ class RoundButton extends StatelessWidget {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           textColor: AppColor.primaryColor1,
           minWidth: double.maxFinite,
-          elevation: type == RoundButtonType.bgGradient || type == RoundButtonType.bgSGradient ? 0 : 1,
-          color: type == RoundButtonType.bgGradient || type == RoundButtonType.bgSGradient
+          elevation: type == RoundButtonType.bgGradient ||
+                  type == RoundButtonType.bgSGradient
+              ? 0
+              : 1,
+          color: type == RoundButtonType.bgGradient ||
+                  type == RoundButtonType.bgSGradient
               ? Colors.transparent
               : AppColor.white,
-          child: type == RoundButtonType.bgGradient || type == RoundButtonType.bgSGradient
+          child: type == RoundButtonType.bgGradient ||
+                  type == RoundButtonType.bgSGradient
               ? Text(title,
                   style: TextStyle(
                       color: AppColor.white,
@@ -69,7 +79,6 @@ class RoundButton extends StatelessWidget {
                           fontSize: fontSize,
                           fontWeight: fontWeight)),
                 ),
-        )
-    );
+        ));
   }
 }

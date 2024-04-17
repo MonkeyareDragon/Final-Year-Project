@@ -1,0 +1,53 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Edit ExercisePerform</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Header -->
+                        <div class="mb-3">
+                            <label for="header" class="form-label">Header</label>
+                            {{ form.header }}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+
+                        <!-- Step No -->
+                        <div class="mb-3">
+                            <label for="step_no" class="form-label">Step No</label>
+                            {{ form.step_no }}
+                        </div>
+
+                        <!-- Exercises -->
+                        <div class="mb-3">
+                            <label for="exercises" class="form-label">Exercises</label>
+                            {{ form.exercises }}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-edit"></i> Update ExercisePerform</button>
+                            <a href="{% url 'api_v1:dashboard:workout_exercise_perform' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

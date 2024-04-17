@@ -3,6 +3,9 @@
 
 <h1>All Workouts</h1>
 <br>
+<div class="mb-3">
+    <a href="{% url 'api_v1:dashboard:add_workout' %}" class="btn btn-outline-dark"><i class="bx bx-plus"></i> Add Workout</a>
+</div>
 <table class="table table-striped table-hover table-bordered">
     <thead class="table-dark">
         <tr>
@@ -15,6 +18,7 @@
             <th scope="col">Exercise Count</th>
             <th scope="col">Exercises</th>
             <th scope="col">Equipments</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>       
@@ -42,11 +46,18 @@
                         {% endfor %}
                     </ul>
                 </td>
+                <td>
+                    <div class="d-flex">
+                        <a href="{% url 'api_v1:dashboard:edit_workout' workout.id %}" class="btn btn-outline-dark flex-fill"><i class="bx bx-edit"></i> Edit</a>
+                        <a href="{% url 'api_v1:dashboard:delete_workout' workout.id %}" class="btn btn-outline-danger flex-fill"><i class="bx bx-trash"></i> Delete</a>
+                    </div>
+                    
+                </td>
             </tr>
         {% endfor %}
     {% else %}
         <tr>
-            <td colspan="8">No workouts found</td>
+            <td colspan="9">No workouts found</td>
         </tr>
     {% endif %}
     </tbody>

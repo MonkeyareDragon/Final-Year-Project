@@ -1,0 +1,67 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Add Workout</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Workout Image -->
+                        <div class="mb-3">
+                            <label for="workout_image" class="form-label">Workout Image</label>
+                            {{ form.workout_image }}
+                        </div>
+
+                        <!-- Workout Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Workout Name</label>
+                            {{ form.name }}
+                        </div>
+                        
+                        <!-- Time Required -->
+                        <div class="mb-3">
+                            <label for="time_required" class="form-label">Time Required (HH:MM:SS)</label>
+                            {{ form.time_required }}
+                        </div>
+
+                        <!-- Difficulty -->
+                        <div class="mb-3">
+                            <label for="difficulty" class="form-label">Difficulty</label>
+                            {{ form.difficulty }}
+                        </div>
+
+                        <!-- Equipments -->
+                        <div class="mb-3">
+                            <label for="equipments" class="form-label">Equipments</label>
+                            {{ form.equipments }}
+                        </div>
+
+                        <!-- Exercises Formset -->
+                        <div class="mb-3">
+                            {{ formset.management_form }}
+                            {% for subform in formset %}
+                                {{ subform }}
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-plus"></i> Add Workout</button>
+                            <a href="{% url 'api_v1:dashboard:workout_workout' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

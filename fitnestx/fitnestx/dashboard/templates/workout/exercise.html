@@ -3,6 +3,9 @@
 
 <h1>All Exercises</h1>
 <br>
+<div class="mb-3">
+    <a href="{% url 'api_v1:dashboard:add_exercise' %}" class="btn btn-outline-dark"><i class="bx bx-plus"></i> Add Exercise</a>
+</div>
 <table class="table table-striped table-hover table-bordered">
     <thead class="table-dark">
         <tr>
@@ -14,6 +17,7 @@
             <th scope="col">Calories Burn</th>
             <th scope="col">Custom Repeats</th>
             <th scope="col">Time Required</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>       
@@ -28,11 +32,17 @@
                 <td>{{ exercise.calories_burn }}</td>
                 <td>{{ exercise.custom_repeats }}</td>
                 <td>{{ exercise.time_required }}</td>
+                <td>
+                    <div class="d-flex">
+                        <a href="{% url 'api_v1:dashboard:edit_exercise' exercise.id %}" class="btn btn-outline-dark flex-fill"><i class="bx bx-edit"></i> Edit</a>
+                        <a href="{% url 'api_v1:dashboard:delete_exercise' exercise.id %}" class="btn btn-outline-danger flex-fill"><i class="bx bx-trash"></i> Delete</a>
+                    </div>                    
+                </td>
             </tr>
         {% endfor %}
     {% else %}
         <tr>
-            <td colspan="7">No exercises found</td>
+            <td colspan="8">No exercises found</td>
         </tr>
     {% endif %}
     </tbody>

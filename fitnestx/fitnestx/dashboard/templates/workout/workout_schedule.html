@@ -14,6 +14,9 @@
             <th scope="col">Notification Note</th>
             <th scope="col">Notify Status</th>
             <th scope="col">Status</th>
+            <th scope="col">Send Notification</th>
+            <th scope="col">Check Notification</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>       
@@ -26,13 +29,38 @@
                 <td>{{ schedule.workout.name }}</td>
                 <td>{{ schedule.user.username }}</td>
                 <td>{{ schedule.notification_note }}</td>
-                <td>{{ schedule.notify_status }}</td>
+                <td>{% if schedule.notify_status  %}
+                        <i class='bx bx-check-circle text-success'></i>
+                    {% else %}
+                        <i class='bx bx-x-circle text-danger'></i>
+                    {% endif %}
+                </td>
                 <td>{{ schedule.status }}</td>
+                <td>
+                    {% if schedule.check_notification  %}
+                        <i class='bx bx-check-circle text-success'></i>
+                    {% else %}
+                        <i class='bx bx-x-circle text-danger'></i>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if schedule.send_notification  %}
+                        <i class='bx bx-check-circle text-success'></i>
+                    {% else %}
+                        <i class='bx bx-x-circle text-danger'></i>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="d-flex">
+                        <a href="{% url 'api_v1:dashboard:edit_workout_schedule' schedule.id %}" class="btn btn-outline-dark flex-fill"><i class="bx bx-edit"></i> Edit</a>
+                        <a href="{% url 'api_v1:dashboard:delete_workout_schedule' schedule.id %}" class="btn btn-outline-danger flex-fill"><i class="bx bx-trash"></i> Delete</a>
+                    </div>                    
+                </td>
             </tr>
         {% endfor %}
     {% else %}
         <tr>
-            <td colspan="7">No workout schedules found</td>
+            <td colspan="9">No workout schedules found</td>
         </tr>
     {% endif %}
     </tbody>

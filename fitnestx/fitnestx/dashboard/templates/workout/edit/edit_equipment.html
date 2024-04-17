@@ -1,0 +1,47 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Edit Equipment</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Equipment Image -->
+                        <div class="mb-3">
+                            <label for="equipment_image" class="form-label">Equipment Image</label>
+                            {{ form.equipment_image }}
+                        </div>
+
+                        <!-- Equipment Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Equipment Name</label>
+                            {{ form.name }}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-edit"></i> Update Equipment</button>
+                            <a href="{% url 'api_v1:dashboard:workout_equipment' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

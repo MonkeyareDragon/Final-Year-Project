@@ -1,0 +1,47 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Edit Workout Exercise</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Workout -->
+                        <div class="mb-3">
+                            <label for="workout" class="form-label">Workout</label>
+                            {{ form.workout }}
+                        </div>
+
+                        <!-- Exercise -->
+                        <div class="mb-3">
+                            <label for="exercise" class="form-label">Exercise</label>
+                            {{ form.exercise }}
+                        </div>
+
+                        <!-- Set Count -->
+                        <div class="mb-3">
+                            <label for="set_count" class="form-label">Set Count</label>
+                            {{ form.set_count }}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-edit"></i> Update Workout Exercise</button>
+                            <a href="{% url 'api_v1:dashboard:workout_workout_exercise' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Edit Workout Schedule</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Date -->
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            {{ form.date }}
+                        </div>
+
+                        <!-- Time -->
+                        <div class="mb-3">
+                            <label for="time" class="form-label">Time</label>
+                            {{ form.time }}
+                        </div>
+
+                        <!-- Workout -->
+                        <div class="mb-3">
+                            <label for="workout" class="form-label">Workout</label>
+                            {{ form.workout }}
+                        </div>
+
+                        <!-- User -->
+                        <div class="mb-3">
+                            <label for="user" class="form-label">User</label>
+                            {{ form.user }}
+                        </div>
+
+                        <!-- Notification Note -->
+                        <div class="mb-3">
+                            <label for="notification_note" class="form-label">Notification Note</label>
+                            {{ form.notification_note }}
+                        </div>
+
+                        <!-- Notify Status -->
+                        <div class="mb-3 form-check">
+                            {{ form.notify_status.label_tag }}
+                            {{ form.notify_status }}
+                        </div>
+
+                        <!-- Status -->
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            {{ form.status }}
+                        </div>
+
+                        <!-- Check Notification -->
+                        <div class="mb-3 form-check">
+                            {{ form.check_notification.label_tag }}
+                            {{ form.check_notification }}
+                        </div>
+
+                        <!-- Send Notification -->
+                        <div class="mb-3 form-check">
+                            {{ form.send_notification.label_tag }}
+                            {{ form.send_notification }}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-edit"></i> Update Workout Schedule</button>
+                            <a href="{% url 'api_v1:dashboard:workout_workout_schedule' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -264,7 +264,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 15),
                                   child: Image.asset(
-                                    "assets/img/profile/Gender.png",
+                                    "assets/img/profile/GoalIcon.png",
                                     width: 20,
                                     height: 20,
                                     fit: BoxFit.contain,

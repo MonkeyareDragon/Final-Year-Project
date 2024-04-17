@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:loginsignup/controller/helper/session_manager.dart';
+import 'package:loginsignup/controller/helper/url_helper.dart';
 import 'package:loginsignup/model/session/user_session.dart';
 
 class ApiService {
@@ -8,7 +9,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/api/v1/users/token/'),
+      ApiUrlHelper.buildUrl('users/token/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -44,7 +45,7 @@ class ApiService {
   Future<Map<String, dynamic>> register(
       String email, String password, String firstName, String lastName) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/api/v1/users/registration/'),
+      ApiUrlHelper.buildUrl('users/registration/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -70,7 +71,7 @@ class ApiService {
   Future<Map<String, dynamic>> verifyOTP(
       String email, String otp, String firstName, String lastName) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/api/v1/users/verify-otp/'),
+      ApiUrlHelper.buildUrl('users/verify-otp/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -106,7 +107,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> resendOTP(String email) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/api/v1/users/resend-otp/'),
+      ApiUrlHelper.buildUrl('users/resend-otp/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -126,7 +127,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> passwordReset(String email) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/api/v1/users/password-reset/'),
+      ApiUrlHelper.buildUrl('users/password-reset/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -140,7 +141,7 @@ class ApiService {
       return {'success': true, "detail": "Send OTP code to email."};
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
-      return {'success': false, 'error': 'Invalid credentials'};
+      return {'success': false, 'error': '${response.body}'};
     }
   }
 }
