@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loginsignup/common/color_extension.dart';
-import 'package:loginsignup/common_widget/meal_category_cell.dart';
-import 'package:loginsignup/common_widget/meal_recommendation_cell.dart';
-import 'package:loginsignup/common_widget/popular_meal_row.dart';
+import 'package:loginsignup/common/sesson_helper.dart';
+import 'package:loginsignup/common_widget/meal/meal_category_cell.dart';
+import 'package:loginsignup/common_widget/meal/meal_recommendation_cell.dart';
+import 'package:loginsignup/common_widget/meal/popular_meal_row.dart';
 import 'package:loginsignup/controller/meal/meal_apis.dart';
 import 'package:loginsignup/controller/meal/meal_recommendation.dart';
 import 'package:loginsignup/model/meal/category.dart';
 import 'package:loginsignup/model/meal/food.dart';
 import 'package:loginsignup/model/meal/meal_rec.dart';
+import 'package:loginsignup/model/session/user_session.dart';
 import 'package:loginsignup/view/meal/food_details_view.dart';
 
 class FindMealView extends StatefulWidget {
@@ -82,11 +84,11 @@ class _FindMealView extends State<FindMealView> {
 
    Future<void> fetchDietMeal() async {
     try {
-      int userId = 2;
+      final UserSession session = await getSessionOrThrow();
       String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
       print(formattedDate);
       List<SimilarMeal> dietMeal =
-          await fetchDietMealsBaseOnUserActivity(userId, formattedDate);
+          await fetchDietMealsBaseOnUserActivity(session.userId, formattedDate);
       setState(() {
         dietMealArr = dietMeal
             .map((dietMeal) => {

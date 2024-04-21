@@ -1,3 +1,5 @@
+import 'package:loginsignup/common/sesson_helper.dart';
+import 'package:loginsignup/controller/helper/url_helper.dart';
 import 'package:loginsignup/model/meal/category.dart';
 import 'package:loginsignup/model/meal/food.dart';
 import 'package:loginsignup/model/meal/food_make_steps.dart';
@@ -5,20 +7,17 @@ import 'package:loginsignup/model/meal/ingredient.dart';
 import 'package:loginsignup/model/meal/meal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:loginsignup/model/meal/nutrition.dart';
-
-const String baseUrl = 'http://10.0.2.2:8000/api/v1';
-String token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE0NDQ2Njg3LCJqdGkiOiJiMTRiMTM3MGQwM2I0ODM4YWNhZTFhMTJmODhiZDllMiIsInVzZXJfaWQiOjJ9.59dRIQYHj348UYHmF6DDef5s94mOysGjs1Kl669b-aI';
+import 'package:loginsignup/model/session/user_session.dart';
 
 // API call to fetch all the data of meals
 Future<List<Meal>> fetchMealDetails() async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/meal/users/meal-list/'),
+      ApiUrlHelper.buildUrl('meal/users/meal-list/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -37,10 +36,11 @@ Future<List<Meal>> fetchMealDetails() async {
 // API call to fetch all the data of category base on meal id
 Future<List<Category>> fetchCategoryDetailsOnMealID(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/meal/users/categories/$id/'),
+      ApiUrlHelper.buildUrl('meal/users/categories/$id/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -60,10 +60,11 @@ Future<List<Category>> fetchCategoryDetailsOnMealID(int id) async {
 // API call to fetch all the data of food base on meal id
 Future<List<Food>> fetchFoodDetailsOnMealID(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/meal/users/foods/$id/'),
+      ApiUrlHelper.buildUrl('meal/users/foods/$id/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -83,10 +84,11 @@ Future<List<Food>> fetchFoodDetailsOnMealID(int id) async {
 // API call to fetch all the data of nutrition base on food id
 Future<List<Nutrition>> fetchNutritionsBaseOnFood(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/meal/users/nutrition/$id/'),
+      ApiUrlHelper.buildUrl('meal/users/nutrition/$id/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -106,10 +108,11 @@ Future<List<Nutrition>> fetchNutritionsBaseOnFood(int id) async {
 // API call to fetch all the data of ingredient base on food id
 Future<List<Ingredient>> fetchIngredientBaseOnFood(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/meal/users/ingredient/$id/'),
+      ApiUrlHelper.buildUrl('meal/users/ingredient/$id/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -129,10 +132,11 @@ Future<List<Ingredient>> fetchIngredientBaseOnFood(int id) async {
 // API call to fetch all the data of Food Making Steps on food id
 Future<List<FoodMakingSteps>> fetchFoodMakingStepsBaseOnFood(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/meal/users/food-making-steps/$id/'),
+      ApiUrlHelper.buildUrl('meal/users/food-making-steps/$id/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 

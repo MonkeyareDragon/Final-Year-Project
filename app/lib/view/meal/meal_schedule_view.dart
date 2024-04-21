@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loginsignup/common/color_extension.dart';
+import 'package:loginsignup/common/sesson_helper.dart';
 import 'package:loginsignup/common_widget/food_schedule_row.dart';
 import 'package:loginsignup/common_widget/nutrition_row.dart';
 import 'package:loginsignup/controller/meal/meal_notification_apis.dart';
 import 'package:loginsignup/model/meal/meal_notification.dart';
 import 'package:calendar_agenda/calendar_agenda.dart';
+import 'package:loginsignup/model/session/user_session.dart';
 
 class MealScheduleView extends StatefulWidget {
   const MealScheduleView({Key? key}) : super(key: key);
@@ -30,13 +32,16 @@ class _MealScheduleViewState extends State<MealScheduleView> {
 
   Future<void> fetchMealScheduleData(DateTime selectedDate) async {
     try {
+      final UserSession session = await getSessionOrThrow();
       final String formattedDate =
           DateFormat('yyyy-MM-dd').format(selectedDate);
 
       final List<MealSchedule> mealSchedules =
-          await fetchMealSchedulerDetailsOnUserID(2, formattedDate);
+          await fetchMealSchedulerDetailsOnUserID(
+              session.userId, formattedDate);
 
       setState(() {
+        print(mealDetailsList);
         mealDetailsList.clear();
       });
 
@@ -68,12 +73,12 @@ class _MealScheduleViewState extends State<MealScheduleView> {
 
   // Method to fetch activity data from API
   void fetchNutritionData(DateTime selectedDate) async {
-    int userId = 2;
+    final UserSession session = await getSessionOrThrow();
     final String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
     try {
       DailyMealScheduleNutritions nutritionGoals =
           await fetchDailyMealSchedulerNutritionOnUserID(
-              userId, formattedDate); // Pass user id as argument
+              session.userId, formattedDate); // Pass user id as argument
 
       // Update nutritionArr with fetched data
       setState(() {

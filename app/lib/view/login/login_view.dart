@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/view/login/password_recovery.dart';
 import 'package:loginsignup/view/login/signup_view.dart';
@@ -39,8 +40,34 @@ class _LoginViewState extends State<LoginView> {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => MainNavBarViewState()));
     } else {
-      print('Login failed. Error: ${result['error']}');
+      String errorMessage = 'Invalid credentials';
+      final errorBody = jsonDecode(result['error']);
+
+      errorBody.forEach((key, value) {
+        if (value is List && value.isNotEmpty) {
+          errorMessage = value[0];
+          return;
+        }
+      });
+
+      _showErrorDialog('Login Failed', errorMessage);
     }
+  }
+
+  void _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

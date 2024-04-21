@@ -49,7 +49,7 @@ def get_age_years(dob):
     return age_years
 
 
-def calculate_calories_burned(height_cm, weight_kg, age_years, gender, activity_level):
+def calculate_calories_burned(height_cm, weight_kg, age_years, gender, activity_level, steps, running, stairs_steps):
     
     height_cm = float(height_cm)
     weight_kg = float(weight_kg)
@@ -76,12 +76,12 @@ def calculate_calories_burned(height_cm, weight_kg, age_years, gender, activity_
     # Calculate Basal Metabolic Rate (BMR) using Harris-Benedict equation
     # Source: 
     if gender.lower() == "male":
-        bmr = 260 + (9.65 * weight_kg) + (573 * height_m) - (5.08 * age_years)
+        bmr = 260 + (9.65 * weight_kg) + (573 * height_m) - (5.08 * age_years) 
     elif gender.lower() == "female":
         bmr = 43 + (7.38 * weight_kg) + (607 * height_m * 100) - (2.31 * age_years)
 
     # Adjust BMR based on activity level
-    calories_burned = bmr * activity_factor
+    calories_burned = (bmr * activity_factor) + (steps * 0.5) + (running * 1) + (stairs_steps * 1.5)
 
     return calories_burned
 

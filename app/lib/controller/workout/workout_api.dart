@@ -1,21 +1,21 @@
 import 'package:http/http.dart' as http;
+import 'package:loginsignup/common/sesson_helper.dart';
+import 'package:loginsignup/controller/helper/url_helper.dart';
+import 'package:loginsignup/model/session/user_session.dart';
 import 'dart:convert';
 import 'package:loginsignup/model/workout/equipment.dart';
 import 'package:loginsignup/model/workout/exercise.dart';
 import 'package:loginsignup/model/workout/workout.dart';
 import 'package:loginsignup/model/workout/workout_exercise.dart';
 
-const String baseUrl = 'http://10.0.2.2:8000/api/v1';
-String token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExNTI2MDQzLCJqdGkiOiIxYTBmNDdmYzQzNjY0NjYwYmIxNWJmMWI1YjljYmI0YSIsInVzZXJfaWQiOjJ9.Bn7VD-KbEJKJUluxoaS1DoGzMMhlJIiR7-twjhXr1Y0';
-
 // API call to fetch all the data of equipments
 Future<List<Equipment>> fetchEquipments() async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/equipment/'),
+      ApiUrlHelper.buildUrl('workout/users/equipment/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -34,10 +34,11 @@ Future<List<Equipment>> fetchEquipments() async {
 // API call to fetch details of a specific equipment by ID
 Future<List<Equipment>> fetchEquipmentById(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/workout/$id/equipments/'),
+      ApiUrlHelper.buildUrl('workout/users/equipment/$id/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -61,10 +62,11 @@ Future<List<Equipment>> fetchEquipmentById(int id) async {
 // API call to fetch all the data of exercises
 Future<List<Exercise>> fetchExercises() async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/exercises/'),
+      ApiUrlHelper.buildUrl('workout/users/exercises/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -88,10 +90,11 @@ Future<List<Exercise>> fetchExercises() async {
 // API call to fetch details of a specific exercises by ID
 Future<List<Exercise>> fetchExercisesById(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/workout/$id/exercises-details/'),
+      ApiUrlHelper.buildUrl('workout/users/workout/$id/exercises-details/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -113,10 +116,11 @@ Future<List<Exercise>> fetchExercisesById(int id) async {
 // API call to fetch all the data of workout
 Future<List<Workout>> fetchWorkout() async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/workout/'),
+      ApiUrlHelper.buildUrl('workout/users/workout/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -135,10 +139,11 @@ Future<List<Workout>> fetchWorkout() async {
 // API call to fetch details of a specific workout by ID
 Future<Workout> fetchWorkoutById(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/workout/$id/'),
+      ApiUrlHelper.buildUrl('workout/users/workout/$id/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -156,10 +161,11 @@ Future<Workout> fetchWorkoutById(int id) async {
 // API call to fetch all the data of workout-exercises
 Future<List<WorkoutExercise>> fetchWorkoutExercises() async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/workout-exercise/'),
+      ApiUrlHelper.buildUrl('workout/users/workout-exercise/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -178,10 +184,11 @@ Future<List<WorkoutExercise>> fetchWorkoutExercises() async {
 // API call to fetch details of a specific ExerciseSet by ID
 Future<List<ExerciseSet>> fetchWorkoutExercisesSetById(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/workout-exercise/$id/'),
+      ApiUrlHelper.buildUrl('workout/users/workout-exercise/$id/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -210,10 +217,11 @@ Future<List<ExerciseSet>> fetchWorkoutExercisesSetById(int id) async {
 // API call to fetch details of a specific Exercise Description (How to do it) by ID
 Future<List<ExerciseDescription>> fetchExerciseDescriptionById(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/workout/users/exercise-perform/$id/'),
+      ApiUrlHelper.buildUrl('workout/users/exercise-description/$id/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 

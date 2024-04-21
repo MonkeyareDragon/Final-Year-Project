@@ -5,8 +5,6 @@ import 'package:loginsignup/controller/helper/url_helper.dart';
 import 'package:loginsignup/model/session/user_session.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8000';
-
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await http.post(
       ApiUrlHelper.buildUrl('users/token/'),
@@ -38,7 +36,7 @@ class ApiService {
       return {'success': true, 'token': responseData['access']};
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
-      return {'success': false, 'error': 'Invalid credentials'};
+      return {'success': false, 'error': '${response.body}'};
     }
   }
 

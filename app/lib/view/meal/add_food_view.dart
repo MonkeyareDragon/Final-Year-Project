@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common/date_function.dart';
+import 'package:loginsignup/common/sesson_helper.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
 import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/controller/meal/meal_notification_apis.dart';
 import 'package:intl/intl.dart';
+import 'package:loginsignup/model/session/user_session.dart';
 
 class AddFoodView extends StatefulWidget {
   final DateTime date;
@@ -29,8 +31,20 @@ class _AddMealViewState extends State<AddFoodView> {
     _selectedTime = DateTime.now();
   }
 
-  Future<void> FoodSchedule(Map<String, dynamic> requestData) async {
-    await createFoodSchedule(requestData);
+  void _showSnackBarOnPreviousScreen(BuildContext context, String message) {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColor.secondaryColor1,
+        elevation: 0,
+        margin: EdgeInsets.only(
+          top: 0,
+        ),
+      ),
+    );
   }
 
   Future<void> _showDatePicker(BuildContext context) async {
@@ -200,21 +214,30 @@ class _AddMealViewState extends State<AddFoodView> {
             Spacer(),
             RoundButton(
                 title: "Save",
-                onPressed: () {
+                onPressed: () async {
+                  final UserSession session = await getSessionOrThrow();
                   String formattedDate =
                       DateFormat('yyyy-MM-dd').format(_selectedDate);
-                  
-                  String formateTime = DateFormat('hh:mm:ss').format(_selectedTime);
+
+                  String formateTime =
+                      DateFormat('hh:mm:ss').format(_selectedTime);
 
                   Map<String, dynamic> requestData = {
                     'date': formattedDate.toString(),
                     'time': formateTime.toString(),
                     'food': widget.dObj['food_id'],
-                    'user': 2
+                    'user': session.userId
                   };
 
-                  // Call the method with the request data
-                  FoodSchedule(requestData);
+                  bool isSuccess = await createFoodSchedule(requestData);
+
+                  if (isSuccess) {
+                    _showSnackBarOnPreviousScreen(
+                        context, 'Schedule for meal is added scuccessfully');
+                  } else {
+                    _showSnackBarOnPreviousScreen(
+                        context, 'Failed to add schedule for meal');
+                  }
                 }),
             const SizedBox(
               height: 10,

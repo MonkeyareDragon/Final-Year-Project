@@ -1,28 +1,24 @@
 import 'dart:developer';
-
 import 'package:http/http.dart' as http;
+import 'package:loginsignup/common/sesson_helper.dart';
 import 'dart:convert';
-
-const String baseUrl = 'http://10.0.2.2:8000/api/v1';
-// const String baseUrl = 'http://192.168.1.79:8000/api/v1';
+import 'package:loginsignup/controller/helper/url_helper.dart';
+import 'package:loginsignup/model/session/user_session.dart';
 
 Future<String?> sendSensorDataToAPI(List<List<double>> sensorData) async {
-  final String token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE0MDMwNDQwLCJqdGkiOiI4MWQzYWExYzkzMmM0NWIyOTVjYWYxOGRkNWNiNjcyNiIsInVzZXJfaWQiOjR9.xOiputdX31IUXoSz8qQTgx885dwF3n5-5NglSkIDq7M';
+  final UserSession session = await getSessionOrThrow();
   final jsonData = jsonEncode({
-    "user": 27,
+    "user": session.userId,
     "data": sensorData,
   });
-  log('Sending request to: $baseUrl/activity/users/predict/');
-  log('Headers: {\'Authorization\': \'Bearer $token\', \'Content-Type\': \'application/json\'}');
+  log('Headers: {\'Authorization\': \'Bearer ${session.accessToken}\', \'Content-Type\': \'application/json\'}');
   log('Body: $jsonData');
-  final String apiUrl = '$baseUrl/activity/users/predict/';
   try {
     final http.Response response = await http.post(
-      Uri.parse(apiUrl),
+      ApiUrlHelper.buildUrl('activity/users/predict/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
       body: jsonData,
     );

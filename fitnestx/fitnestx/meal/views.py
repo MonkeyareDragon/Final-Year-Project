@@ -178,25 +178,25 @@ class DailyNutritionDataView(APIView):
             user=user_id,
             date=date,
             status='Completed'
-        ).aggregate(total_calorie=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='Calories')))['total_calorie'] or 0
+        ).aggregate(total_calorie=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='Iron')))['total_calorie'] or 0
         
         total_protein = FoodSchedule.objects.filter(
             user=user_id,
             date=date,
             status='Completed'
-        ).aggregate(total_protein=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='protein')))['total_protein'] or 0
+        ).aggregate(total_protein=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='Calcium')))['total_protein'] or 0
         
         total_fat = FoodSchedule.objects.filter(
             user=user_id,
             date=date,
             status='Completed'
-        ).aggregate(total_fat=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='fat')))['total_fat'] or 0
+        ).aggregate(total_fat=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='Fat')))['total_fat'] or 0
         
         total_carbo = FoodSchedule.objects.filter(
             user=user_id,
             date=date,
             status='Completed'
-        ).aggregate(total_carbo=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='carbo')))['total_carbo'] or 0
+        ).aggregate(total_carbo=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='Carbohydrate')))['total_carbo'] or 0
         
         target_calorie = 1500
         target_protein = 2000  
@@ -443,28 +443,29 @@ class MealRecBasedOnUserActivity(View):
     
     @staticmethod
     def get_recommendation(user_id, number_of_recommendations, user_feats):
-        model_path = settings.LIBRECOMMENDER_MODEL_FILEPATH
-        model = MealRecBasedOnUserActivity.load_model(model_path)
+        try:
+            model_path = settings.LIBRECOMMENDER_MODEL_FILEPATH
+            model = MealRecBasedOnUserActivity.load_model(model_path)
 
-        recommendations = model.recommend_user(user=user_id, n_rec=number_of_recommendations, user_feats=user_feats)
-
-        food_details_list = []
-        
-        for food_id in recommendations[user_id]:
-            try:
-                food = Food.objects.get(id=food_id)
-                food_details = {
-                    "name": food.name,
-                    "cooking_difficulty": food.cooking_difficulty,
-                    "time_required": food.time_required,
-                    "calories": food.calories,
-                    "food_image": food.food_image.url if food.food_image else None
-                }
-                food_details_list.append(food_details)
-            except Food.DoesNotExist:
-                continue
-
-        return food_details_list
+            recommendations = model.recommend_user(user=user_id, n_rec=number_of_recommendations, user_feats=user_feats)
+            food_details_list = []
+            
+            for food_id in recommendations[user_id]:
+                try:
+                    food = Food.objects.get(id=food_id)
+                    food_details = {
+                        "name": food.name,
+                        "cooking_difficulty": food.cooking_difficulty,
+                        "time_required": food.time_required,
+                        "calories": food.calories,
+                        "food_image": food.food_image.url if food.food_image else None
+                    }
+                    food_details_list.append(food_details)
+                except Food.DoesNotExist:
+                    continue
+        except Exception as e:
+            raise Exception(f"Failed to get recommendations: {str(e)}")
+        return food_details_list   
         
     def get(self, request, user_id, date, *args, **kwargs):
         try:

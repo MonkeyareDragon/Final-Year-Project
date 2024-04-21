@@ -54,15 +54,15 @@ class ActivityGoal(models.Model):
         activity_counter = Counter(data.predicted_activity for data in sensor_data)
         total_activity = sum(activity_counter.values())
 
-        if total_activity < 1:
+        if total_activity < 500:
             return "low activity"
-        elif total_activity < 10:
-            return "sedentary"
-        elif total_activity < 500:
-            return "lightly active"
         elif total_activity < 1000:
+            return "sedentary"
+        elif total_activity < 2500:
+            return "lightly active"
+        elif total_activity < 50000:
             return "moderately active"
-        elif total_activity < 1500:
+        elif total_activity < 10000:
             return "very active"
         else:
             return "extra active"
@@ -71,13 +71,17 @@ class ActivityGoal(models.Model):
         """
         Update the calories burned based on user profile and activity level.
         """
+        today = date.today()
         if self.user and self.user.userprofile:
             user_profile = self.user.userprofile
             height_cm = user_profile.height
             weight_kg = user_profile.weight
             dob = user_profile.dob
             gender = user_profile.gender
-
+            steps = SensorData.objects.filter(user=self.user, date_and_time__date=today, predicted_activity="Walking").count()
+            running = SensorData.objects.filter(user=self.user, date_and_time__date=today, predicted_activity="Jogging").count()
+            stairs_steps = SensorData.objects.filter(user=self.user, date_and_time__date=today, predicted_activity="Stairs").count()
+            
             # Calculate age
             age_years = get_age_years(dob)
 
@@ -86,7 +90,7 @@ class ActivityGoal(models.Model):
 
             if height_cm and weight_kg and age_years and gender and activity_level:
                 try:
-                    calories_burned = calculate_calories_burned(height_cm, weight_kg, age_years, gender, activity_level)
+                    calories_burned = calculate_calories_burned(height_cm, weight_kg, age_years, gender, activity_level, steps, running, stairs_steps)
                     self.calories_burn = calories_burned
                 except ValueError as e:
                     # Handle invalid activity level

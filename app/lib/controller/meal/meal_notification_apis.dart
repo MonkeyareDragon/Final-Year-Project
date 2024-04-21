@@ -1,43 +1,46 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:loginsignup/common/sesson_helper.dart';
+import 'package:loginsignup/controller/helper/url_helper.dart';
 import 'package:loginsignup/model/meal/meal_notification.dart';
 import 'package:flutter/material.dart';
+import 'package:loginsignup/model/session/user_session.dart';
 
-const String baseUrl = 'http://10.0.2.2:8000/api/v1';
-String token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE0NDQ2Njg3LCJqdGkiOiJiMTRiMTM3MGQwM2I0ODM4YWNhZTFhMTJmODhiZDllMiIsInVzZXJfaWQiOjJ9.59dRIQYHj348UYHmF6DDef5s94mOysGjs1Kl669b-aI';
-
-Future<void> createFoodSchedule(Map<String, dynamic> requestData) async {
-  final String apiUrl = '$baseUrl/meal/users/food-schedule/create/';
+Future<bool> createFoodSchedule(Map<String, dynamic> requestData) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final http.Response response = await http.post(
-      Uri.parse(apiUrl),
+      ApiUrlHelper.buildUrl('meal/users/food-schedule/create/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
       body: jsonEncode(requestData),
     );
 
     if (response.statusCode == 201) {
       print('FoodSchedule created successfully');
+      return true;
     } else {
       print(
           'Failed to create FoodSchedule. Status code: ${response.statusCode}');
       print('Response body: ${response.body}');
+      return false;
     }
   } catch (e) {
     print('Error creating FoodSchedule: $e');
+    throw Exception('Failed to create FoodSchedule: $e');
   }
 }
 
 // API call to fetch all the data of meal notification based on user id
 Future<List<MealNotification>> fetchMealNotificationsOnUserID(int id) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse('$baseUrl/meal/users/notifications/$id/'),
+      ApiUrlHelper.buildUrl('meal/users/notifications/$id/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -57,11 +60,12 @@ Future<List<MealNotification>> fetchMealNotificationsOnUserID(int id) async {
 Future<List<MealSchedule>> fetchMealSchedulerDetailsOnUserID(
     int id, String requiredDate) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse(
-          '$baseUrl/meal/users/meals-schedule/user/$id/date/$requiredDate/'),
+      ApiUrlHelper.buildUrl(
+          'meal/users/meals-schedule/user/$id/date/$requiredDate/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -89,11 +93,12 @@ Future<List<MealSchedule>> fetchMealSchedulerDetailsOnUserID(
 Future<DailyMealScheduleNutritions> fetchDailyMealSchedulerNutritionOnUserID(
     int id, String requiredDate) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse(
-          '$baseUrl/meal/users/schedule-nutrition/user/$id/date/$requiredDate/'),
+      ApiUrlHelper.buildUrl(
+          'meal/users/schedule-nutrition/user/$id/date/$requiredDate/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -113,22 +118,23 @@ Future<DailyMealScheduleNutritions> fetchDailyMealSchedulerNutritionOnUserID(
 // API call to patch all the status of the meal schedule
 Future<void> patchMealSchedulerStatus(int scheduleid) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.patch(
-      Uri.parse(
-          '$baseUrl/meal/users/food-schedule/$scheduleid/complete/'),
+      ApiUrlHelper.buildUrl('meal/users/food-schedule/$scheduleid/complete/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
     if (response.statusCode == 200) {
       print('Meal schedule status updated successfully');
-    } if (response.statusCode == 403) {
-      print('Forbidden to update meal schedule status');
     }
-    else {
-      print('Failed to update meal schedule status. Status code: ${response.statusCode}');
+    if (response.statusCode == 403) {
+      print('Forbidden to update meal schedule status');
+    } else {
+      print(
+          'Failed to update meal schedule status. Status code: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
   } catch (e) {
@@ -137,16 +143,15 @@ Future<void> patchMealSchedulerStatus(int scheduleid) async {
   }
 }
 
-
 // API call to delete the given id of the meal schedule
 Future<void> deleteMealScheduler(int scheduleid) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.delete(
-      Uri.parse(
-          '$baseUrl/meal/users/food-schedule/$scheduleid/delete/'),
+      ApiUrlHelper.buildUrl('meal/users/food-schedule/$scheduleid/delete/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -154,9 +159,9 @@ Future<void> deleteMealScheduler(int scheduleid) async {
       print('Meal schedule have successfully deleted');
     } else if (response.statusCode == 403) {
       print('Forbidden to delete this meal schedule');
-    }
-    else {
-      print('Failed to delete meal schedule. Status code: ${response.statusCode}');
+    } else {
+      print(
+          'Failed to delete meal schedule. Status code: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
   } catch (e) {
@@ -169,11 +174,12 @@ Future<void> deleteMealScheduler(int scheduleid) async {
 Future<List<TodayMeal>> fetchTodayScheduleMeals(
     int id, String requiredDate, String requestTime) async {
   try {
+    final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      Uri.parse(
-          '$baseUrl/meal/users/meals/up-comming-bar/$id/$requiredDate/$requestTime/'),
+      ApiUrlHelper.buildUrl(
+          'meal/users/meals/up-comming-bar/$id/$requiredDate/$requestTime/'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${session.accessToken}',
       },
     );
 
@@ -193,78 +199,78 @@ Future<List<TodayMeal>> fetchTodayScheduleMeals(
     }
   } catch (e) {
     print('Error fetching meal details which are schedule today: $e');
-    throw Exception('Failed to fetch meal details which are schedule today: $e');
+    throw Exception(
+        'Failed to fetch meal details which are schedule today: $e');
   }
 }
 
- Future<void> checkMealNotification(int userId) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/meal/users/user/$userId/schedules/'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-      );
+Future<void> checkMealNotification(int userId) async {
+  try {
+    final UserSession session = await getSessionOrThrow();
+    final response = await http.get(
+      ApiUrlHelper.buildUrl('meal/users/user/$userId/schedules/'),
+      headers: {
+        'Authorization': 'Bearer ${session.accessToken}',
+      },
+    );
 
-      if (response.statusCode == 200) {
-        List<dynamic> responseData = json.decode(response.body);
+    if (response.statusCode == 200) {
+      List<dynamic> responseData = json.decode(response.body);
 
-        for (var data in responseData) {
-          if (data['schedules'] != null && data['schedules'] is List) {
-            for (var schedule in data['schedules']) {
+      for (var data in responseData) {
+        if (data['schedules'] != null && data['schedules'] is List) {
+          for (var schedule in data['schedules']) {
+            DateTime currentDate = DateTime.now();
+            DateTime scheduleDate = DateTime.parse(schedule['date']);
+            TimeOfDay scheduleTime =
+                TimeOfDay.fromDateTime(DateTime.parse(schedule['time']));
+            TimeOfDay currentTime = TimeOfDay.fromDateTime(currentDate);
 
-              DateTime currentDate = DateTime.now();
-              DateTime scheduleDate = DateTime.parse(schedule['date']);
-              TimeOfDay scheduleTime = TimeOfDay.fromDateTime(
-                  DateTime.parse(schedule['time']));
-              TimeOfDay currentTime = TimeOfDay.fromDateTime(currentDate);
-
-              if (scheduleDate.isBefore(currentDate) ||
-                  (scheduleDate.isAtSameMomentAs(currentDate) &&
-                      currentTime.hour > scheduleTime.hour) ||
-                  (scheduleDate.isAtSameMomentAs(currentDate) &&
-                      currentTime.hour == scheduleTime.hour &&
-                      currentTime.minute > scheduleTime.minute)) {
-               
-                String notificationMessage =
-                    "Hello ${schedule['user']['username']}, it's time for your scheduled meal: ${schedule['food']['name']}.";
-                await updateNotificationAPI(
-                    schedule['id'], notificationMessage);
-              }
+            if (scheduleDate.isBefore(currentDate) ||
+                (scheduleDate.isAtSameMomentAs(currentDate) &&
+                    currentTime.hour > scheduleTime.hour) ||
+                (scheduleDate.isAtSameMomentAs(currentDate) &&
+                    currentTime.hour == scheduleTime.hour &&
+                    currentTime.minute > scheduleTime.minute)) {
+              String notificationMessage =
+                  "Hello ${schedule['user']['username']}, it's time for your scheduled meal: ${schedule['food']['name']}.";
+              await updateNotificationAPI(schedule['id'], notificationMessage);
             }
           }
         }
-      } else {
-        throw Exception(
-            'Failed to load meal details which are scheduled: ${response.reasonPhrase}');
       }
-    } catch (e) {
-      print('Error updating notification: $e');
-      throw Exception('Failed to update notification: $e');
+    } else {
+      throw Exception(
+          'Failed to load meal details which are scheduled: ${response.reasonPhrase}');
     }
+  } catch (e) {
+    print('Error updating notification: $e');
+    throw Exception('Failed to update notification: $e');
   }
+}
 
-  Future<void> updateNotificationAPI(
-      int scheduleId, String notificationMessage) async {
-    try {
-      final response = await http.put(
-        Uri.parse('$baseUrl/meal/schedules/$scheduleId/'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'notification_note': notificationMessage,
-          'notify_status': true,
-        }),
-      );
+Future<void> updateNotificationAPI(
+    int scheduleId, String notificationMessage) async {
+  try {
+    final UserSession session = await getSessionOrThrow();
+    final response = await http.put(
+      ApiUrlHelper.buildUrl('meal/schedules/$scheduleId/'),
+      headers: {
+        'Authorization': 'Bearer ${session.accessToken}',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'notification_note': notificationMessage,
+        'notify_status': true,
+      }),
+    );
 
-      if (response.statusCode != 200) {
-        throw Exception(
-            'Failed to update notification status: ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      print('Error updating notification status: $e');
-      throw Exception('Failed to update notification status: $e');
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Failed to update notification status: ${response.reasonPhrase}');
     }
+  } catch (e) {
+    print('Error updating notification status: $e');
+    throw Exception('Failed to update notification status: $e');
   }
+}
