@@ -7,7 +7,7 @@ from fitnestx.dashboard.utilis import get_icon_class, get_total_exercises, get_t
 from fitnestx.workout.models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise, WorkoutSchedule
 from fitnestx.meal.models import Category, Food, FoodIngredient, FoodMakingSteps, FoodNutrition, FoodSchedule, Ingredient, Meal, Nutrition
 from fitnestx.activity.models import ActivityGoal, SensorData, SleepTracking, WaterIntake
-from .forms import CategoryForm, EquipmentEditForm, EquipmentForm, ExerciseEditForm, ExerciseForm, ExercisePerformEditForm, ExercisePerformForm, FoodEditForm, FoodForm, FoodScheduleForm, UserCreateForm, UserEditForm, UserProfileEditForm, WorkoutEditForm, WorkoutExerciseEditForm, WorkoutExerciseInlineFormSet, WorkoutForm, WorkoutScheduleEditForm
+from .forms import CategoryForm, EquipmentEditForm, EquipmentForm, ExerciseEditForm, ExerciseForm, ExercisePerformEditForm, ExercisePerformForm, FoodEditForm, FoodForm, FoodIngredientForm, FoodMakingStepsForm, FoodNutritionForm, FoodScheduleForm, IngredientForm, MealEditForm, MealForm, NutritionForm, UserCreateForm, UserEditForm, UserProfileEditForm, WorkoutEditForm, WorkoutExerciseEditForm, WorkoutExerciseInlineFormSet, WorkoutForm, WorkoutScheduleEditForm
 from fitnestx.users.models import User, UserProfile
 import csv
 from django.http import JsonResponse
@@ -51,21 +51,19 @@ def logout_user(request):
 
 def register_user(request):
     if request.method == "POST":
-        form = UserCreateForm(request.POST)
-        if form.is_valid():
-            form.save()
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(request, email=email, password=password)
+        username = request.POST.get('username')
+        email = request.POST.get('registerEmail')
+        password = request.POST.get('registerPassword')
+        
+        user = authenticate(request, username=username, email=email, password=password)
+        
+        if user is not None:
             login(request, user)
-            username = user.username
-            messages.success(request, f"You have Successfully Register! Welcome {username}.")
-            return redirect('api_v1:dashboard:home')
-    else:
-        form = UserCreateForm()
-        return render(request, 'authentication/register.html', {'form': form, 'title': 'Register'})
+            messages.success(request, "You have Successfully Registered and Logged In!")
+        else:
+            messages.error(request, "Invalid email or password to register. Please try again!")
     
-    return render(request, 'authentication/register.html', {'form': form, 'title': 'Register'})
+    return render(request, 'authentication/login.html', {'title': 'Register'})
 
 def redirect_to_user(request):
     users = User.objects.all()
@@ -170,7 +168,7 @@ def export_to_csv_food_details(request):
 
     writer = csv.writer(response)
     writer.writerow([
-        'ID', 'Name', 'Cooking Difficulty', 'Time Required', 'Calories', 
+        'ID', 'Name', 'Meal', 'Cooking Difficulty', 'Time Required', 'Calories', 
         'Author', 'Description', 'Nutrition', 'Ingredient', 'Making Steps'
     ])
 
@@ -178,7 +176,8 @@ def export_to_csv_food_details(request):
     foods = Food.objects.prefetch_related(
         Prefetch('foodnutrition_set', queryset=FoodNutrition.objects.select_related('nutrition').all()),
         Prefetch('foodingredient_set', queryset=FoodIngredient.objects.select_related('ingredient').all()),
-        Prefetch('foodmakingsteps_set')
+        Prefetch('foodmakingsteps_set'),
+        'category_set'  # Prefetch the categories associated with each food item
     ).all()
 
     for food in foods:
@@ -193,13 +192,15 @@ def export_to_csv_food_details(request):
         steps_data = []
         for step in food.foodmakingsteps_set.all():
             steps_data.append(f"Step {step.step_no}: {step.description}")
-        
-        time_required_mins = f"{food.time_required}mins"
 
+        # Fetch meal names associated with the food through categories
+        meal_names = ', '.join(category.meal_set.first().name for category in food.category_set.all() if category.meal_set.exists())
+
+        time_required_mins = f"{food.time_required}mins"
         calories_kcal = f"{food.calories}kcal"
 
         writer.writerow([
-            food.id, food.name, food.cooking_difficulty, time_required_mins, calories_kcal,
+            food.id, food.name, meal_names, food.cooking_difficulty, time_required_mins, calories_kcal,
             food.author, food.description,
             ', '.join(nutrition_data), 
             ', '.join(ingredient_data), 
@@ -263,7 +264,7 @@ def edit_user(request, user_id):
             return redirect('api_v1:dashboard:users_user')
     else:
         form = UserEditForm(instance=user)
-        return render(request, 'users/edit_user.html', {'form': form, 'title': 'Edit User Data'})
+        return render(request, 'users/edit/edit_user.html', {'form': form, 'title': 'Edit User Data'})
     
     return render(request, 'users/edit/edit_user.html', {'form': form, 'title': 'Edit User Data'})
 
@@ -283,7 +284,7 @@ def edit_user_profile(request, profile_id):
             return redirect('api_v1:dashboard:users_user_profile')
     else:
         form = UserProfileEditForm(instance=user_profile)
-        return render(request, 'users/edit_user_profile.html', {'form': form, 'title': 'Edit User Profile'})
+        return render(request, 'users/edit/edit_user_profile.html', {'form': form, 'title': 'Edit User Profile'})
 
     return render(request, 'users/edit/edit_user_profile.html', {'form': form, 'title': 'Edit User Profile'})
 
@@ -308,13 +309,48 @@ def edit_food(request, food_id):
 def add_food(request):
     if request.method == 'POST':
         form = FoodForm(request.POST, request.FILES)
+        FoodNutritionFormSet = inlineformset_factory(
+            Food, 
+            FoodNutrition, 
+            form=FoodNutritionForm, 
+            extra=1, 
+            can_delete=True
+        )
+        FoodIngredientFormSet = inlineformset_factory(
+            Food, 
+            FoodIngredient, 
+            form=FoodIngredientForm, 
+            extra=1, 
+            can_delete=True
+        )
+        
         if form.is_valid():
-            form.save()
-            return redirect('api_v1:dashboard:meal_food')
+            food = form.save()
+            
+            nutrition_formset = FoodNutritionFormSet(request.POST, instance=food)
+            ingredient_formset = FoodIngredientFormSet(request.POST, instance=food)
+            
+            if nutrition_formset.is_valid() and ingredient_formset.is_valid():
+                nutrition_formset.save()
+                ingredient_formset.save()
+                return redirect('api_v1:dashboard:meal_food')
+                
     else:
         form = FoodForm()
+        FoodNutritionFormSet = inlineformset_factory(
+            Food, 
+            FoodNutrition, 
+            form=FoodNutritionForm,
+            extra=1,
+        )
+        FoodIngredientFormSet = inlineformset_factory(
+            Food, 
+            FoodIngredient, 
+            form=FoodIngredientForm, 
+            extra=1,
+        )
     
-    return render(request, 'meal/add/add_food.html', {'form': form, 'title': 'Add Food'})
+    return render(request, 'meal/add/add_food.html', {'form': form, 'nutrition_formset': FoodNutritionFormSet(), 'ingredient_formset': FoodIngredientFormSet(), 'title': 'Add Food'})
 
 def add_category(request):
     if request.method == 'POST':
@@ -533,3 +569,70 @@ def edit_workout_schedule(request, workout_schedule_id):
         form = WorkoutScheduleEditForm(instance=workout_schedule)
     
     return render(request, 'workout/edit/edit_workout_schedule.html', {'form': form, 'title': 'Edit Workout Schedule'})
+
+def add_nutrition(request):
+    if request.method == 'POST':
+        form = NutritionForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:meal_nutrition')  
+    else:
+        form = NutritionForm()
+    
+    return render(request, 'meal/add/add_nutrition.html', {'form': form, 'title': 'Add Nutrition'})
+
+def add_ingredient(request):
+    if request.method == 'POST':
+        form = IngredientForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:meal_ingredient')  
+    else:
+        form = IngredientForm()
+    
+    return render(request, 'meal/add/add_ingredient.html', {'form': form, 'title': 'Add Ingredient'})
+
+def add_meal(request):
+    if request.method == 'POST':
+        form = MealForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:meal_meal')
+    else:
+        form = MealForm()
+    
+    return render(request, 'meal/add/add_meal.html', {'form': form, 'title': 'Add Meal'})
+
+def add_food_making_steps(request):
+    if request.method == 'POST':
+        form = FoodMakingStepsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:meal_food_making_steps') 
+    else:
+        form = FoodMakingStepsForm()
+    
+    return render(request, 'meal/add/add_food_making_steps.html', {'form': form, 'title': 'Add Food Making Step'})
+
+def food_data_list(request):
+    nutrition_data = FoodNutrition.objects.all()
+    ingredient_data = FoodIngredient.objects.all()
+    return render(request, 'meal/food_data_list.html', {'nutrition_data': nutrition_data, 'ingredient_data': ingredient_data})
+
+def delete_meal(request, meal_id):
+    meal = get_object_or_404(Meal, id=meal_id)
+    meal.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'api_v1:dashboard:meal_list'))
+
+def edit_meal(request, meal_id):
+    meal = get_object_or_404(Meal, id=meal_id)
+    
+    if request.method == "POST":
+        form = MealEditForm(request.POST, request.FILES, instance=meal)
+        if form.is_valid():
+            form.save()
+            return redirect('api_v1:dashboard:meal_meal') 
+    else:
+        form = MealEditForm(instance=meal)
+    
+    return render(request, 'meal/edit/edit_meal.html', {'form': form, 'title': 'Edit Meal'})

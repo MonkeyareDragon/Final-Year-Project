@@ -1,0 +1,67 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<h1>All Food Data</h1>
+<br>
+
+<!-- Food Nutrition Table -->
+<h2>Food Nutrition</h2>
+<table class="table table-striped table-hover table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Food Name</th>
+            <th scope="col">Nutrition Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Property</th>
+        </tr>
+    </thead>
+    <tbody>       
+        {% if nutrition_data %}
+        {% for item in nutrition_data %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.food.name }}</td>
+                <td>{{ item.nutrition.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.property }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="5">No food nutrition found</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+<br>
+<!-- Food Ingredient Table -->
+<h2>Food Ingredients</h2>
+<table class="table table-striped table-hover table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Food Name</th>
+            <th scope="col">Ingredient Name</th>
+            <th scope="col">Quantity Required</th>
+        </tr>
+    </thead>
+    <tbody>       
+        {% if ingredient_data %}
+        {% for item in ingredient_data %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.food.name }}</td>
+                <td>{{ item.ingredient.name }}</td>
+                <td>{{ item.quantity_required }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="4">No food ingredients found</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+{% endblock %}

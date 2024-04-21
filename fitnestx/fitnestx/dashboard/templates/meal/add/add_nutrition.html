@@ -1,0 +1,41 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Add Nutrition</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Nutrition Image -->
+                        <div class="mb-3">
+                            <label for="nutrition_image" class="form-label">Nutrition Image</label>
+                            {{ form.nutrition_image }}
+                        </div>
+
+                        <!-- Nutrition Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nutrition Name</label>
+                            {{ form.name }}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-plus"></i> Add Nutrition</button>
+                            <a href="{% url 'api_v1:dashboard:meal_nutrition' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

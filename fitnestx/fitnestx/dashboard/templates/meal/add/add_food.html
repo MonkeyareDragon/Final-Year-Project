@@ -32,7 +32,7 @@
 
                         <!-- Time Required -->
                         <div class="mb-3">
-                            <label for="time_required" class="form-label">Time Required (minutes)</label>
+                            <label for="time_required" class="form-label">Time Required</label>
                             {{ form.time_required }}
                         </div>
 
@@ -52,6 +52,22 @@
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             {{ form.description }}
+                        </div>
+
+                        <!-- Food Nutrition Formset -->
+                        <div class="mb-3">
+                            {{ nutrition_formset.management_form }}
+                            {% for subform in nutrition_formset %}
+                                {{ subform }}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Food Ingredient Formset -->
+                        <div class="mb-3">
+                            {{ ingredient_formset.management_form }}
+                            {% for subform in ingredient_formset %}
+                                {{ subform }}
+                            {% endfor %}
                         </div>
                         
                         <!-- Submit Button -->

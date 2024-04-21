@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm  # This is a built-in form that comes with Django
 from fitnestx.workout.models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise, WorkoutSchedule
-from fitnestx.meal.models import Category, Food, FoodSchedule
+from fitnestx.meal.models import Category, Food, FoodIngredient, FoodMakingSteps, FoodNutrition, FoodSchedule, Ingredient, Meal, Nutrition
 from fitnestx.users.models import User, UserProfile
 from django import forms
 
@@ -126,6 +126,16 @@ class FoodForm(forms.ModelForm):
             'author': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         }
+
+class FoodNutritionForm(forms.ModelForm):
+    class Meta:
+        model = FoodNutrition
+        fields = ['nutrition', 'quantity', 'property']
+
+class FoodIngredientForm(forms.ModelForm):
+    class Meta:
+        model = FoodIngredient
+        fields = ['ingredient', 'quantity_required']
 
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -331,3 +341,60 @@ class WorkoutScheduleEditForm(forms.ModelForm):
     class Meta:
         model = WorkoutSchedule
         fields = ['date', 'time', 'workout', 'user', 'notification_note', 'notify_status', 'status', 'check_notification', 'send_notification']
+
+class NutritionForm(forms.ModelForm):
+    class Meta:
+        model = Nutrition
+        fields = ['nutrition_image', 'name']
+        widgets = {
+            'nutrition_image': forms.FileInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class IngredientForm(forms.ModelForm):
+    class Meta:
+        model = Ingredient
+        fields = ['ingredient_image', 'name']
+        widgets = {
+            'ingredient_image': forms.FileInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class MealForm(forms.ModelForm):
+    class Meta:
+        model = Meal
+        fields = ['meal_image', 'name', 'food_count', 'categorys']
+        widgets = {
+            'meal_image': forms.FileInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'food_count': forms.NumberInput(attrs={'class': 'form-control'}),
+            'categorys': forms.SelectMultiple(attrs={'class': 'form-control'}),
+        }
+
+class FoodMakingStepsForm(forms.ModelForm):
+    class Meta:
+        model = FoodMakingSteps
+        fields = ['description', 'step_no', 'food']
+        widgets = {
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'step_no': forms.NumberInput(attrs={'class': 'form-control'}),
+            'food': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+class MealEditForm(forms.ModelForm):
+    meal_image = forms.ImageField(label="Meal Image", required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
+    name = forms.CharField(label="", max_length=25, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Meal Name'}))
+    food_count = forms.IntegerField(label="", widget=forms.NumberInput(attrs={'class':'form-control', 'placeholder':'Food Count'}))
+    categorys = forms.ModelMultipleChoiceField(queryset=Category.objects.all(), widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
+    
+    class Meta:
+        model = Meal
+        fields = ['meal_image', 'name', 'food_count', 'categorys']
+    
+    def __init__(self, *args, **kwargs):
+        super(MealEditForm, self).__init__(*args, **kwargs)
+
+        self.fields['meal_image'].widget.attrs['class'] = 'form-control-file'
+        self.fields['name'].widget.attrs['class'] = 'form-control'
+        self.fields['food_count'].widget.attrs['class'] = 'form-control'
+        self.fields['categorys'].widget.attrs['class'] = 'form-control'

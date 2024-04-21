@@ -1,0 +1,47 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Add Food Making Step</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+
+                        <!-- Step No -->
+                        <div class="mb-3">
+                            <label for="step_no" class="form-label">Step Number</label>
+                            {{ form.step_no }}
+                        </div>
+
+                        <!-- Food -->
+                        <div class="mb-3">
+                            <label for="food" class="form-label">Food</label>
+                            {{ form.food }}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-plus"></i> Add Step</button>
+                            <a href="{% url 'api_v1:dashboard:meal_food_making_steps' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

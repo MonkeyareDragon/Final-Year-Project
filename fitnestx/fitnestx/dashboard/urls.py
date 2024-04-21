@@ -60,4 +60,11 @@ urlpatterns = [
     path('edit_workout_exercise/<int:workout_exercise_id>/', views.edit_workout_exercise, name='edit_workout_exercise'),
     path('delete_workout_schedule/<int:workout_schedule_id>/', views.delete_workout_schedule, name='delete_workout_schedule'),
     path('edit_workout_schedule/<int:workout_schedule_id>/', views.edit_workout_schedule, name='edit_workout_schedule'),
+    path('add_nutrition/', views.add_nutrition, name='add_nutrition'),
+    path('add_ingredient/', views.add_ingredient, name='add_ingredient'),
+    path('add_meal/', views.add_meal, name='add_meal'),
+    path('add_food_making_steps/', views.add_food_making_steps, name='add_food_making_steps'),
+    path('food-details/', views.food_data_list, name='food_data_list'),
+    path('delete_meal/<int:meal_id>/', views.delete_meal, name='delete_meal'),
+    path('edit_meal/<int:meal_id>/', views.edit_meal, name='edit_meal'),
 ]

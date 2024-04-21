@@ -1,0 +1,53 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Add Meal</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Meal Image -->
+                        <div class="mb-3">
+                            <label for="meal_image" class="form-label">Meal Image</label>
+                            {{ form.meal_image }}
+                        </div>
+
+                        <!-- Meal Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Meal Name</label>
+                            {{ form.name }}
+                        </div>
+                        
+                        <!-- Food Count -->
+                        <div class="mb-3">
+                            <label for="food_count" class="form-label">Food Count</label>
+                            {{ form.food_count }}
+                        </div>
+
+                        <!-- Categories -->
+                        <div class="mb-3">
+                            <label for="categories" class="form-label">Categorys</label>
+                            {{ form.categorys }}
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-dark"><i class="bx bx-plus"></i> Add Meal</button>
+                            <a href="{% url 'api_v1:dashboard:meal_meal' %}" class="btn btn-outline-secondary"><i class="bx bx-arrow-back"></i> Back</a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
