@@ -49,15 +49,12 @@ class WorkoutExerciseList(generics.ListAPIView):
     queryset = WorkoutExercise.objects.all()
     serializer_class = WorkoutExerciseSetSerializer
 
-class WorkoutExerciseDetailsAPIView(APIView):
-    def get(self, request, workout_id, *args, **kwargs):
-        try:
-            workout = Workout.objects.get(pk=workout_id)
-            exercises = workout.exercises.all()
-            serializer = ExerciseSerializer(exercises, many=True)
-            return Response(serializer.data)
-        except Workout.DoesNotExist:
-            return Response({"message": "Workout not found"}, status=404)
+class WorkoutExerciseDetailsAPIView(ListAPIView):
+    serializer_class = ExercisePerformSerializer
+
+    def get_queryset(self):
+        exercise_id = self.kwargs['exercise_id']
+        return ExercisePerform.objects.filter(exercises__id=exercise_id)
 
 class WorkoutEquipmentAPIView(APIView):
     def get(self, request, workout_id, *args, **kwargs):

@@ -36,7 +36,7 @@ Future<List<Equipment>> fetchEquipmentById(int id) async {
   try {
     final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      ApiUrlHelper.buildUrl('workout/users/equipment/$id/'),
+      ApiUrlHelper.buildUrl('workout/users/workout/$id/equipments/'),
       headers: {
         'Authorization': 'Bearer ${session.accessToken}',
       },
@@ -219,7 +219,7 @@ Future<List<ExerciseDescription>> fetchExerciseDescriptionById(int id) async {
   try {
     final UserSession session = await getSessionOrThrow();
     final response = await http.get(
-      ApiUrlHelper.buildUrl('workout/users/exercise-description/$id/'),
+      ApiUrlHelper.buildUrl('workout/users/workout/$id/exercises-details/'),
       headers: {
         'Authorization': 'Bearer ${session.accessToken}',
       },
