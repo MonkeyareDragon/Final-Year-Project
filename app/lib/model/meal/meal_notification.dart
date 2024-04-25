@@ -85,20 +85,20 @@ class MealScheduleDetail {
 }
 
 class DailyMealScheduleNutritions {
-  int totalCalorie;
-  int targetCalorie;
-  int totalProtein;
-  int targetProtein;
+  int totalcholesterol;
+  int targetcholesterol;
+  int totalVitaminc;
+  int targetVitaminc;
   int totalFat;
   int targetFat;
   int totalCarbohydrate;
   int targetCarbohydrate;
 
   DailyMealScheduleNutritions({
-    required this.totalCalorie,
-    required this.targetCalorie,
-    required this.totalProtein,
-    required this.targetProtein,
+    required this.totalcholesterol,
+    required this.targetcholesterol,
+    required this.totalVitaminc,
+    required this.targetVitaminc,
     required this.totalFat,
     required this.targetFat,
     required this.totalCarbohydrate,
@@ -107,10 +107,10 @@ class DailyMealScheduleNutritions {
 
   factory DailyMealScheduleNutritions.fromJson(Map<String, dynamic> json) {
     return DailyMealScheduleNutritions(
-      totalCalorie: json['total_calorie'],
-      targetCalorie: json['target_calorie'],
-      totalProtein: json['total_protein'],
-      targetProtein: json['target_protein'],
+      totalcholesterol: json['total_cholesterol'],
+      targetcholesterol: json['target_cholesterol'],
+      totalVitaminc: json['total_vitaminc'],
+      targetVitaminc: json['target_vitaminc'],
       totalFat: json['total_fat'],
       targetFat: json['target_fat'],
       totalCarbohydrate: json['total_carbo'],

@@ -84,18 +84,18 @@ class _MealScheduleViewState extends State<MealScheduleView> {
       setState(() {
         nutritionArr = [
           {
-            "title": "Calories",
+            "title": "Cholesterol",
             "image": "assets/img/home/burn.png",
-            "unit_name": "kCal",
-            "value": "${nutritionGoals.totalCalorie}",
-            "max_value": "${nutritionGoals.targetCalorie}",
+            "unit_name": "mg",
+            "value": "${nutritionGoals.totalcholesterol}",
+            "max_value": "${nutritionGoals.targetcholesterol}",
           },
           {
-            "title": "Proteins",
+            "title": "Vitamin C",
             "image": "assets/img/home/proteins.png",
             "unit_name": "g",
-            "value": "${nutritionGoals.totalProtein}",
-            "max_value": "${nutritionGoals.targetProtein}",
+            "value": "${nutritionGoals.totalVitaminc}",
+            "max_value": "${nutritionGoals.targetVitaminc}",
           },
           {
             "title": "Fats",

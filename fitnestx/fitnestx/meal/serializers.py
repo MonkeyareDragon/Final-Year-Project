@@ -135,10 +135,10 @@ class MealDetailScheduleScreenSerializer(serializers.ModelSerializer):
         fields = ['meal_name', 'total_calories', 'details']
 
 class DailyNutritionDataSerializer(serializers.Serializer):
-    total_calorie = serializers.IntegerField()
-    target_calorie = serializers.IntegerField()
-    total_protein = serializers.IntegerField()
-    target_protein = serializers.IntegerField()
+    total_cholesterol = serializers.IntegerField()
+    target_cholesterol = serializers.IntegerField()
+    total_vitaminc = serializers.IntegerField()
+    target_vitaminc = serializers.IntegerField()
     total_fat = serializers.IntegerField()
     target_fat = serializers.IntegerField()
     total_carbo = serializers.IntegerField()

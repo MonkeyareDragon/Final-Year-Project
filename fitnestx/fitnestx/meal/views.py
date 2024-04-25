@@ -174,40 +174,40 @@ class MealScheduleScreenDetailView(APIView):
     
 class DailyNutritionDataView(APIView):
     def get(self, request, user_id, date):
-        total_calorie = FoodSchedule.objects.filter(
+        total_cholesterol = FoodSchedule.objects.filter(
             user=user_id,
             date=date,
             status='Completed'
-        ).aggregate(total_calorie=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='Iron')))['total_calorie'] or 0
+        ).aggregate(total_cholesterol=Sum('food__foodnutrition__quantity', filter=models.Q(food__foodnutrition__nutrition__name='Cholesterol')))['total_cholesterol'] or 0
         
-        total_protein = FoodSchedule.objects.filter(
+        total_vitaminc = FoodSchedule.objects.filter(
             user=user_id,
             date=date,
             status='Completed'
-        ).aggregate(total_protein=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='Calcium')))['total_protein'] or 0
+        ).aggregate(total_vitaminc=Sum('food__foodnutrition__quantity', filter=models.Q(food__foodnutrition__nutrition__name='Vitamin C')))['total_vitaminc'] or 0
         
         total_fat = FoodSchedule.objects.filter(
             user=user_id,
             date=date,
             status='Completed'
-        ).aggregate(total_fat=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='Fat')))['total_fat'] or 0
+        ).aggregate(total_fat=Sum('food__foodnutrition__quantity', filter=models.Q(food__foodnutrition__nutrition__name='Fat')))['total_fat'] or 0
         
         total_carbo = FoodSchedule.objects.filter(
             user=user_id,
             date=date,
             status='Completed'
-        ).aggregate(total_carbo=Sum('food__nutritions__quantity', filter=models.Q(food__nutritions__name='Carbohydrate')))['total_carbo'] or 0
+        ).aggregate(total_carbo=Sum('food__foodnutrition__quantity', filter=models.Q(food__foodnutrition__nutrition__name='Carbohydrate')))['total_carbo'] or 0
         
-        target_calorie = 1500
-        target_protein = 2000  
+        target_cholesterol = 1500
+        target_vitaminc = 2000  
         target_fat = 1000 
         target_carbo = 500 
         
         serializer = DailyNutritionDataSerializer(data={
-            'total_calorie': total_calorie,
-            'target_calorie': target_calorie,
-            'total_protein': total_protein,
-            'target_protein': target_protein,
+            'total_cholesterol': total_cholesterol,
+            'target_cholesterol': target_cholesterol,
+            'total_vitaminc': total_vitaminc,
+            'target_vitaminc': target_vitaminc,
             'total_fat': total_fat,
             'target_fat': target_fat,
             'total_carbo': total_carbo,
