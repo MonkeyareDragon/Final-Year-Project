@@ -116,15 +116,19 @@ Future<DailyMealScheduleNutritions> fetchDailyMealSchedulerNutritionOnUserID(
 }
 
 // API call to patch all the status of the meal schedule
-Future<void> patchMealSchedulerStatus(int scheduleid) async {
+Future<void> patchMealSchedulerStatus(int scheduleid, double rating) async {
   try {
     final UserSession session = await getSessionOrThrow();
+    var requestData = {
+      'rating': rating,
+    };
     final response = await http.patch(
       ApiUrlHelper.buildUrl('meal/users/food-schedule/$scheduleid/complete/'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${session.accessToken}',
       },
+      body: jsonEncode(requestData),
     );
 
     if (response.statusCode == 200) {

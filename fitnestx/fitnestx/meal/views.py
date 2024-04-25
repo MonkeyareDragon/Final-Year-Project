@@ -225,6 +225,7 @@ class FoodScheduleStatusUpdateAPIView(generics.UpdateAPIView):
         instance = self.get_object()
         if instance.user == request.user:
             instance.status = 'Completed'
+            instance.rating = request.data.get('rating', 0)
             instance.save()
             serializer = self.get_serializer(instance)
             return Response(serializer.data)

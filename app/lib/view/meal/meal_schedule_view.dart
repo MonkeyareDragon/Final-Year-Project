@@ -19,7 +19,7 @@ class MealScheduleView extends StatefulWidget {
 class _MealScheduleViewState extends State<MealScheduleView> {
   CalendarAgendaController _calendarAgendaControllerAppBar =
       CalendarAgendaController();
-  late DateTime currentCalenderData; 
+  late DateTime currentCalenderData = DateTime.now();
   List<Map<String, dynamic>> nutritionArr = [];
   List<Map<String, dynamic>> mealDetailsList = [];
 

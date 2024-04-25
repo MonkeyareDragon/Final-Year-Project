@@ -220,7 +220,7 @@ class _AddMealViewState extends State<AddFoodView> {
                       DateFormat('yyyy-MM-dd').format(_selectedDate);
 
                   String formateTime =
-                      DateFormat('hh:mm:ss').format(_selectedTime);
+                      DateFormat('HH:mm:ss').format(_selectedTime);
 
                   Map<String, dynamic> requestData = {
                     'date': formattedDate.toString(),

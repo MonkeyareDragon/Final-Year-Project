@@ -147,4 +147,4 @@ class DailyNutritionDataSerializer(serializers.Serializer):
 class FoodScheduleStatusUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodSchedule
-        fields = ['id', 'status']
+        fields = ['id', 'status', 'rating']

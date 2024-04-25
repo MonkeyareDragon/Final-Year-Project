@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:intl/intl.dart';
 import 'package:loginsignup/common_widget/icon_title_row.dart';
@@ -9,7 +10,12 @@ class FoodScheduleRow extends StatelessWidget {
   final Map mObj;
   final int index;
   final Function onReload;
-  const FoodScheduleRow({Key? key, required this.mObj, required this.index, required this.onReload}): super(key: key);
+  const FoodScheduleRow(
+      {Key? key,
+      required this.mObj,
+      required this.index,
+      required this.onReload})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +25,8 @@ class FoodScheduleRow extends StatelessWidget {
         ? AppColor.primaryColor2
         : AppColor.secondaryColor2;
     var media = MediaQuery.of(context).size;
+
+    ValueNotifier<double> ratingNotifier = ValueNotifier<double>(0.0);
 
     return Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
@@ -199,13 +207,68 @@ class FoodScheduleRow extends StatelessWidget {
                               if (mObj["notify_status"] == true)
                                 Expanded(
                                   child: RoundButton(
-                                      title: "Mark Done",
-                                      onPressed: () async {
-                                        patchMealSchedulerStatus(
-                                            mObj["schedule_id"]);
-                                        Navigator.pop(context);
-                                        onReload();
-                                      }),
+                                    title: "Mark Done",
+                                    onPressed: () async {
+                                      await showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return Container(
+                                            height: 200,
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 20,
+                                              vertical: 15,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "Rate this Meal",
+                                                  style: TextStyle(
+                                                    color: AppColor.black,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 15),
+                                                RatingBar.builder(
+                                                  initialRating:
+                                                      ratingNotifier.value,
+                                                  minRating: 0,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: true,
+                                                  itemCount: 5,
+                                                  itemSize: 40,
+                                                  itemBuilder: (context, _) =>
+                                                      Icon(
+                                                    Icons.star,
+                                                    color:
+                                                        AppColor.primaryColor1,
+                                                  ),
+                                                  onRatingUpdate: (newRating) {
+                                                    ratingNotifier.value =
+                                                        newRating;
+                                                  },
+                                                ),
+                                                const SizedBox(height: 20),
+                                                RoundButton(
+                                                  title: "Submit Rating",
+                                                  onPressed: () async {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  isBlack: true,
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+
+                                      await patchMealSchedulerStatus(
+                                          mObj["schedule_id"], ratingNotifier.value);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                                 ),
                               const SizedBox(width: 10),
                               Expanded(
