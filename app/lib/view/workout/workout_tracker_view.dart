@@ -279,7 +279,9 @@ class _WorkOutTrackerViewState extends State<WorkOutTrackerView> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const WorkoutScheduleView()));
+                                            WorkoutScheduleView(
+                                              workoutList: workout
+                                            )));
                               }),
                         ),
                       ],

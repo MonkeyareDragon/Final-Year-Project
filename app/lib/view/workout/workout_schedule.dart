@@ -1,13 +1,21 @@
+import 'dart:convert';
+
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common/date_function.dart';
+import 'package:loginsignup/common/sesson_helper.dart';
 import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
+import 'package:loginsignup/controller/helper/url_helper.dart';
+import 'package:loginsignup/model/session/user_session.dart';
 import 'package:loginsignup/view/workout/add_schedule_view.dart';
+import 'package:http/http.dart' as http;
 
 class WorkoutScheduleView extends StatefulWidget {
+  final List workoutList;
   const WorkoutScheduleView({
     super.key,
+    required this.workoutList,
   });
 
   @override
@@ -19,52 +27,36 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
       CalendarAgendaController();
   late DateTime _selectedDateAppBBar;
 
-  List eventArr = [
-    {
-      "name": "Ab Workout",
-      "start_time": "05/02/2024 07:30 AM",
-    },
-    {
-      "name": "Upperbody Workout",
-      "start_time": "05/02/2024 09:00 AM",
-    },
-    {
-      "name": "Lowerbody Workout",
-      "start_time": "05/02/2024 03:00 PM",
-    },
-    {
-      "name": "Ab Workout",
-      "start_time": "05/02/2024 07:30 AM",
-    },
-    {
-      "name": "Upperbody Workout",
-      "start_time": "05/02/2024 01:00 AM",
-    },
-    {
-      "name": "Lowerbody Workout",
-      "start_time": "05/02/2024 03:00 PM",
-    },
-    {
-      "name": "Ab Workout",
-      "start_time": "05/02/2024 03:30 AM",
-    },
-    {
-      "name": "Upperbody Workout",
-      "start_time": "05/02/2024 09:00 AM",
-    },
-    {
-      "name": "Lowerbody Workout",
-      "start_time": "05/02/2024 09:00 PM",
-    }
-  ];
-
+  List eventArr = [];
   List selectDayEventArr = [];
 
   @override
   void initState() {
     super.initState();
     _selectedDateAppBBar = DateTime.now();
-    setDayEventWorkoutList();
+    fetchWorkoutSchedules();
+  }
+
+  Future<void> fetchWorkoutSchedules() async {
+    final UserSession session = await getSessionOrThrow();
+    final response = await http.get(
+      ApiUrlHelper.buildUrl(
+          'workout/users/workout-schedule/user/${session.userId}/'),
+      headers: {
+        'Authorization': 'Bearer ${session.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        eventArr = jsonDecode(response.body);
+        print(eventArr);
+        setDayEventWorkoutList();
+        print(selectDayEventArr);
+      });
+    } else {
+      throw Exception('Failed to load workout schedules');
+    }
   }
 
   void setDayEventWorkoutList() {
@@ -120,15 +112,35 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         ),
         actions: [
           InkWell(
-            onTap: () {},
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return SimpleDialog(
+                    title: Text('Choose Action'),
+                    children: <Widget>[
+                      SimpleDialogOption(
+                        onPressed: () {
+                          Navigator.pop(context); // Close the dialog
+                          _refreshUserScheduleData(); // Trigger refresh action
+                        },
+                        child: Text('Refresh'),
+                      ),
+                      // Add more options if needed
+                    ],
+                  );
+                },
+              );
+            },
             child: Container(
               margin: const EdgeInsets.all(8),
               height: 40,
               width: 40,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: AppColor.lightGray,
-                  borderRadius: BorderRadius.circular(10)),
+                color: AppColor.lightGray,
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: Image.asset(
                 "assets/img/home/more_btn.png",
                 width: 15,
@@ -136,7 +148,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
                 fit: BoxFit.contain,
               ),
             ),
-          )
+          ),
         ],
       ),
       backgroundColor: AppColor.white,
@@ -422,6 +434,7 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
               MaterialPageRoute(
                   builder: (context) => AddScheduleView(
                         date: _selectedDateAppBBar,
+                        workoutList: widget.workoutList,
                       )));
         },
         child: Container(
@@ -443,5 +456,9 @@ class _WorkoutScheduleViewState extends State<WorkoutScheduleView> {
         ),
       ),
     );
+  }
+
+  Future<void> _refreshUserScheduleData() async {
+    fetchWorkoutSchedules();
   }
 }

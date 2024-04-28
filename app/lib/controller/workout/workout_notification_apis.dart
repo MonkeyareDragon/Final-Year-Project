@@ -5,7 +5,7 @@ import 'package:loginsignup/controller/helper/url_helper.dart';
 import 'package:loginsignup/model/session/user_session.dart';
 import 'package:loginsignup/model/workout/workout_schedule.dart';
 
-Future<void> createWorkoutSchedule(Map<String, dynamic> requestData) async {
+Future<bool> createWorkoutSchedule(Map<String, dynamic> requestData) async {
   try {
     final UserSession session = await getSessionOrThrow();
     final http.Response response = await http.post(
@@ -19,13 +19,16 @@ Future<void> createWorkoutSchedule(Map<String, dynamic> requestData) async {
 
     if (response.statusCode == 201) {
       print('FoodSchedule created successfully');
+      return true;
     } else {
       print(
           'Failed to create FoodSchedule. Status code: ${response.statusCode}');
       print('Response body: ${response.body}');
+      return false;
     }
   } catch (e) {
     print('Error creating FoodSchedule: $e');
+    throw Exception('Failed to create FoodSchedule: $e');
   }
 }
 

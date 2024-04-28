@@ -2,14 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loginsignup/common/color_extension.dart';
 import 'package:loginsignup/common/date_function.dart';
-import 'package:loginsignup/common_widget/icon_title_row.dart';
+import 'package:loginsignup/common/sesson_helper.dart';
 import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:intl/intl.dart';
+import 'package:loginsignup/common_widget/icon_title_row.dart';
 import 'package:loginsignup/controller/workout/workout_notification_apis.dart';
+import 'package:loginsignup/model/session/user_session.dart';
 
 class AddScheduleView extends StatefulWidget {
   final DateTime date;
-  const AddScheduleView({super.key, required this.date});
+  final List workoutList;
+  const AddScheduleView({
+    super.key,
+    required this.date,
+    required this.workoutList,
+  });
 
   @override
   State<AddScheduleView> createState() => _AddScheduleViewState();
@@ -18,16 +25,31 @@ class AddScheduleView extends StatefulWidget {
 class _AddScheduleViewState extends State<AddScheduleView> {
   late DateTime _selectedDate;
   late DateTime _selectedTime;
+  late Map<String, dynamic> _selectedWorkout;
 
   @override
   void initState() {
     super.initState();
     _selectedDate = widget.date;
     _selectedTime = DateTime.now();
+    _selectedWorkout =
+        widget.workoutList.isNotEmpty ? widget.workoutList[0] : {};
   }
 
-  Future<void> WorkoutSchedule(Map<String, dynamic> requestData) async {
-    await createWorkoutSchedule(requestData);
+    void _showSnackBarOnPreviousScreen(BuildContext context, String message) {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColor.secondaryColor1,
+        elevation: 0,
+        margin: EdgeInsets.only(
+          top: 0,
+        ),
+      ),
+    );
   }
 
   Future<void> _showDatePicker(BuildContext context) async {
@@ -127,7 +149,7 @@ class _AddScheduleViewState extends State<AddScheduleView> {
               ],
             ),
             const SizedBox(
-              height: 20,
+              height: 15,
             ),
             Text(
               "Time",
@@ -149,72 +171,104 @@ class _AddScheduleViewState extends State<AddScheduleView> {
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
-            Text(
-              "Details Workout",
-              style: TextStyle(
-                  color: AppColor.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500),
+            Row(
+              children: [
+                Text(
+                  "Choose Workout: ",
+                  style: TextStyle(
+                      color: AppColor.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                DropdownButton<Map<String, dynamic>>(
+                  value: _selectedWorkout,
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedWorkout = newValue!;
+                    });
+                  },
+                  items: widget.workoutList.map((workout) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
+                      value: workout,
+                      child: Text(workout['title']),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
             const SizedBox(
               height: 10,
             ),
-            IconTitleNextRow(
-                icon: "assets/img/home/choose_workout.png",
-                title: "Choose Workout",
-                time: "Upperbody",
-                color: AppColor.lightGray,
-                onPressed: () {}),
-            const SizedBox(
-              height: 10,
-            ),
-            IconTitleNextRow(
-                icon: "assets/img/home/difficulity.png",
-                title: "Difficulity",
-                time: "Beginner",
-                color: AppColor.lightGray,
-                onPressed: () {}),
-            const SizedBox(
-              height: 10,
-            ),
-            IconTitleNextRow(
-                icon: "assets/img/home/repetitions.png",
-                title: "Custom Repetitions",
-                time: "",
-                color: AppColor.lightGray,
-                onPressed: () {}),
-            const SizedBox(
-              height: 10,
-            ),
-            IconTitleNextRow(
-                icon: "assets/img/home/repetitions.png",
-                title: "Custom Weights",
-                time: "",
-                color: AppColor.lightGray,
-                onPressed: () {}),
+            if (_selectedWorkout.isNotEmpty) ...[
+              IconTitleNextRow(
+                  icon: "assets/img/home/Icon-Barbel.png",
+                  title: "Chosen Food",
+                  time: "${_selectedWorkout['exercises']}",
+                  color: AppColor.lightGray,
+                  onPressed: () {}),
+              const SizedBox(
+                height: 10,
+              ),
+              IconTitleNextRow(
+                  icon: "assets/img/home/difficulity.png",
+                  title: "Difficulity",
+                  time: "${_selectedWorkout['difficulty']}",
+                  color: AppColor.lightGray,
+                  onPressed: () {}),
+              const SizedBox(
+                height: 10,
+              ),
+              IconTitleNextRow(
+                  icon: "assets/img/home/repetitions.png",
+                  title: "Prepeartion Time",
+                  time: "${_selectedWorkout['time']}",
+                  color: AppColor.lightGray,
+                  onPressed: () {}),
+              const SizedBox(
+                height: 10,
+              ),
+              IconTitleNextRow(
+                  icon: "assets/img/home/repetitions.png",
+                  title: "Calories Obtain",
+                  time: "${_selectedWorkout['calories']}",
+                  color: AppColor.lightGray,
+                  onPressed: () {}),
+            ],
             Spacer(),
             RoundButton(
                 title: "Save",
-                onPressed: () {
+                onPressed: () async {
+                  final UserSession session = await getSessionOrThrow();
                   String formattedDate =
                       DateFormat('yyyy-MM-dd').format(_selectedDate);
 
                   String formateTime =
-                      DateFormat('hh:mm:ss').format(_selectedTime);
+                      DateFormat('HH:mm:ss').format(_selectedTime);
 
                   Map<String, dynamic> requestData = {
                     'date': formattedDate.toString(),
                     'time': formateTime.toString(),
-                    'workout': 1,
-                    'user': 2
+                    'workout': _selectedWorkout['workoutId'],
+                    'user': session.userId
                   };
 
-                  WorkoutSchedule(requestData);
+                  bool isSuccess = await createWorkoutSchedule(requestData);
+
+                  if (isSuccess) {
+                    _showSnackBarOnPreviousScreen(
+                        context, 'Schedule for workout is added scuccessfully');
+                  } else {
+                    _showSnackBarOnPreviousScreen(
+                        context, 'Failed to add schedule for workout');
+                  }
                 }),
             const SizedBox(
-              height: 10,
+              height: 5,
             ),
           ],
         ),

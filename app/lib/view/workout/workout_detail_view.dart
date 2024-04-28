@@ -6,7 +6,7 @@ import 'package:loginsignup/common_widget/base_widget/primary_button.dart';
 import 'package:loginsignup/controller/workout/workout_api.dart';
 import 'package:loginsignup/model/workout/equipment.dart';
 import 'package:loginsignup/model/workout/exercise.dart';
-import 'package:loginsignup/view/workout/workout_schedule.dart';
+import 'package:loginsignup/view/workout/start_workout_view.dart';
 import 'package:loginsignup/view/workout/workout_steps_description.dart';
 
 class WorkoutDetailView extends StatefulWidget {
@@ -35,6 +35,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
 
   List equipmentArr = [];
   List exerciseSetArr = [];
+  List customRepeatsList = [];
 
   @override
   void initState() {
@@ -76,14 +77,25 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                             "exercise_time_required":
                                 exercise.exerciseTimeRequired,
                             "exercise_difficulty": exercise.exerciseDifficulty,
-                            "exercise_calories_burn": exercise.exerciseCaloriesBurn,
-                            "exercise_description": exercise.exerciseDescription,
-                            "exercise_custom_repeats": exercise.exerciseCustomRepeats,
+                            "exercise_calories_burn":
+                                exercise.exerciseCaloriesBurn,
+                            "exercise_description":
+                                exercise.exerciseDescription,
+                            "exercise_custom_repeats":
+                                exercise.exerciseCustomRepeats,
                           })
                       .toList(),
                 })
             .toList();
+        customRepeatsList = exerciseSetArr
+            .map((exerciseSet) => exerciseSet["set"]
+                .map((exercise) => exercise["exercise_time_required"])
+                .toList())
+            .toList()
+            .expand((element) => element)
+            .toList();
       });
+      print(customRepeatsList);
     } catch (e) {
       print('Error fetching exercise sets: $e');
     }
@@ -229,13 +241,7 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                           title: "Schedule Workout",
                           time: "5/27, 09:00 AM",
                           color: AppColor.primaryColor2.withOpacity(0.3),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const WorkoutScheduleView()));
-                          }),
+                          onPressed: () {}),
                       SizedBox(
                         height: media.width * 0.02,
                       ),
@@ -371,9 +377,19 @@ class _WorkoutDetailViewState extends State<WorkoutDetailView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: RoundButton(title: "Start Workout", onPressed: () {})
-                        ),
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: RoundButton(
+                                title: "Start Workout",
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => StartWorkout(
+                                          exerciseSetArr: exerciseSetArr,
+                                          customRepeatsList: customRepeatsList),
+                                    ),
+                                  );
+                                })),
                       ),
                     ],
                   ),

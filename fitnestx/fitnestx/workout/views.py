@@ -4,6 +4,9 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListAPIView
 from django.http import JsonResponse
+from django.views.generic import View
+from datetime import datetime
+from fitnestx.users.models import User
 from .models import Equipment, Exercise, ExercisePerform, Workout, WorkoutExercise, WorkoutSchedule
 from .serializers import EquipmentSerializer, ExercisePerformSerializer, ExerciseSerializer, WorkoutExerciseSetSerializer, WorkoutScheduleSerializer, WorkoutSerializer
 
@@ -77,22 +80,20 @@ class WorkoutScheduleCreateAPIView(generics.CreateAPIView):
     queryset = WorkoutSchedule.objects.all()
     serializer_class = WorkoutScheduleSerializer
 
-class WorkoutScheduleDetailView(APIView):
-    def get(self, request, user_id, date):
-        workout_schedules = WorkoutSchedule.objects.filter(user__id=user_id, date=date)
+class UserWorkoutScheduleView(View):
+    def get(self, request, user_id, *args, **kwargs):
+        user = get_object_or_404(User, id=user_id)
+        workout_schedules = WorkoutSchedule.objects.filter(user=user)
         
-        data = []
-        for workout_schedule in workout_schedules:
-            data.append({
-                'date': workout_schedule.date,
-                'time': workout_schedule.time,
-                'workout_name': workout_schedule.workout.name,
-                'user_username': workout_schedule.user.username,
-                'notification_note': workout_schedule.notification_note,
-                'notify_status': workout_schedule.notify_status,
-                'status': workout_schedule.status,
-                'check_notification': workout_schedule.check_notification,
-                'send_notification': workout_schedule.send_notification,
-            })
+        response_data = []
         
-        return JsonResponse(data, safe=False)
+        for schedule in workout_schedules:
+            start_time = datetime.combine(schedule.date, schedule.time).strftime("%d/%m/%Y %I:%M %p")
+            data = {
+                "workout_id": schedule.workout.id,
+                "name": schedule.workout.name,
+                "start_time": start_time,
+            }
+            response_data.append(data)
+        
+        return JsonResponse(response_data, safe=False)
