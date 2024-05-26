@@ -200,14 +200,14 @@ class _LoginViewState extends State<LoginView> {
                         "Don’t have an account yet? ",
                         style: TextStyle(
                           color: AppColor.black,
-                          fontSize: 14,
+                          fontSize: 12,
                         ),
                       ),
                       Text(
                         "Register",
                         style: TextStyle(
                             color: AppColor.secondaryColor1,
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.w700),
                       )
                     ],

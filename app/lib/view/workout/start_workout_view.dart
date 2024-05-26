@@ -159,7 +159,7 @@ class _StartWorkoutState extends State<StartWorkout> {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "REAPT",
+                      "REPEAT",
                       style: TextStyle(
                           fontSize: 30,
                           color: Colors.grey[350],

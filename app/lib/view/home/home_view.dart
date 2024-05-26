@@ -334,7 +334,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 SizedBox(
                                     width: 120,
-                                    height: 50,
+                                    height: 40,
                                     child: RoundButton(
                                         title: "View More",
                                         type: RoundButtonType.bgSGradient,

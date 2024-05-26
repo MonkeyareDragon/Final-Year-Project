@@ -107,7 +107,7 @@ class _SignUpViewState extends State<SignUpView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: EdgeInsets.only(top: media.width * 0.05),
+                padding: EdgeInsets.only(top: media.width * 0.09),
                 child: Text(
                   "Hey there,",
                   style: TextStyle(color: AppColor.gray, fontSize: 16),
@@ -193,7 +193,7 @@ class _SignUpViewState extends State<SignUpView> {
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       "By continuing you accept our Privacy Policy and\nTerm of Use",
-                      style: TextStyle(color: AppColor.gray, fontSize: 10),
+                      style: TextStyle(color: AppColor.gray, fontSize: 8),
                     ),
                   )
                 ],

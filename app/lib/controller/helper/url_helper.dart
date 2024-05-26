@@ -1,7 +1,9 @@
 // common.UrlUtil
 class UrlUtil {
   static String getImageUrl(String equipmentImage) {
-    String baseUrl = 'http://10.0.2.2:8000/';
+    //String baseUrl = 'http://10.0.2.2:8000/';
+    String baseUrl = 'http://192.168.110.80:8000/';
+
     // Modify the base URL if necessary based on environment or configuration
     // For example:
     // if (isProduction) {
@@ -17,8 +19,8 @@ class UrlUtil {
 }
 
 class ApiUrlHelper {
-  static const String baseUrl = 'http://10.0.2.2:8000/api/v1';
-  // static const String baseUrl = 'http://192.168.1.79:8000/api/v1';
+  //static const String baseUrl = 'http://10.0.2.2:8000/api/v1';
+  static const String baseUrl = 'http://192.168.110.80:8000/api/v1';
 
   static Uri buildUrl(String path) {
     return Uri.parse('$baseUrl/$path');
